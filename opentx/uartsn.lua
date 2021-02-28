@@ -38,7 +38,8 @@ local function run()
 		-- 		\x02: start_of_text
 		-- 		\x03: end_of_text
 		
-		packet = packet .. src .. '\x17' .. getValue(src) ..'\x17'
+		packet = packet .. '\x01' .. '0' .. '\x02' .. src .. '\x03'
+		packet = packet .. '\x01' .. '1' .. '\x02' .. getValue(src) .. '\x03'
 	end
 	packet = packet .. '\n'
 	serialWrite(packet)

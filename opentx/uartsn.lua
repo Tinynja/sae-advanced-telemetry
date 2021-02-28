@@ -28,7 +28,17 @@ local function run()
 	-- called periodically
 	packet = ''
 	for i,src in ipairs(sources) do
-		packet = packet .. src .. '\x03' .. getValue(src) ..'\x03'
+		-- protocol: \x01 + [type] + \x02 + [name] + \x03 + \x01 + [type] + \x02 + [value] + \x03
+		
+		-- 		type :=
+		-- 			0: name
+		-- 			1: value
+		
+		-- 		\x01: start_of_heading
+		-- 		\x02: start_of_text
+		-- 		\x03: end_of_text
+		
+		packet = packet .. src .. '\x17' .. getValue(src) ..'\x17'
 	end
 	packet = packet .. '\n'
 	serialWrite(packet)

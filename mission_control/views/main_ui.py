@@ -5,7 +5,14 @@ from PyQt5.QtWidgets import *
 
 
 class MainUi:
-	def __init__(self):
+	def __init__(self, main_window):
+		self._main_window = main_window
+
+		# Init main window
+		self._main_window.setWindowTitle('Avion-Cargo Mission Control')
+		# self._main_window.setWindowIcon(QIcon('resources/icons/nomad.ico'))
+		self._main_window.setCentralWidget(QWidget())
+
 		self._create_gauges()
 		self._create_PFD()
 		self._create_drop_history()

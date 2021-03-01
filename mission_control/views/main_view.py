@@ -6,10 +6,7 @@ from PyQt5.QtWidgets import *
 
 class MainUi:
 	def __init__(self):
-		self._create_gauges()
-		self._create_PFD()
-		self._create_drop_history()
-		self._create_MAP()
+		pass
 
 	def _create_gauges(self):
 		pass

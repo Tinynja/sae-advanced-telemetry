@@ -4,18 +4,12 @@ from PyQt5.QtCore import *
 from PyQt5.QtWidgets import *
 
 
-class MainUi:
+class MainView:
 	def __init__(self):
-		pass
+		super().__init__()
 
-	def _create_gauges(self):
-		pass
-
-	def _create_PFD(self):
-		pass
-
-	def _create_drop_history(self):
-		pass
-
-	def _create_MAP(self):
-		pass
+		# 
+		# - Banque d'images
+		# - 2 Trapèzes + Ligne
+		# - Tourne + Crop images
+		# - 

@@ -38,23 +38,55 @@ class MainUi:
 		self._PFD_layout = QVBoxLayout()
 		_Top_layout    = QHBoxLayout()
 		_Bottom_layout = QHBoxLayout()
+
+		_GS_display     = QVBoxLayout()
+		_Clock_display  = QVBoxLayout()
+		_VSI_display    = QVBoxLayout()
 		
 		self._PFD_layout.setContentsMargins(5,5,5,5)
 
-		_Top_layout.addWidget(Color('yellow'))
-		_Top_layout.addWidget(QLabel('Test2!'))
-		_Top_layout.addWidget(Color('blue'))
-		_Top_layout.addWidget(Color('red'))
+		_label_GS_label = QLabel('Ground speed (kts)')
+		_label_GS_label.setAlignment(Qt.AlignCenter)		
+		_GS_display.addWidget(_label_GS_label)
+		_label_GS_value = QLabel('19')
+		_label_GS_value.setAlignment(Qt.AlignCenter)
+		_label_GS_value.setFont(QFont('Arial',20))
+		_GS_display.addWidget(_label_GS_value)
 
-		_Bottom_layout.addWidget(Color('green'))
+		_label_Clock_label = QLabel('Time since beggining of flight')
+		_label_Clock_label.setAlignment(Qt.AlignCenter)	
+		_Clock_display.addWidget(_label_Clock_label)
+		_label_Clock_value = QLabel('01:22.1')
+		_label_Clock_value.setAlignment(Qt.AlignCenter)	
+		_label_Clock_value.setFont(QFont('Arial',20))
+		_Clock_display.addWidget(_label_Clock_value)
+
+		_label_VSI_label = QLabel('Vertical speed (fpm)')
+		_label_VSI_label.setAlignment(Qt.AlignCenter)		
+		_VSI_display.addWidget(_label_VSI_label)
+		_label_VSI_value = QLabel('+ 50')
+		_label_VSI_value.setAlignment(Qt.AlignCenter)
+		_label_VSI_value.setFont(QFont('Arial',20))
+		_VSI_display.addWidget(_label_VSI_value)
+
+
+		#indicateur de TAS
+		_Bottom_layout.addWidget(Color('green'))  
+		#indicateur d'assiette
 		_Bottom_layout.addWidget(Color('orange'))
+		#indicateur de VSI graphique
 		_Bottom_layout.addWidget(Color('white'))
+		#indicateur d'altitude
+		_Bottom_layout.addWidget(Color('purple'))
+
+		_Top_layout.addLayout( _GS_display )
+		_Top_layout.addLayout( _Clock_display )
+		_Top_layout.addLayout( _VSI_display )
+
 
 		self._PFD_layout.addLayout( _Top_layout )
 		self._PFD_layout.addLayout( _Bottom_layout )
 
-		#self._PFD_layout.addWidget(QLabel('Test1!'))
-		#self._PFD_layout.addWidget(QLabel('Test2!'))
 
 
 	def _create_drop_history(self):
@@ -93,7 +125,7 @@ if __name__ == '__main__':
 	app = QApplication([])
 	main_ui = MainUi(None)
 	dummy_widget = QWidget()
-	#dummy_widget.setLayout(main_ui._drop_history_layout) # Indiquer ici le nom du layout que vous voulez afficher
-	dummy_widget.setLayout(main_ui._PFD_layout) # Indiquer ici le nom du layout que vous voulez afficher
+	dummy_widget.setLayout(main_ui._drop_history_layout) # Indiquer ici le nom du layout que vous voulez afficher
+	#dummy_widget.setLayout(main_ui._PFD_layout) # Indiquer ici le nom du layout que vous voulez afficher
 	dummy_widget.show()
 	app.exec()

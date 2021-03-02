@@ -125,7 +125,7 @@ if __name__ == '__main__':
 	app = QApplication([])
 	main_ui = MainUi(None)
 	dummy_widget = QWidget()
-	dummy_widget.setLayout(main_ui._drop_history_layout) # Indiquer ici le nom du layout que vous voulez afficher
-	#dummy_widget.setLayout(main_ui._PFD_layout) # Indiquer ici le nom du layout que vous voulez afficher
+	# dummy_widget.setLayout(main_ui._drop_history_layout) # Indiquer ici le nom du layout que vous voulez afficher
+	dummy_widget.setLayout(main_ui._PFD_layout) # Indiquer ici le nom du layout que vous voulez afficher
 	dummy_widget.show()
 	app.exec()

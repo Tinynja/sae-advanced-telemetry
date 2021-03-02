@@ -45,6 +45,7 @@ class MainUi:
 		
 		self._PFD_layout.setContentsMargins(5,5,5,5)
 
+		#indicateur de GS
 		_label_GS_label = QLabel('Ground speed (kts)')
 		_label_GS_label.setAlignment(Qt.AlignCenter)		
 		_GS_display.addWidget(_label_GS_label)
@@ -53,6 +54,7 @@ class MainUi:
 		_label_GS_value.setFont(QFont('Arial',20))
 		_GS_display.addWidget(_label_GS_value)
 
+		#indicateur de temps écoulé
 		_label_Clock_label = QLabel('Time since beggining of flight')
 		_label_Clock_label.setAlignment(Qt.AlignCenter)	
 		_Clock_display.addWidget(_label_Clock_label)
@@ -61,6 +63,7 @@ class MainUi:
 		_label_Clock_value.setFont(QFont('Arial',20))
 		_Clock_display.addWidget(_label_Clock_value)
 
+		#indicateur de VS
 		_label_VSI_label = QLabel('Vertical speed (fpm)')
 		_label_VSI_label.setAlignment(Qt.AlignCenter)		
 		_VSI_display.addWidget(_label_VSI_label)
@@ -74,7 +77,7 @@ class MainUi:
 		_Bottom_layout.addWidget(Color('green'))  
 		#indicateur d'assiette
 		_Bottom_layout.addWidget(Color('orange'))
-		#indicateur de VSI graphique
+		#indicateur de VS graphique
 		_Bottom_layout.addWidget(Color('white'))
 		#indicateur d'altitude
 		_Bottom_layout.addWidget(Color('purple'))

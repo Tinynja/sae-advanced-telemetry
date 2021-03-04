@@ -43,7 +43,8 @@ class MainUi:
 		Clock_display  = QVBoxLayout()
 		VSI_display    = QVBoxLayout()
 
-		TAS_display    = QVBoxLayout()
+		TAS_display    = QStackedLayout()
+		TAS_display.setStackingMode(QStackedLayout.StackAll)
 		Attitude_display = QStackedLayout()
 		#... à continuer pour la partie du bas
 
@@ -81,10 +82,9 @@ class MainUi:
 
 
 		#indicateur de TAS
-		original = QPixmap('mission_control/views/Speeds.png')
-
-		top = 0
-		height = 281
+		original = QPixmap('mission_control/views/TAS_Graphic.JPG')
+		top = 400
+		height = 300
 
 		def update_img(adj=0):
 			global top1
@@ -95,10 +95,21 @@ class MainUi:
 		update_img()
 
 		TAS_IMG.setFrameStyle(QFrame.Box)
-		TAS_value = QLabel('21')
-		TAS_value.setFrameStyle(QFrame.Panel | QFrame.Sunken)
-		TAS_display.addWidget(TAS_value)
+		TAS_value = QLabel('28')
+		TAS_value.setFont(QFont('Arial',30))
+		TAS_value.setAlignment(Qt.AlignCenter)	
+		TAS_value.setFrameStyle(QFrame.Panel | QFrame.Raised)
+		TAS_value.setStyleSheet("background-color: black; color: white")
+		dummy_widget = QWidget()
+		TAS_layout = QVBoxLayout(dummy_widget)
+		TAS_layout.setContentsMargins(5,0,5,0)
+		TAS_layout.addStretch(1)
+		TAS_layout.addWidget(TAS_value)
+		TAS_layout.addStretch(1)
 		TAS_display.addWidget(TAS_IMG)
+		TAS_display.addWidget(dummy_widget)
+
+		
 
 		#indicateur d'assiette
 		Attitude_label = QLabel('Roll and pitch angle')

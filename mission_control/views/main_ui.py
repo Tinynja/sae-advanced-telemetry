@@ -56,6 +56,7 @@ class MainUi:
 		GS_value = QLabel('19')
 		GS_value.setAlignment(Qt.AlignCenter)
 		GS_value.setFont(QFont('Arial',20))
+		GS_value.setFrameStyle(QFrame.Panel | QFrame.Sunken)
 		GS_display.addWidget(GS_value)
 
 		#indicateur de temps écoulé
@@ -65,6 +66,7 @@ class MainUi:
 		Clock_value = QLabel('01:22.1')
 		Clock_value.setAlignment(Qt.AlignCenter)	
 		Clock_value.setFont(QFont('Arial',20))
+		Clock_value.setFrameStyle(QFrame.Panel | QFrame.Sunken)
 		Clock_display.addWidget(Clock_value)
 
 		#indicateur de VS
@@ -73,14 +75,31 @@ class MainUi:
 		VSI_display.addWidget(VSI_label)
 		VSI_value = QLabel('+ 50')
 		VSI_value.setAlignment(Qt.AlignCenter)
+		VSI_value.setFrameStyle(QFrame.Panel | QFrame.Sunken)
 		VSI_value.setFont(QFont('Arial',20))
 		VSI_display.addWidget(VSI_value)
 
 
 		#indicateur de TAS
-		TAS_label = QLabel('TAS (kts)')
-		TAS_label.setFrameStyle(QFrame.Box)
-		TAS_display.addWidget(TAS_label)
+		original = QPixmap('mission_control/views/Speeds.png')
+
+		top = 0
+		height = 281
+
+		def update_img(adj=0):
+			global top1
+			top1 = max(0, min(top+adj, original.height()-height))
+			TAS_IMG.setPixmap(original.copy(QRect(0, top, original.width(), height)))
+		
+		TAS_IMG = QLabel()
+		update_img()
+
+		TAS_IMG.setFrameStyle(QFrame.Box)
+		TAS_value = QLabel('21')
+		TAS_value.setFrameStyle(QFrame.Panel | QFrame.Sunken)
+		TAS_display.addWidget(TAS_value)
+		TAS_display.addWidget(TAS_IMG)
+
 		#indicateur d'assiette
 		Attitude_label = QLabel('Roll and pitch angle')
 		Attitude_label.setFrameStyle(QFrame.Box)
@@ -88,7 +107,7 @@ class MainUi:
 		Attitude_value = QLabel('Pitch = -0.5 deg | Roll = 12.2 deg')
 		Attitude_display.addWidget(Attitude_value)
 		# #indicateur de VS graphique
-		# Altitude_display = Bottom_layout.addWidget(Color('white'))
+		# Altitude_display = Bottom_layout.addWidget(Color('black'))
 		# #indicateur d'altitude
 		# VSI_graphic_display = Bottom_layout.addWidget(Color('purple'))
 

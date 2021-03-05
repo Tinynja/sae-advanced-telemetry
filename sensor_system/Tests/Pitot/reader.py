@@ -23,9 +23,9 @@ def read_pitot_data(uart, f_output, stop_event, q):
 			# Write to CSV file
 			f_output(data_row)
 		except UnicodeDecodeError:
-			print(f'\rERROR: Undecodable data received' + ' '*(len(last_print)-32))
-		except IndexError:
-			print(f'\rERROR: Incomplete data received' + ' '*(len(last_print)-31))
+			print(f'\rERROR: Undecodable data received                  ')
+		except (IndexError, ValueError):
+			print(f'\rERROR: Incomplete data received                   ')
 	q.put(i)
 
 def write_to_csv(f, data_row):
@@ -80,8 +80,8 @@ while True:
 		uart_thread = threading.Thread(target=lambda: read_pitot_data(uart, lambda data_row: write_to_csv(f, data_row), stop_event, q))
 		uart_thread.start()
 		# Test
-		for i in range(10):
-			uart.write((f'Diff_p (Pa):{i}\n').encode())
+		# for i in range(10):
+		# 	uart.write((f'Diff_p (Pa):{i}\n').encode())
 		input('RECORDING (0)... Press Enter to pause recording. ')
 		stop_event.set()
 		uart_thread.join()

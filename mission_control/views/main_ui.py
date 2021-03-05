@@ -82,21 +82,22 @@ class MainUi:
 
 
 		#indicateur de TAS
-		original = QPixmap('mission_control/views/TAS_Graphic.JPG')
-		top = 400
+		original_img_TAS = QPixmap('mission_control/views/TAS_Graphic.JPG')
+		tas = 12
+		calculated_top = 100 - 9.803921569 * (tas-57)
+		top = round(calculated_top)
 		height = 300
-
 		def update_img(adj=0):
 			global top1
-			top1 = max(0, min(top+adj, original.height()-height))
-			TAS_IMG.setPixmap(original.copy(QRect(0, top, original.width(), height)))
-		
+			top1 = max(0, min(top+adj, original_img_TAS.height()-height))
+			TAS_IMG.setPixmap(original_img_TAS.copy(QRect(0, top, original_img_TAS.width(), height)))
 		TAS_IMG = QLabel()
 		update_img()
 
 		TAS_IMG.setFrameStyle(QFrame.Box)
-		TAS_value = QLabel('28')
-		TAS_value.setFont(QFont('Arial',30))
+		
+		TAS_value = QLabel(str(tas))
+		TAS_value.setFont(QFont('Arial',25))
 		TAS_value.setAlignment(Qt.AlignCenter)	
 		TAS_value.setFrameStyle(QFrame.Panel | QFrame.Raised)
 		TAS_value.setStyleSheet("background-color: black; color: white")
@@ -109,9 +110,9 @@ class MainUi:
 		TAS_display.addWidget(TAS_IMG)
 		TAS_display.addWidget(dummy_widget)
 
-		
-
 		#indicateur d'assiette
+		original_img_attitude = QPixmap('mission_control/views/Attitude_Graphic.JPG')
+
 		Attitude_label = QLabel('Roll and pitch angle')
 		Attitude_label.setFrameStyle(QFrame.Box)
 		Attitude_display.addWidget(Attitude_label)

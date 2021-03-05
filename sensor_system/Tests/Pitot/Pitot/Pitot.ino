@@ -52,7 +52,7 @@ void loop() {
 
 	Serial.print("\t");
 
-	Serial.print("Temp (C):\t");
+	Serial.print("Temp (C):");
 	Serial.print(temp);
 
 	// float rho = 1.1689;

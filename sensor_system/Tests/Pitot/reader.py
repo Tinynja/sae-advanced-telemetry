@@ -126,7 +126,7 @@ def read_pitot_data(pitot, f_output, stop_event, q):
 	q.put(start_time)
 
 def write_to_csv(f, data_row):
-	writer = csv.DictWriter(f, fieldnames=list(data_row))
+	writer = csv.DictWriter(f, fieldnames=list(data_row), delimiter=';')
 	if not f.seek(0,2):
 		writer.writeheader()
 	f.seek(f.tell()-2)
@@ -137,8 +137,10 @@ def write_to_csv(f, data_row):
 ################## MAIN CODE ##################
 reprint = Reprint()
 
+print('If the sensor data gets printed on a new line everytime please make the window wider.')
+
 # List all the available COM port and prompt for selection
-print('Scanning COM ports...')
+print('\nScanning COM ports...')
 ports = list_ports.comports()
 for i,p in enumerate(ports):
 	print(f'{p.device}: {p.manufacturer} ({p.description})')

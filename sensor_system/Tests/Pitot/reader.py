@@ -6,29 +6,35 @@ import threading, queue
 
 
 ################## FUNCTIONS ##################
+
 def read_pitot_data(uart, f_output, stop_event, q):
 	i = q.get()
 	while not stop_event.is_set():
-		print(f'\rRECORDING ({i})... Press Enter to pause recording. ', end='')
-		i += 1
-		# last_print = print(f'\rRECORDING ({i})... Press Enter to pause recording. ', end='')
-		# try:
-		# 	message = uart.read_until(b'\n').decode()
-		# 	if len(message) == 0 or message[-1] != '\n': continue
-		# 	data_row = {d.split(':')[0]:float(d.split(':')[1]) for d in message.split('\t')}
-		# 	f_output(data_row)
-		# 	i += 1
-		# except UnicodeDecodeError:
-		# 	print(f'\rERROR: Undecodable data received' + ' '*(len(last_print)-32))
-		# except IndexError:
-		# 	print(f'\rERROR: Incomplete data received' + ' '*(len(last_print)-31))
+		# print(f'\rRECORDING ({i})... Press Enter to pause recording. ', end='')
+		# i += 1
+		try:
+			message = uart.read_until(b'\n').decode()
+			if len(message) == 0 or message[-1] != '\n': continue
+			data_row = {d.split(':')[0]:float(d.split(':')[1]) for d in message.split('\t')}
+			i += 1
+			# Print important information
+			last_print = 'RECORDING (%d, %s)... Press Enter to pause recording. ' % (i, message.replace('\t', ', ').replace('\n', ''))
+			print('\r' + last_print, end='')
+			# Write to CSV file
+			f_output(data_row)
+		except UnicodeDecodeError:
+			print(f'\rERROR: Undecodable data received' + ' '*(len(last_print)-32))
+		except IndexError:
+			print(f'\rERROR: Incomplete data received' + ' '*(len(last_print)-31))
 	q.put(i)
 
 def write_to_csv(f, data_row):
 	writer = csv.DictWriter(f, fieldnames=list(data_row))
 	if not f.seek(0,2):
 		writer.writeheader()
+	f.seek(f.tell()-2)
 	writer.writerow(data_row)
+	f.flush()
 
 
 ################## MAIN CODE ##################
@@ -70,12 +76,16 @@ while True:
 	q.put(0)
 	command = input('Press Enter to start recording, or write "new". ')
 	while command.lower() != 'new':
-		uart_thread = threading.Thread(target=lambda: read_pitot_data(uart, print, stop_event, q))
+		# Start the UART reader in another thread because calling input() will halt the current thread
+		uart_thread = threading.Thread(target=lambda: read_pitot_data(uart, lambda data_row: write_to_csv(f, data_row), stop_event, q))
 		uart_thread.start()
+		# Test
 		for i in range(10):
-			uart.write((input()+'\n').encode())
+			uart.write((f'Diff_p (Pa):{i}\n').encode())
+		input('RECORDING (0)... Press Enter to pause recording. ')
 		stop_event.set()
 		uart_thread.join()
 		stop_event.clear()
 		command = input('\rSTOPPED... Press Enter to resume recording, or write "new". ')
 	q.get()
+	f.close()

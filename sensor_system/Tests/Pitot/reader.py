@@ -93,7 +93,7 @@ def read_pitot_data(pitot, f_output, stop_event, q):
 						'Temp (C)': pitot.temp,
 						'Rho (kg/m^3)': pitot.rho,
 						'Velocity (km/h)': pitot.velocity}
-			formatted_data_row = {k:f'{v:.2f}' for k,v in data_row.items()}
+			formatted_data_row = {k:f'{v:.3f}' for k,v in data_row.items()}
 			i += 1
 			# Print important information
 			reprint(f'RECORDING {i}: {formatted_data_row}... ', end='')

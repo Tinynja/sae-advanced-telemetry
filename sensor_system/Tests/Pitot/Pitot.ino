@@ -49,16 +49,17 @@ void loop() {
 	
 	Serial.print("Delta_P (Pa):");
 	Serial.print(diff_pa);
-	Serial.print("\t")
 
-	float rho = 1.1689;
+	Serial.print("\t");
 
-	/*Serial.print("Vit (m/s): \t");
+	Serial.print("Temp (C):\t");
+	Serial.print(temp);
+
+	// float rho = 1.1689;
+
+	/*Serial.print("Vit (m/s):\t");
 	Serial.println(sqrt(2*abs(diff_pa/rho)));*/
 
-	/*Serial.print("Temp (C): \t");
-	Serial.println(temp);*/
-
-	Serial.println()
+	Serial.println();
 	delay(150); // Wait 5 seconds for next scan
 }

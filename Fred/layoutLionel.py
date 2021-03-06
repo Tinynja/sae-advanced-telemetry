@@ -15,13 +15,15 @@ class MainWindow(QMainWindow):
 		
 		self.b1=QPushButton("ACTIVE",self)
 		self.b1.setGeometry(0,0,60,50)
-		# self.b1.clicked.connect()
+		self.b1.setStyleSheet("background-color: green; color: white")
+		self.b1.clicked.connect(lambda : print('Actif'))
 
 		
 		self.b2=QPushButton("Stand by",self)
 		self.b2.setGeometry(0,0,60,50)
+		self.b2.setStyleSheet("background-color: red; color: white")
 		self.b2.move(60,0)
-		# self.b2.clicked.connect()
+		self.b2.clicked.connect(lambda : print('Inactif'))
 	
 
 

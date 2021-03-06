@@ -43,7 +43,8 @@ class MainUi:
 		Clock_display  = QVBoxLayout()
 		VSI_display    = QVBoxLayout()
 
-		TAS_display    = QVBoxLayout()
+		TAS_display    = QStackedLayout()
+		TAS_display.setStackingMode(QStackedLayout.StackAll)
 		Attitude_display = QStackedLayout()
 		#... à continuer pour la partie du bas
 
@@ -56,6 +57,7 @@ class MainUi:
 		GS_value = QLabel('19')
 		GS_value.setAlignment(Qt.AlignCenter)
 		GS_value.setFont(QFont('Arial',20))
+		GS_value.setFrameStyle(QFrame.Panel | QFrame.Sunken)
 		GS_display.addWidget(GS_value)
 
 		#indicateur de temps écoulé
@@ -65,6 +67,7 @@ class MainUi:
 		Clock_value = QLabel('01:22.1')
 		Clock_value.setAlignment(Qt.AlignCenter)	
 		Clock_value.setFont(QFont('Arial',20))
+		Clock_value.setFrameStyle(QFrame.Panel | QFrame.Sunken)
 		Clock_display.addWidget(Clock_value)
 
 		#indicateur de VS
@@ -73,22 +76,50 @@ class MainUi:
 		VSI_display.addWidget(VSI_label)
 		VSI_value = QLabel('+ 50')
 		VSI_value.setAlignment(Qt.AlignCenter)
+		VSI_value.setFrameStyle(QFrame.Panel | QFrame.Sunken)
 		VSI_value.setFont(QFont('Arial',20))
 		VSI_display.addWidget(VSI_value)
 
 
 		#indicateur de TAS
-		TAS_label = QLabel('TAS (kts)')
-		TAS_label.setFrameStyle(QFrame.Box)
-		TAS_display.addWidget(TAS_label)
+		original_img_TAS = QPixmap('mission_control/views/TAS_Graphic.JPG')
+		tas = 12
+		calculated_top = 100 - 9.803921569 * (tas-57)
+		top = round(calculated_top)
+		height = 300
+		def update_img(adj=0):
+			global top1
+			top1 = max(0, min(top+adj, original_img_TAS.height()-height))
+			TAS_IMG.setPixmap(original_img_TAS.copy(QRect(0, top, original_img_TAS.width(), height)))
+		TAS_IMG = QLabel()
+		update_img()
+
+		TAS_IMG.setFrameStyle(QFrame.Box)
+		
+		TAS_value = QLabel(str(tas))
+		TAS_value.setFont(QFont('Arial',25))
+		TAS_value.setAlignment(Qt.AlignCenter)	
+		TAS_value.setFrameStyle(QFrame.Panel | QFrame.Raised)
+		TAS_value.setStyleSheet("background-color: black; color: white")
+		dummy_widget = QWidget()
+		TAS_layout = QVBoxLayout(dummy_widget)
+		TAS_layout.setContentsMargins(5,0,5,0)
+		TAS_layout.addStretch(1)
+		TAS_layout.addWidget(TAS_value)
+		TAS_layout.addStretch(1)
+		TAS_display.addWidget(TAS_IMG)
+		TAS_display.addWidget(dummy_widget)
+
 		#indicateur d'assiette
+		original_img_attitude = QPixmap('mission_control/views/Attitude_Graphic.JPG')
+
 		Attitude_label = QLabel('Roll and pitch angle')
 		Attitude_label.setFrameStyle(QFrame.Box)
 		Attitude_display.addWidget(Attitude_label)
 		Attitude_value = QLabel('Pitch = -0.5 deg | Roll = 12.2 deg')
 		Attitude_display.addWidget(Attitude_value)
 		# #indicateur de VS graphique
-		# Altitude_display = Bottom_layout.addWidget(Color('white'))
+		# Altitude_display = Bottom_layout.addWidget(Color('black'))
 		# #indicateur d'altitude
 		# VSI_graphic_display = Bottom_layout.addWidget(Color('purple'))
 

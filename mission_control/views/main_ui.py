@@ -53,7 +53,7 @@ class MainUi:
 		self._gauges_layout.addWidget(b1)
 		self._gauges_layout.addWidget(b2)
 
-		#Batterie
+		# #Batterie
 		Bat = QProgressBar()
 		Bat.setGeometry(30,40,200,75)
 		step = 25
@@ -66,11 +66,34 @@ class MainUi:
 		#Module pour Jauges 
 
 		from analoggaugewidget import AnalogGaugeWidget
-		j1=QVBoxLayout
-		jauge = AnalogGaugeWidget()
-		jauge.update_value(500)
-		j1.addWidget(jauge)
-		self._gauges_layout.addLayout(j1)
+		jauges=QGridLayout
+
+		#Jauge de la puissance
+		puissance = AnalogGaugeWidget()
+		puissance.update_value(500)
+		jauges.addWidget(puissance)
+
+		#Jauge du voltage de l'avion mère
+		volt_Avion = AnalogGaugeWidget()
+		volt_Avion.update_value(200)
+		jauges.addWidget(volt_Avion)
+
+		#Jauge du voltage de la télémétrie
+		volt_telem = AnalogGaugeWidget()
+		volt_telem.update_value(350)
+		jauges.addWidget(volt_telem)
+
+		#Jauge de l'accéléromètre en X
+		acc_x = AnalogGaugeWidget()
+		acc_x.update_value(350)
+		jauges.addWidget(acc_x)
+
+		#Jauge de l'accéléromètre en Y
+		acc_y = AnalogGaugeWidget()
+		acc_y.update_value(350)
+		jauges.addWidget(acc_y)
+
+		self._gauges_layout.addLayout(jauges)
 
 
 
@@ -234,8 +257,8 @@ if __name__ == '__main__':
 	app = QApplication([])
 	main_ui = MainUi(None)
 	dummy_widget = QWidget()
-	# dummy_widget.setLayout(main_ui._gauges_layout) # Indiquer ici le nom du layout que vous voulez afficher
-	dummy_widget.setLayout(main_ui._drop_history_layout) # Indiquer ici le nom du layout que
+	#dummy_widget.setLayout(main_ui._gauges_layout) # Indiquer ici le nom du layout que vous voulez afficher
+	#dummy_widget.setLayout(main_ui._drop_history_layout) # Indiquer ici le nom du layout que
 	# dummy_widget.setLayout(main_ui._PFD_layout) # Indiquer ici le nom du layout que vous voulez afficher
 	dummy_widget.show()
 	app.exec()

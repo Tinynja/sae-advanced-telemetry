@@ -5,6 +5,7 @@ from serial.serialutil import SerialException
 from serial.tools import list_ports
 import threading
 import random
+from math import pi, sin
 
 # Pipy libraries
 from PyQt5.QtGui import *
@@ -14,20 +15,30 @@ from PyQt5.QtCore import *
 
 class DummySerial:
 	def __init__(self, *args, **kwargs):
+		self.max_step = 0.3
+		self.delay = 0.1
 		self.variables = {'thr':[-1024, 1024], 'rud':[-1024, 1024], 'pitot': [0, 100]}
-		self._last_data_sent = 2*len(self.variables)-1
+
+		# Set a random initial value for each variable so they get phase shifted (sinusoid)
+		self._last_values = [2*pi*random.random() for limits in self.variables]
+		# Keep track of the last data sent (since uart.read_until splits the text)
 		# even: variable name
 		# odd: variable value
+		self._last_data_sent = 2*len(self.variables)-1
 	
 	def read_until(self, *args, **kwargs):
 		self._last_data_sent = (self._last_data_sent+1)%(2*len(self.variables))
-		if self._last_data_sent % 2:
-			# odd: variable value
-			packet = f'\x011\x02{random.uniform(*self.variables[list(self.variables)[int((self._last_data_sent-1)/2)]])}\x03\n'
-		else:
+		idx = int(self._last_data_sent/2)
+		src = list(self.variables)[int(self._last_data_sent/2)]
+		if not self._last_data_sent % 2:
 			# even: variable name
-			packet = f'\x010\x02{list(self.variables)[int(self._last_data_sent/2)]}\x03'
-		time.sleep(0.1)
+			packet = f'\x010\x02{src}\x03'
+		else:
+			# odd: variable value
+			self._last_values[idx] = (self._last_values[idx]+self.max_step*random.random())%(2*pi)
+			limits = self.variables[src]
+			packet = f'\x011\x02{(limits[1]-limits[0])/2*sin(self._last_values[idx])+(limits[1]+limits[0])/2}\x03\n'
+		time.sleep(self.delay)
 		return packet.encode()
 
 

@@ -9,7 +9,11 @@ class ProgressbarBat(QWidget):
 		super().__init__()
 
 		self.Bat = QProgressBar(self)
-		self.Bat.setGeometry(30,40,200,25)
+		self.Bat.setGeometry(30,40,200,75)
+		self.timer = QBasicTimer()
+		self.step = 25
+	
+		self.Bat.setValue(self.step)
 
 
 

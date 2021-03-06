@@ -6,13 +6,13 @@ from PyQt5.QtWidgets import *
 # Color est ajouté pour PFD, à voir si on laisse ça là
 class Color(QWidget):
 
-    def __init__(self, color, *args, **kwargs):
-        super(Color, self).__init__(*args, **kwargs)
-        self.setAutoFillBackground(True)
+	def __init__(self, color, *args, **kwargs):
+		super(Color, self).__init__(*args, **kwargs)
+		self.setAutoFillBackground(True)
 
-        palette = self.palette()
-        palette.setColor(QPalette.Window, QColor(color))
-        self.setPalette(palette)
+		palette = self.palette()
+		palette.setColor(QPalette.Window, QColor(color))
+		self.setPalette(palette)
 #fin de color
 
 
@@ -32,7 +32,7 @@ class MainUi:
 
 
 	def _create_gauges(self):
-		pass
+		self._gauges_layout = QLayout()
 
 	def _create_PFD(self):
 		self._PFD_layout = QVBoxLayout()
@@ -145,8 +145,8 @@ if __name__ == '__main__':
 	app = QApplication([])
 	main_ui = MainUi(None)
 	dummy_widget = QWidget()
-	#dummy_widget.setLayout(main_ui._drop_history_layout) # Indiquer ici le nom du layout que vous voulez afficher
+	dummy_widget.setLayout(main_ui._gauges_layout) # Indiquer ici le nom du layout que vous voulez afficher
 	# dummy_widget.setLayout(main_ui._drop_history_layout) # Indiquer ici le nom du layout que
-	dummy_widget.setLayout(main_ui._PFD_layout) # Indiquer ici le nom du layout que vous voulez afficher
+	# dummy_widget.setLayout(main_ui._PFD_layout) # Indiquer ici le nom du layout que vous voulez afficher
 	dummy_widget.show()
 	app.exec()

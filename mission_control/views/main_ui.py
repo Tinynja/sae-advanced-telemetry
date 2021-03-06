@@ -3,6 +3,9 @@ from PyQt5.QtGui import *
 from PyQt5.QtCore import *
 from PyQt5.QtWidgets import *
 
+
+
+
 # Color est ajouté pour PFD, à voir si on laisse ça là
 class Color(QWidget):
 
@@ -32,7 +35,46 @@ class MainUi:
 
 
 	def _create_gauges(self):
-		self._gauges_layout = QLayout()
+		self._gauges_layout = QHBoxLayout 
+		
+		#Switch active/stand by
+	
+		b1 = QPushButton("ACTIVE")
+		b1.setGeometry(0,0,60,50)
+		b1.setStyleSheet("background-color: green; color: white")
+		b1.clicked.connect(lambda: print('Actif'))
+
+		b2 = QPushButton("Stand by")
+		b2.setGeometry(0,0,60,50)
+		b2.setStyleSheet("background-color: red; color: white")
+		b2.move(60,0)
+		b2.clicked.connect(lambda: print('Inactif'))
+
+		self._gauges_layout.addWidget(b1)
+		self._gauges_layout.addWidget(b2)
+
+		#Batterie
+		Bat = QProgressBar()
+		Bat.setGeometry(30,40,200,75)
+		step = 25
+		Bat.setValue(step)
+
+		self._gauges_layout.addWidget(Bat)
+
+
+		#Jauges
+		#Module pour Jauges 
+
+		from analoggaugewidget import AnalogGaugeWidget
+		j1=QVBoxLayout
+		jauge = AnalogGaugeWidget()
+		jauge.update_value(500)
+		j1.addWidget(jauge)
+		self._gauges_layout.addLayout(j1)
+
+
+
+
 
 	def _create_PFD(self):
 		self._PFD_layout = QVBoxLayout()

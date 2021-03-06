@@ -3,45 +3,20 @@ from PyQt5.QtWidgets import *
 from PyQt5.QtCore import *
 
 import sys
+import progress
 
 
 class MainWindow(QMainWindow):
 
     def __init__(self, *args, **kwargs):
         super(MainWindow, self).__init__(*args, **kwargs)
-
-        hbox = QHBoxLayout(self)
-
-        topleft = QFrame(self)
-        topleft.setFrameShape(QFrame.StyledPanel)
-
-        topright = QFrame(self)
-        topright.setFrameShape(QFrame.StyledPanel)
-
-        bottom = QFrame(self)
-        bottom.setFrameShape(QFrame.StyledPanel)
-
-        splitter1 = QSplitter(Qt.Horizontal)
-        splitter1.addWidget(topleft)
-        splitter1.addWidget(topright)
-
-        splitter2 = QSplitter(Qt.Vertical)
-        splitter2.addWidget(splitter1)
-        splitter2.addWidget(bottom)
-
-        hbox.addWidget(splitter2)
-        self.setLayout(hbox)
-
-        self.setGeometry(300, 300, 450, 400)
-        self.setWindowTitle('QSplitter')
-
-        self.layout= QVBoxLayout()
+		self.batterie = QHBoxLayout()
 
         #Switch active/stand by
-        self.b1=QPushButton("ACTIVE",self)
-        self.layout.addWidget(self.b1)
-        self.b2=QPushButton("Stand by",self)
-        self.layout.addWidget(self.b2)
+        #self.b1=QPushButton("ACTIVE",self)
+        #self.layout.addWidget(self.b1)
+        #self.b2=QPushButton("Stand by",self)
+        #self.layout.addWidget(self.b2)
 
 
 
@@ -52,6 +27,25 @@ class MainWindow(QMainWindow):
 
 
         #Batterie
+
+	def batterie(self): 
+        self.pbar = QProgressBar(self)
+        self.pbar.setGeometry(30, 40, 300, 25)
+        self.pbar.setAlignment(Qt.AlignCenter) 
+        self.pbar.setMinimum(0)
+        self.pbar.setValue(y)
+        self.pbar.setValue(40)
+
+        self.pbar.setRange(0,100)
+        self.pbar.setStyleSheet("QProgressBar::chunk"
+                         "{"
+                         "background-color: Green;"
+                         "margin: 4px;"
+                         "}")
+           
+        self.setGeometry(300, 300, 480, 170)
+        self.setWindowTitle('Batterie')
+
 
         #Récuperer la charge de la battérie avec un connect maybe ? Voir Amine
 

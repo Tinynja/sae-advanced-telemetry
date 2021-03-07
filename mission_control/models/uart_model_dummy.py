@@ -4,13 +4,44 @@ import serial
 from serial.serialutil import SerialException
 from serial.tools import list_ports
 import threading
+import random
+from math import pi, sin
 
 # Pipy libraries
 from PyQt5.QtCore import QObject, pyqtSignal
 from PyQt5.QtWidgets import QApplication
 
 
-class UartModel(QObject):
+class DummySerial:
+	def __init__(self, *args, **kwargs):
+		self.max_step = 0.3
+		self.delay = 0.1
+		self.variables = {'thr':[-1024, 1024], 'rud':[-1024, 1024], 'pitot': [0, 100]}
+
+		# Set a random initial value for each variable so they get phase shifted (sinusoid)
+		self._last_values = [2*pi*random.random() for limits in self.variables]
+		# Keep track of the last data sent (since uart.read_until splits the text)
+		# even: variable name
+		# odd: variable value
+		self._last_data_sent = 2*len(self.variables)-1
+	
+	def read_until(self, *args, **kwargs):
+		self._last_data_sent = (self._last_data_sent+1)%(2*len(self.variables))
+		idx = int(self._last_data_sent/2)
+		src = list(self.variables)[int(self._last_data_sent/2)]
+		if not self._last_data_sent % 2:
+			# even: variable name
+			packet = f'\x010\x02{src}\x03'
+		else:
+			# odd: variable value
+			self._last_values[idx] = (self._last_values[idx]+self.max_step*random.random())%(2*pi)
+			limits = self.variables[src]
+			packet = f'\x011\x02{(limits[1]-limits[0])/2*sin(self._last_values[idx])+(limits[1]+limits[0])/2}\x03\n'
+		time.sleep(self.delay)
+		return packet.encode()
+
+
+class UartDummyModel(QObject):
 	# Configure the model signals:
 	# 	linkStatusChanged :=
 	#		0: bad
@@ -50,17 +81,17 @@ class UartModel(QObject):
 	def _port_listing_task(self, delay=1):
 		while self._do_port_listing:
 			last_listing_time = time.time()
-			self._update_port_list({p.device:p for p in list_ports.comports()})
+			self._update_port_list({'DUMMY1': [], **{f'DUMMY{p+1}': [] for p in random.sample(range(4), k=2)}})
 			# Wait at least `delay` seconds until next port list
 			time.sleep(max(0, last_listing_time + delay - time.time()))
 
 	def configure_comport(self, port=None, timeout=1, **kwargs):
 		self.comport_config = {'port': port, 'timeout':timeout, **kwargs}
-		if isinstance(self._serial_port, serial.Serial):
-			self._serial_port.close()
+		# if isinstance(self._serial_port, serial.Serial):
+		# 	self._serial_port.close()
 		while port is None or self.available_ports is None or port in self.available_ports:
 			try:
-				self._serial_port = serial.Serial(port=port, timeout=timeout, **kwargs)
+				self._serial_port = DummySerial(port=port, timeout=timeout, **kwargs)
 				break
 			except SerialException:
 				time.sleep(0.5)
@@ -92,6 +123,7 @@ class UartModel(QObject):
 					if time.time()-last_response_time > 5:
 						self.configure_comport(**self.comport_config)
 				elif response[0] != 1 or response[2] != 2 or response[-1] != 3:
+					# Indexing a byte string returns an int
 					# Protocol mismatch
 					last_response_time = time.time()
 					last_response = b''
@@ -144,11 +176,11 @@ class UartModel(QObject):
 
 if __name__ == '__main__':
 	app = QApplication([])
-	mdl = UartModel()
+	mdl = UartDummyModel()
 	mdl.portListChanged.connect(lambda ports: print(list(ports.keys())))
 	mdl.linkStatusChanged.connect(lambda link_status: print(f'Link status: {("BAD", "DATA LOSS", "GOOD")[link_status]}'))
 	mdl.dataChanged.connect(lambda name, value: print(f'{name}: {value}'))
 	# mdl.configure_comport('COM4', timeout=1, baudrate=115200, parity=serial.PARITY_NONE, stopbits=serial.STOPBITS_ONE)
-	mdl.configure_comport('COM5')
+	mdl.configure_comport('DUMMY1')
 	mdl.start_port_polling()
 	app.exec()

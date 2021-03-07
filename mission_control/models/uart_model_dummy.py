@@ -8,9 +8,8 @@ import random
 from math import pi, sin
 
 # Pipy libraries
-from PyQt5.QtGui import *
-from PyQt5.QtWidgets import *
-from PyQt5.QtCore import *
+from PyQt5.QtCore import QObject, pyqtSignal
+from PyQt5.QtWidgets import QApplication
 
 
 class DummySerial:
@@ -42,7 +41,7 @@ class DummySerial:
 		return packet.encode()
 
 
-class UartModel(QObject):
+class UartDummyModel(QObject):
 	# Configure the model signals:
 	# 	linkStatusChanged :=
 	#		0: bad
@@ -177,7 +176,7 @@ class UartModel(QObject):
 
 if __name__ == '__main__':
 	app = QApplication([])
-	mdl = UartModel()
+	mdl = UartDummyModel()
 	mdl.portListChanged.connect(lambda ports: print(list(ports.keys())))
 	mdl.linkStatusChanged.connect(lambda link_status: print(f'Link status: {("BAD", "DATA LOSS", "GOOD")[link_status]}'))
 	mdl.dataChanged.connect(lambda name, value: print(f'{name}: {value}'))

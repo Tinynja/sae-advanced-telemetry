@@ -99,8 +99,8 @@ class MainUi:
 		def __update_img(adj=0):
 			global top1
 			top1 = max(0, min(top+adj, original_img_TAS.height()-height))
-			TAS_IMG.setPixmap(original_img_TAS.copy(QRect(0, top, original_img_TAS.width(), height)))
-		TAS_IMG = QLabel()
+			TAS_img.setPixmap(original_img_TAS.copy(QRect(0, top, original_img_TAS.width(), height)))
+		TAS_img = QLabel()
 		__update_img()
 
 		TAS_img.setFrameStyle(QFrame.Box)
@@ -120,25 +120,25 @@ class MainUi:
 		TAS_display.addWidget(dummy_widget)
 
 		#indicateur d'assiette
-		original_img_attitude = QPixmap('mission_control/views/Attitude_Graphic.JPG')
-		bank_angle = 5
-		pitch_angle = 10
-		def update_img(adj=0):
-			global angle
-			angle += adj
-			transform = QTransform().rotate(angle)
-			attitude_img.setPixmap(original.transformed(transform, Qt.SmoothTransformation))
+		# original_img_attitude = QPixmap('mission_control/views/Attitude_Graphic.JPG')
+		# bank_angle = 5
+		# pitch_angle = 10
+		# def update_img(adj=0):
+		# 	global angle
+		# 	angle += adj
+		# 	transform = QTransform().rotate(angle)
+		# 	attitude_img.setPixmap(original.transformed(transform, Qt.SmoothTransformation))
 
-		attitude_img = QLabel()
-		update_img(bank_angle)
-		attitude_img.setFrameStyle(QFrame.Box) #TODO: je suis rendu ici - Francois
-		original_img_attitude = QPixmap('resources/Attitude_Graphic.JPG')
+		# attitude_img = QLabel()
+		# update_img(bank_angle)
+		# attitude_img.setFrameStyle(QFrame.Box) #TODO: je suis rendu ici - Francois
+		# original_img_attitude = QPixmap('resources/Attitude_Graphic.JPG')
 
-		Attitude_label = QLabel('Roll and pitch angle')
-		Attitude_label.setFrameStyle(QFrame.Box)
-		Attitude_display.addWidget(Attitude_label)
-		Attitude_value = QLabel('Pitch = -0.5 deg | Roll = 12.2 deg')
-		Attitude_display.addWidget(Attitude_value)
+		# Attitude_label = QLabel('Roll and pitch angle')
+		# Attitude_label.setFrameStyle(QFrame.Box)
+		# Attitude_display.addWidget(Attitude_label)
+		# Attitude_value = QLabel('Pitch = -0.5 deg | Roll = 12.2 deg')
+		# Attitude_display.addWidget(Attitude_value)
 		# #indicateur de VS graphique
 		# Altitude_display = bottom_layout.addWidget(Color('black'))
 		# #indicateur d'altitude

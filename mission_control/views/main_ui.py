@@ -1,3 +1,6 @@
+# Built-in libraries
+from math import cos, sin, radians
+
 # Pipy libraries
 from PyQt5.QtGui import *
 from PyQt5.QtCore import *
@@ -119,26 +122,21 @@ class MainUi:
 		TAS_display.addWidget(TAS_img)
 		TAS_display.addWidget(dummy_widget)
 
-		#indicateur d'assiette
-		# original_img_attitude = QPixmap('mission_control/views/Attitude_Graphic.JPG')
-		# bank_angle = 5
-		# pitch_angle = 10
-		# def update_img(adj=0):
-		# 	global angle
-		# 	angle += adj
-		# 	transform = QTransform().rotate(angle)
-		# 	attitude_img.setPixmap(original.transformed(transform, Qt.SmoothTransformation))
+		self._original_attitude_img = QPixmap('resources/Attitude_Graphic.png')
+		self.pitch, self.roll = 0, 0
+		self._attitude = QLabel()
+		# Attitude_label = QLabel('Roll and pitch angle')
+		self._attitude.setFrameStyle(QFrame.Box)
+		Attitude_display.addWidget(self._attitude)
+		# Attitude_value = QLabel('Pitch = -0.5 deg | Roll = 12.2 deg')
+		# Attitude_display.addWidget(Attitude_value)
+		self.set_attitude(pitch=40, roll=30)
 
 		# attitude_img = QLabel()
 		# update_img(bank_angle)
 		# attitude_img.setFrameStyle(QFrame.Box) #TODO: je suis rendu ici - Francois
 		# original_img_attitude = QPixmap('resources/Attitude_Graphic.JPG')
 
-		# Attitude_label = QLabel('Roll and pitch angle')
-		# Attitude_label.setFrameStyle(QFrame.Box)
-		# Attitude_display.addWidget(Attitude_label)
-		# Attitude_value = QLabel('Pitch = -0.5 deg | Roll = 12.2 deg')
-		# Attitude_display.addWidget(Attitude_value)
 		# #indicateur de VS graphique
 		# Altitude_display = bottom_layout.addWidget(Color('black'))
 		# #indicateur d'altitude
@@ -153,11 +151,24 @@ class MainUi:
 		bottom_layout.addLayout( Attitude_display )
 		# bottom_layout.addLayout( Altitude_display )
 		# bottom_layout.addLayout( VSI_graphic_display )
+	
+	# Indicateur d'assiette
+	def set_attitude(self, pitch=None, roll=None):
+		pitch = pitch or self.pitch
+		roll = roll or self.roll
+		self.pitch = pitch
+		self.roll = roll
 
-
-
-
-
+		# Calibration de l'indicateur d'assiette:
+		# 	pitch := 1023px/160deg
+		width, height = 400, 300
+		radius, angle = pitch*1023/160, roll+90
+		x_center, y_center = radius*cos(radians(angle)), radius*sin(radians(angle))
+		
+		rotation = QTransform().rotate(roll)
+		new_attitude = self._original_attitude_img.transformed(rotation, Qt.SmoothTransformation)
+		crop = QRect(new_attitude.width()/2-x_center-width/2, new_attitude.height()/2-y_center-height/2, width, height)
+		self._attitude.setPixmap(new_attitude.copy(crop))
 
 	def _create_drop_history(self):
 		self._drop_history_layout = QGridLayout()

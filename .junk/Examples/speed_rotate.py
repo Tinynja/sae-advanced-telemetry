@@ -7,7 +7,8 @@ app = QApplication([])
 main_widget = QWidget()
 QGridLayout(main_widget)
 
-original = QPixmap('Speeds.png')
+original = QPixmap('.junk/Examples/Speeds.png')
+# original = QPixmap('mission_control/views/Attitude_Graphic.JPG')
 
 angle = 0
 height = 80

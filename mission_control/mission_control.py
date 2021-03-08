@@ -22,6 +22,7 @@ args = parser.parse_args().__dict__
 class MissionControl(QApplication):
 	def __init__(self, dummy=False, debug=False):
 		super().__init__([])
+		dummy = True
 
 		# Needed in order to load resources correctly
 		self._goto_mc_root_directory()

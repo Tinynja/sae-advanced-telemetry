@@ -90,11 +90,11 @@ class MainUi:
 		def update_img(adj=0):
 			global top1
 			top1 = max(0, min(top+adj, original_img_TAS.height()-height))
-			TAS_IMG.setPixmap(original_img_TAS.copy(QRect(0, top, original_img_TAS.width(), height)))
-		TAS_IMG = QLabel()
+			TAS_img.setPixmap(original_img_TAS.copy(QRect(0, top, original_img_TAS.width(), height)))
+		TAS_img = QLabel()
 		update_img()
 
-		TAS_IMG.setFrameStyle(QFrame.Box)
+		TAS_img.setFrameStyle(QFrame.Box)
 		
 		TAS_value = QLabel(str(tas))
 		TAS_value.setFont(QFont('Arial',25))
@@ -107,11 +107,22 @@ class MainUi:
 		TAS_layout.addStretch(1)
 		TAS_layout.addWidget(TAS_value)
 		TAS_layout.addStretch(1)
-		TAS_display.addWidget(TAS_IMG)
+		TAS_display.addWidget(TAS_img)
 		TAS_display.addWidget(dummy_widget)
 
 		#indicateur d'assiette
 		original_img_attitude = QPixmap('mission_control/views/Attitude_Graphic.JPG')
+		bank_angle = 5
+		pitch_angle = 10
+		def update_img(adj=0):
+			global angle
+			angle += adj
+			transform = QTransform().rotate(angle)
+			attitude_img.setPixmap(original.transformed(transform, Qt.SmoothTransformation))
+
+		attitude_img = QLabel()
+		update_img(bank_angle)
+		attitude_img.setFrameStyle(QFrame.Box) #TODO: je suis rendu ici - Francois
 
 		Attitude_label = QLabel('Roll and pitch angle')
 		Attitude_label.setFrameStyle(QFrame.Box)

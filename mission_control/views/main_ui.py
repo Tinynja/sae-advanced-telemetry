@@ -6,6 +6,7 @@ from PyQt5.QtGui import *
 from PyQt5.QtCore import *
 from PyQt5.QtWidgets import *
 
+import sys
 
 class MainUi:
 	def __init__(self, main_window):
@@ -174,16 +175,28 @@ class MainUi:
 		self._drop_history_layout = QGridLayout()
 	
 		labels = []
+		buttons = []
+
+		def clickme(self):
+			self.setStyleSheet("background-color: green")
+
+		def __create_button(text):
+			btn = QPushButton(text)
+			btn.setFont(QFont('Arial',32))
+			#btn.clicked.connect(self.clickme) marche po amine fix le stp
+			buttons.append(btn)
+
 		def __create_label(text):
 			labels.append(QLabel(text))
 			labels[-1].setFont(QFont('Arial',32))
 			labels[-1].setFrameStyle(QFrame.Box|QFrame.Plain)
 			labels[-1].setLineWidth(2)
 
-		__create_label("Planeur 1")
-		__create_label("Planeur 2")
-		__create_label("Vivres")
-		__create_label("Habitats")
+		__create_button("Planeur 1")
+		__create_button("Planeur 2")
+		__create_button("Vivres")
+		__create_button("Habitats")
+
 		__create_label("Altitude Planeur 1")
 		__create_label("Altitude Planeur 2")
 		__create_label("Altitude Vivres")
@@ -194,22 +207,22 @@ class MainUi:
 		for i in range(2):
 			for j in range(4):
 				if i == 0:
-					self._drop_history_layout.addWidget(labels[j],j+1,0,1,2)
+					self._drop_history_layout.addWidget(buttons[j],j+1,0,1,2)
 				elif i == 1:
-					self._drop_history_layout.addWidget(labels[j+4],j+1,2,1,2)
+					self._drop_history_layout.addWidget(labels[j],j+1,2,1,2)
 		
-		for i in range(4): #changement de couleur lorsque l'utilisateur click sur le label
-			if labels[i-1].mousePressEvent is True:
-				labels[i-1].setStyleSheet("background-color: green")
+		# for i in range(4): #changement de couleur lorsque l'utilisateur click sur le label
+		# 	if labels[i-1].mousePressEvent is True:
+		# 		labels[i-1].setStyleSheet("background-color: green")
 		
-		if labels[0].mousePressEvent or labels[1].mousePressEvent and labels[2].mousePressEvent or labels[3].mousePressEvent: #Verification que planeur et largage ne soient pas clicker en meme temps
-			labels[2].setStyleSheet("background-color: red")
-			labels[3].setStyleSheet("background-color: red")
-			print("Erreur! Incompatibilité entre les composantes à larguer")
+		# if labels[0].mousePressEvent or labels[1].mousePressEvent and labels[2].mousePressEvent or labels[3].mousePressEvent: #Verification que planeur et largage ne soient pas clicker en meme temps
+		# 	labels[2].setStyleSheet("background-color: red")
+		# 	labels[3].setStyleSheet("background-color: red")
+		# 	print("Erreur! Incompatibilité entre les composantes à larguer")
 
-		for i in range(4): #Double click pour modifier le text et save l'altitude de largage
-			if labels[i-1].mouseDoubleClickEvent is True:
-				labels[i+4].setText(self.__record_altitude)
+		# for i in range(4): #Double click pour modifier le text et save l'altitude de largage
+		# 	if labels[i-1].mouseDoubleClickEvent is True:
+		# 		labels[i+4].setText(self.__record_altitude)
 
 		def __record_altitude(self):
 			pass

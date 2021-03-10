@@ -10,6 +10,7 @@ from PyQt5.QtWidgets import *
 from lib.analog_gauge_widget import AnalogGaugeWidget
 
 
+
 class MainUi:
 	def __init__(self, main_window):
 		self._main_window = main_window
@@ -193,7 +194,7 @@ class MainUi:
 		Attitude_display.addWidget(self._attitude)
 		# Attitude_value = QLabel('Pitch = -0.5 deg | Roll = 12.2 deg')
 		# Attitude_display.addWidget(Attitude_value)
-		self.set_attitude(pitch=40, roll=30)
+		self.set_attitude(pitch=20, roll=10)
 
 		# attitude_img = QLabel()
 		# update_img(bank_angle)
@@ -239,14 +240,16 @@ class MainUi:
 		labels = []
 		buttons = []
 
-		def clickme(self):
-			self.setStyleSheet("background-color: green")
+		def clickme(btn):
+			btn.setStyleSheet("background-color: green")
 
 		def __create_button(text):
 			btn = QPushButton(text)
-			btn.setFont(QFont('Arial',32))
-			#btn.clicked.connect(self.clickme) marche po amine fix le stp
 			buttons.append(btn)
+			btn.setFont(QFont('Arial',32))
+			# clickme(123)
+			btn.clicked.connect(lambda checked, btn=btn: clickme(btn))
+			# btn.clicked.emit()
 
 		def __create_label(text):
 			labels.append(QLabel(text))
@@ -273,10 +276,6 @@ class MainUi:
 				elif i == 1:
 					self._drop_history_layout.addWidget(labels[j],j+1,2,1,2)
 		
-		# for i in range(4): #changement de couleur lorsque l'utilisateur click sur le label
-		# 	if labels[i-1].mousePressEvent is True:
-		# 		labels[i-1].setStyleSheet("background-color: green")
-		
 		# if labels[0].mousePressEvent or labels[1].mousePressEvent and labels[2].mousePressEvent or labels[3].mousePressEvent: #Verification que planeur et largage ne soient pas clicker en meme temps
 		# 	labels[2].setStyleSheet("background-color: red")
 		# 	labels[3].setStyleSheet("background-color: red")
@@ -286,7 +285,7 @@ class MainUi:
 		# 	if labels[i-1].mouseDoubleClickEvent is True:
 		# 		labels[i+4].setText(self.__record_altitude)
 
-		def __record_altitude(self):
+		def __record_altitude(self, drop, altitude):
 			pass
 
 	def _create_MAP(self):

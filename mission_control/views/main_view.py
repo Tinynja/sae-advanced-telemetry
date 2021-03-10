@@ -15,7 +15,8 @@ class MainView(QMainWindow):
 		self._connect_signals()
 	
 	def _connect_signals(self):
-		pass
+		
+		model.dataChanged.connect(self._ui.set_attitude)
 
 
 if __name__ == '__main__':

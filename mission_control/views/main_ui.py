@@ -34,15 +34,78 @@ class MainUi:
 		main_layout.addLayout(row1_layout)
 		main_layout.addLayout(row2_layout)
 
-		# row1_layout.addLayout(self._gauges_layout)
+		row1_layout.addLayout(self._gauges_layout)
 		row1_layout.addLayout(self._PFD_layout)
 		row1_layout.addLayout(self._drop_history_layout)
 
 		# row2_layout.addLayout(self._MAP_layout)
 
 	def _create_gauges(self):
-		pass
-		#self._gauges_layout = QLayout()
+		# self._gauges_layout = QHBoxLayout()
+		
+		# #Switch active/stand by
+	
+		# b1 = QPushButton("ACTIVE")
+		# b1.setGeometry(0,0,60,50)
+		# b1.setStyleSheet("background-color: green; color: white")
+		# b1.clicked.connect(lambda: print('Actif'))
+
+		# b2 = QPushButton("Stand by")
+		# b2.setGeometry(0,0,60,50)
+		# b2.setStyleSheet("background-color: red; color: white")
+		# b2.move(60,0)
+		# b2.clicked.connect(lambda: print('Inactif'))
+
+		# self._gauges_layout.addWidget(b1)
+		# self._gauges_layout.addWidget(b2)
+
+		# # #Batterie
+		# Bat = QProgressBar()
+		# Bat.setGeometry(30,40,200,75)
+		# step = 25
+		# Bat.setValue(step)
+
+		# self._gauges_layout.addWidget(Bat)
+
+
+		#Jauges
+		#Module pour Jauges 
+
+		from analoggaugewidget import AnalogGaugeWidget
+		jauges=QGridLayout()
+
+		#Jauge de la puissance
+		puissance = AnalogGaugeWidget()
+		puissance.update_value(500)
+		jauges.addWidget(puissance, 0, 0)
+
+		#Jauge du voltage de l'avion mère
+		volt_Avion = AnalogGaugeWidget()
+		volt_Avion.update_value(200)
+		jauges.addWidget(volt_Avion, 1, 0)
+
+		#Jauge du voltage de la télémétrie
+		volt_telem = AnalogGaugeWidget()
+		volt_telem.update_value(350)
+		jauges.addWidget(volt_telem, 2, 0)
+
+		#Jauge de l'accéléromètre en X
+		acc_x = AnalogGaugeWidget()
+		acc_x.update_value(350)
+		jauges.addWidget(acc_x, 0, 1)
+
+		#Jauge de l'accéléromètre en Y
+		acc_y = AnalogGaugeWidget()
+		acc_y.update_value(350)
+		jauges.addWidget(acc_y, 1, 1)
+
+		self._gauges_layout = jauges
+		# self._gauges_layout.addLayout(jauges)
+		
+
+
+
+
 
 	def _create_PFD(self):
 		self._PFD_layout = QVBoxLayout()
@@ -168,7 +231,7 @@ class MainUi:
 		
 		rotation = QTransform().rotate(roll)
 		new_attitude = self._original_attitude_img.transformed(rotation, Qt.SmoothTransformation)
-		crop = QRect(new_attitude.width()/2-x_center-width/2, new_attitude.height()/2-y_center-height/2, width, height)
+		crop = QRect(int(new_attitude.width()/2-x_center-width/2), int(new_attitude.height()/2-y_center-height/2), width, height)
 		self._attitude.setPixmap(new_attitude.copy(crop))
 
 	def _create_drop_history(self):
@@ -250,7 +313,7 @@ if __name__ == '__main__':
 	dummy_widget = QMainWindow()
 	main_ui = MainUi(dummy_widget)
 	# dummy_widget.setLayout(main_ui._gauges_layout) # Indiquer ici le nom du layout que vous voulez afficher
-	dummy_widget.centralWidget().setLayout(main_ui._drop_history_layout) # Indiquer ici le nom du layout que
+	# dummy_widget.centralWidget().setLayout(main_ui._drop_history_layout) # Indiquer ici le nom du layout que
 	# dummy_widget.setLayout(main_ui._PFD_layout) # Indiquer ici le nom du layout que vous voulez afficher
 	dummy_widget.show()
 	app.exec()

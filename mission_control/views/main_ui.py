@@ -83,7 +83,7 @@ class MainUi:
 		Clock_value.setFrameStyle(QFrame.Panel | QFrame.Sunken)
 		Clock_display.addWidget(Clock_value)
 
-		#indicateur de VS
+		#indicateur de vertical speed
 		VSI_label = QLabel('Vertical speed (fpm)')
 		VSI_label.setAlignment(Qt.AlignCenter)		
 		VSI_display.addWidget(VSI_label)

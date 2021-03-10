@@ -6,11 +6,14 @@ from PyQt5.QtGui import *
 from PyQt5.QtCore import *
 from PyQt5.QtWidgets import *
 
-import sys
+# User libraries
+from lib.analog_gauge_widget import AnalogGaugeWidget
+
 
 class MainUi:
 	def __init__(self, main_window):
 		self._main_window = main_window
+		self._main_window.show()
 
 		# Init main window
 		self._main_window.setWindowTitle('Avion-Cargo Mission Control')
@@ -35,48 +38,50 @@ class MainUi:
 		main_layout.addLayout(row2_layout)
 
 		row1_layout.addLayout(self._gauges_layout)
+		row1_layout.setStretch(0,1)
 		row1_layout.addLayout(self._PFD_layout)
 		row1_layout.addLayout(self._drop_history_layout)
 
 		# row2_layout.addLayout(self._MAP_layout)
 
 	def _create_gauges(self):
-		# self._gauges_layout = QHBoxLayout()
+		self._gauges_layout = QVBoxLayout()
 		
 		# #Switch active/stand by
-	
-		# b1 = QPushButton("ACTIVE")
-		# b1.setGeometry(0,0,60,50)
-		# b1.setStyleSheet("background-color: green; color: white")
-		# b1.clicked.connect(lambda: print('Actif'))
+		activation_layout = QHBoxLayout()
+		b1 = QPushButton("ACTIVE")
+		b1.setGeometry(0,0,60,50)
+		b1.setStyleSheet("background-color: green; color: white")
+		b1.clicked.connect(lambda: print('Actif'))
 
-		# b2 = QPushButton("Stand by")
-		# b2.setGeometry(0,0,60,50)
-		# b2.setStyleSheet("background-color: red; color: white")
-		# b2.move(60,0)
-		# b2.clicked.connect(lambda: print('Inactif'))
+		b2 = QPushButton("Stand by")
+		b2.setGeometry(0,0,60,50)
+		b2.setStyleSheet("background-color: red; color: white")
+		b2.move(60,0)
+		b2.clicked.connect(lambda: print('Inactif'))
 
-		# self._gauges_layout.addWidget(b1)
-		# self._gauges_layout.addWidget(b2)
+		activation_layout.addWidget(b1)
+		activation_layout.addWidget(b2)
 
 		# # #Batterie
-		# Bat = QProgressBar()
-		# Bat.setGeometry(30,40,200,75)
-		# step = 25
-		# Bat.setValue(step)
+		Bat = QProgressBar()
+		Bat.setGeometry(30,40,200,75)
+		step = 25
+		Bat.setValue(step)
 
-		# self._gauges_layout.addWidget(Bat)
+		activation_layout.addWidget(Bat)
+
+		self._gauges_layout.addLayout(activation_layout)
 
 
 		#Jauges
 		#Module pour Jauges 
 
-		from analoggaugewidget import AnalogGaugeWidget
-		jauges=QGridLayout()
+		jauges = QGridLayout()
 
 		#Jauge de la puissance
 		puissance = AnalogGaugeWidget()
-		puissance.update_value(500)
+		puissance.update_value(233)
 		jauges.addWidget(puissance, 0, 0)
 
 		#Jauge du voltage de l'avion mère
@@ -99,13 +104,7 @@ class MainUi:
 		acc_y.update_value(350)
 		jauges.addWidget(acc_y, 1, 1)
 
-		self._gauges_layout = jauges
-		# self._gauges_layout.addLayout(jauges)
-		
-
-
-
-
+		self._gauges_layout.addLayout(jauges)
 
 	def _create_PFD(self):
 		self._PFD_layout = QVBoxLayout()
@@ -312,8 +311,5 @@ if __name__ == '__main__':
 	app = QApplication([])
 	dummy_widget = QMainWindow()
 	main_ui = MainUi(dummy_widget)
-	# dummy_widget.setLayout(main_ui._gauges_layout) # Indiquer ici le nom du layout que vous voulez afficher
-	# dummy_widget.centralWidget().setLayout(main_ui._drop_history_layout) # Indiquer ici le nom du layout que
-	# dummy_widget.setLayout(main_ui._PFD_layout) # Indiquer ici le nom du layout que vous voulez afficher
 	dummy_widget.show()
 	app.exec()

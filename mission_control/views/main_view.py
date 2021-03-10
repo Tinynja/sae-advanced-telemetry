@@ -17,12 +17,3 @@ class MainView(QMainWindow):
 	def _connect_signals(self):
 		
 		model.dataChanged.connect(self._ui.set_attitude)
-
-
-if __name__ == '__main__':
-	import os
-	os.chdir(os.path.join(os.path.dirname(os.path.abspath(__file__)), '..'))
-	app = QApplication([])
-	main_view = MainView()
-	main_view.show()
-	app.exec()

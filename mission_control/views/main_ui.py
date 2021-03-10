@@ -302,13 +302,3 @@ class Color(QWidget):
 		palette = self.palette()
 		palette.setColor(QPalette.Window, QColor(color))
 		self.setPalette(palette)
-
-
-if __name__ == '__main__':
-	import os
-	os.chdir(os.path.join(os.path.dirname(os.path.abspath(__file__)), '..'))
-	app = QApplication([])
-	dummy_widget = QMainWindow()
-	main_ui = MainUi(dummy_widget)
-	dummy_widget.show()
-	app.exec()

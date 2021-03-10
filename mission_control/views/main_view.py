@@ -15,5 +15,4 @@ class MainView(QMainWindow):
 		self._connect_signals()
 	
 	def _connect_signals(self):
-		
-		model.dataChanged.connect(self._ui.set_attitude)
+		pass

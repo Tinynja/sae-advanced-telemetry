@@ -44,6 +44,9 @@ class MainUi:
 		row1_layout.addLayout(self._drop_history_layout)
 
 		# row2_layout.addLayout(self._MAP_layout)
+	
+	def _activer_bouton_standby(self):
+		print('LOOL')
 
 	def _create_gauges(self):
 		self._gauges_layout = QVBoxLayout()
@@ -53,16 +56,15 @@ class MainUi:
 		b1 = QPushButton("ACTIVE")
 		b1.setGeometry(0,0,60,50)
 		b1.setStyleSheet("background-color: green; color: white")
-		b1.clicked.connect(lambda: print('Actif'))
 
-		b2 = QPushButton("Stand by")
-		b2.setGeometry(0,0,60,50)
-		b2.setStyleSheet("background-color: red; color: white")
-		b2.move(60,0)
-		b2.clicked.connect(lambda: print('Inactif'))
+		self.b2 = QPushButton("Stand by")
+		self.b2.setGeometry(0,0,60,50)
+		self.b2.setStyleSheet("background-color: red; color: white")
+		self.b2.move(60,0)
+		self.b2.clicked.connect(lambda: print('Inactif'))
 
 		activation_layout.addWidget(b1)
-		activation_layout.addWidget(b2)
+		activation_layout.addWidget(self.b2)
 
 		# # #Batterie
 		Bat = QProgressBar()
@@ -277,7 +279,7 @@ class MainUi:
 			buttons.append(btn)
 			btn.setFont(QFont('Arial',32))
 			# clickme(123)
-			btn.clicked.connect(lambda checked, btn=btn: clickme(btn))
+			btn.clicked.connect(lambda btn=btn: clickme(btn))
 			# btn.clicked.emit()
 
 		def __create_label(text):

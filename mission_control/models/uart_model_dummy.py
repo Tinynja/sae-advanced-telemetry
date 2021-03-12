@@ -77,6 +77,7 @@ class UartDummyModel(QObject):
 	
 	def stop_port_listing(self):
 		self._do_port_listing = False
+		self._port_listing_thread.join()
 	
 	def _port_listing_task(self, delay=1):
 		while self._do_port_listing:
@@ -103,6 +104,7 @@ class UartDummyModel(QObject):
 
 	def stop_port_polling(self):
 		self._do_port_polling = False
+		self._port_polling_thread.join()
 
 	def _port_polling_task(self):
 		# protocol: \x01 + [type] + \x02 + [name] + \x03 + \x01 + [type] + \x02 + [value] + \x03
@@ -167,6 +169,10 @@ class UartDummyModel(QObject):
 		if new_port_list != self.available_ports:
 			self.portListChanged.emit(new_port_list)
 		self.available_ports = new_port_list
+	
+	def stop_model(self):
+		self.stop_port_listing()
+		self.stop_port_polling()
 
 	# def _inherit_signals(self):
 	# 	for name in dir(self._signals):

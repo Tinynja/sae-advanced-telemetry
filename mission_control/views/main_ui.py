@@ -122,6 +122,8 @@ class MainUi:
 		TAS_display    = QStackedLayout()
 		TAS_display.setStackingMode(QStackedLayout.StackAll)
 		Attitude_display = QStackedLayout()
+		ALT_display    = QStackedLayout()
+		ALT_display.setStackingMode(QStackedLayout.StackAll)
 		#... à continuer pour la partie du bas
 
 		self._PFD_layout.setContentsMargins(5,5,5,5)
@@ -159,7 +161,7 @@ class MainUi:
 
 		#indicateur de TAS
 		original_img_TAS = QPixmap('resources/TAS_Graphic.JPG')
-		tas = 12
+		tas = 33
 		calculated_top = 100 - 9.803921569 * (tas-57)
 		top = round(calculated_top)
 		height = 300
@@ -207,9 +209,9 @@ class MainUi:
 
 
 		#indicateur de ALT
-		original_img_ALT = QPixmap('resources/TAS_Graphic.JPG')
-		alt = 12
-		calculated_top = 100 - 9.803921569 * (alt-57)
+		original_img_ALT = QPixmap('resources/ALT_Graphic.PNG')
+		alt = 64
+		calculated_top = 100 - 5.464490874 * (alt-94)
 		top = round(calculated_top)
 		height = 300
 		def __update_img(adj=0):
@@ -218,12 +220,12 @@ class MainUi:
 			ALT_img.setPixmap(original_img_ALT.copy(QRect(0, top, original_img_ALT.width(), height)))
 		ALT_img = QLabel()
 		__update_img()
-		ALT_value.setFrameStyle(QFrame.Box)
 		ALT_value = QLabel(str(alt))
+		ALT_value.setFrameStyle(QFrame.Box)
 		ALT_value.setFont(QFont('Arial',25))
 		ALT_value.setAlignment(Qt.AlignCenter)	
 		ALT_value.setFrameStyle(QFrame.Panel | QFrame.Raised)
-		ALT_value.setStyleSheet("background-color: black; color: white")
+		ALT_value.setStyleSheet("background-color: green; color: white")
 		alt_dummy_widget = QWidget()
 		ALT_layout = QVBoxLayout(alt_dummy_widget)
 		ALT_layout.setContentsMargins(5,0,5,0)
@@ -240,7 +242,7 @@ class MainUi:
 
 		bottom_layout.addLayout( TAS_display )
 		bottom_layout.addLayout( Attitude_display )
-		bottom_layout.addLayout( Altitude_display )
+		bottom_layout.addLayout( ALT_display )
 		# bottom_layout.addLayout( VSI_graphic_display )
 	
 	# Indicateur d'assiette

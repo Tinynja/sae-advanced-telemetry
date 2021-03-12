@@ -169,9 +169,7 @@ class MainUi:
 			TAS_img.setPixmap(original_img_TAS.copy(QRect(0, top, original_img_TAS.width(), height)))
 		TAS_img = QLabel()
 		__update_img()
-
 		TAS_img.setFrameStyle(QFrame.Box)
-		
 		TAS_value = QLabel(str(tas))
 		TAS_value.setFont(QFont('Arial',25))
 		TAS_value.setAlignment(Qt.AlignCenter)	
@@ -186,6 +184,7 @@ class MainUi:
 		TAS_display.addWidget(TAS_img)
 		TAS_display.addWidget(dummy_widget)
 
+		#Attitude
 		self._original_attitude_img = QPixmap('resources/Attitude_Graphic.png')
 		self.pitch, self.roll = 0, 0
 		self._attitude = QLabel()
@@ -206,6 +205,34 @@ class MainUi:
 		# #indicateur d'altitude
 		# VSI_graphic_display = bottom_layout.addWidget(Color('purple'))
 
+
+		#indicateur de ALT
+		original_img_ALT = QPixmap('resources/TAS_Graphic.JPG')
+		alt = 12
+		calculated_top = 100 - 9.803921569 * (alt-57)
+		top = round(calculated_top)
+		height = 300
+		def __update_img(adj=0):
+			global top1
+			top1 = max(0, min(top+adj, original_img_ALT.height()-height))
+			ALT_img.setPixmap(original_img_ALT.copy(QRect(0, top, original_img_ALT.width(), height)))
+		ALT_img = QLabel()
+		__update_img()
+		ALT_value.setFrameStyle(QFrame.Box)
+		ALT_value = QLabel(str(alt))
+		ALT_value.setFont(QFont('Arial',25))
+		ALT_value.setAlignment(Qt.AlignCenter)	
+		ALT_value.setFrameStyle(QFrame.Panel | QFrame.Raised)
+		ALT_value.setStyleSheet("background-color: black; color: white")
+		alt_dummy_widget = QWidget()
+		ALT_layout = QVBoxLayout(alt_dummy_widget)
+		ALT_layout.setContentsMargins(5,0,5,0)
+		ALT_layout.addStretch(1)
+		ALT_layout.addWidget(ALT_value)
+		ALT_layout.addStretch(1)
+		ALT_display.addWidget(ALT_img)
+		ALT_display.addWidget(alt_dummy_widget)
+
 		#Assemblage de top_layout et bottom_layout
 		top_layout.addLayout( GS_display )
 		top_layout.addLayout( Clock_display )
@@ -213,7 +240,7 @@ class MainUi:
 
 		bottom_layout.addLayout( TAS_display )
 		bottom_layout.addLayout( Attitude_display )
-		# bottom_layout.addLayout( Altitude_display )
+		bottom_layout.addLayout( Altitude_display )
 		# bottom_layout.addLayout( VSI_graphic_display )
 	
 	# Indicateur d'assiette

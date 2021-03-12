@@ -30,7 +30,7 @@ class MissionControl(QApplication):
 		# Initiliaze all components of the application
 		self.config_model = ConfigModel()
 		if dummy:
-			self.uart_model = UartModelDummy()
+			self.uart_model = UartDummyModel()
 			self.uart_model.configure_comport('DUMMY1')
 			self.uart_model.start_port_polling()
 		else:

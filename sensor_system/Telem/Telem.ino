@@ -7,8 +7,11 @@
 #define V1_PIN A1 // Pin d'entrée du capteur de voltage de la batterie principale
 #define I1_PIN A2 // Pin d'entrée du capteur de courant de la batterie principale
 #define V2_PIN A3 // Pin d'entrée du capteur de voltage de la batterie télémétrie
+float   facteur_V1 = 1;
+float   facteur_I1 = 1;
+float   facteur_V2 = 1;
 int32_t pressionMer = 101300; // Pression au niveau de la mer, en Pa
-bool refMer = false; // True pour altitude p/r au niveau de la mer, false pour altitude p/r au sol
+bool    refMer = false; // True pour altitude p/r au niveau de la mer, false pour altitude p/r au sol
 
 MPU6050 imu(Wire);
 Adafruit_BMP085 alt;
@@ -21,6 +24,11 @@ void setup() {
   Serial.begin(112500); // Connection Serial pour debugging. Commenter lors du fonctionnement réel.
   
   Wire.begin(); // Connection I2C
+
+  // Initialisation des pins analog
+  pinMode(V1_PIN, INPUT);
+  pinMode(I1_PIN, INPUT);
+  pinMode(V1_PIN, INPUT);
 
   // Initialisation de l'altimètre
   byte statusAlt = alt.begin();
@@ -101,9 +109,9 @@ void loop() {
 
     // Mesures Analog
     Serial.println("--- Analog ---");
-    Serial.print(F("VOLTAGE BATT1: "));//Serial.println(pitot.getDeltaPa());
-    Serial.print(F("COURANT BATT1: "));//Serial.println(pitot.getVelMs());
-    Serial.print(F("VOLTAGE BATT1: "));//Serial.println(pitot.getTemp());*/
+    Serial.print(F("VOLTAGE BATT1: "));Serial.println(analogRead(V1_PIN)*(5/1023)*facteur_V1);
+    Serial.print(F("COURANT BATT1: "));Serial.println(analogRead(I1_PIN)*(5/1023)*facteur_I1);
+    Serial.print(F("VOLTAGE BATT2: "));Serial.println(analogRead(V2_PIN)*(5/1023)*facteur_V2);*/
     
     Serial.println();
     Serial.println(F("=====================================================\n"));

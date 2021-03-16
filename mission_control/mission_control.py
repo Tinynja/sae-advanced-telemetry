@@ -39,6 +39,10 @@ class MissionControl(QApplication):
 		self.main_view = MainView(self.uart_model, self.config_model)
 		self.main_view.show()
 	
+	def run(self):
+		self.exec()
+		self.uart_model.stop_model()
+	
 	def _goto_mc_root_directory(self):
 		os.chdir(os.path.dirname(os.path.abspath(__file__)))
 	
@@ -55,4 +59,4 @@ class MissionControl(QApplication):
 
 if __name__ == '__main__':
 	app = MissionControl(**args)
-	exit(app.exec())
+	app.run()

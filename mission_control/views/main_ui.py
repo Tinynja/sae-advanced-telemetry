@@ -131,17 +131,17 @@ class MainUi:
 		self._PFD_layout.setContentsMargins(5,5,5,5)
 
 		#indicateur de GS
-		GS_label = QLabel('Ground speed (kts)')
+		GS_label = QLabel('Vitesse sol (nds)')
 		GS_label.setAlignment(Qt.AlignCenter)		
 		GS_display.addWidget(GS_label)
-		GS_value = QLabel('19')
+		GS_value = QLabel('30')
 		GS_value.setAlignment(Qt.AlignCenter)
 		GS_value.setFont(QFont('Arial',20))
 		GS_value.setFrameStyle(QFrame.Panel | QFrame.Sunken)
 		GS_display.addWidget(GS_value)
 
 		#indicateur de temps écoulé
-		Clock_label = QLabel('Time since beggining of flight')
+		Clock_label = QLabel('Temps écoulé depuis le début du vol')
 		Clock_label.setAlignment(Qt.AlignCenter)	
 		Clock_display.addWidget(Clock_label)
 		Clock_value = QLabel('01:22.1')
@@ -151,7 +151,7 @@ class MainUi:
 		Clock_display.addWidget(Clock_value)
 
 		#indicateur de vertical speed
-		VSI_label = QLabel('Vertical speed (fpm)')
+		VSI_label = QLabel('Vitesse verticale (fpm)')
 		VSI_label.setAlignment(Qt.AlignCenter)		
 		VSI_display.addWidget(VSI_label)
 		VSI_value = QLabel('+ 50')

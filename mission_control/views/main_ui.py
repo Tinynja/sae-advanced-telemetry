@@ -271,16 +271,18 @@ class MainUi:
 		labels = []
 		buttons = []
 
-		def clickme(btn):
+		def clickme(self, btn):
 			btn.setStyleSheet("background-color: green")
+			if not btn.isChecked():
+				btn.setStyleSheet("background-color: none")
+			
 
 		def __create_button(text):
-			btn = QPushButton(text)
-			buttons.append(btn)
-			btn.setFont(QFont('Arial',32))
-			# clickme(123)
-			btn.clicked.connect(lambda btn=btn: clickme(btn))
-			# btn.clicked.emit()
+			self.btn = QPushButton(text)
+			buttons.append(self.btn)
+			self.btn.setFont(QFont('Arial',32))
+			self.btn.setCheckable(True)
+			self.btn.clicked.connect(lambda self, btn=self.btn: clickme(self, btn))
 
 		def __create_label(text):
 			labels.append(QLabel(text))
@@ -307,14 +309,8 @@ class MainUi:
 				elif i == 1:
 					self._drop_history_layout.addWidget(labels[j],j+1,2,1,2)
 		
-		# if labels[0].mousePressEvent or labels[1].mousePressEvent and labels[2].mousePressEvent or labels[3].mousePressEvent: #Verification que planeur et largage ne soient pas clicker en meme temps
-		# 	labels[2].setStyleSheet("background-color: red")
-		# 	labels[3].setStyleSheet("background-color: red")
-		# 	print("Erreur! Incompatibilité entre les composantes à larguer")
-
-		# for i in range(4): #Double click pour modifier le text et save l'altitude de largage
-		# 	if labels[i-1].mouseDoubleClickEvent is True:
-		# 		labels[i+4].setText(self.__record_altitude)
+		if buttons[0].isChecked():
+			buttons[1].clicked.connect(lambda self, btn=buttons[1]: clickme(self, btn))
 
 		def __record_altitude(self, drop, altitude):
 			pass

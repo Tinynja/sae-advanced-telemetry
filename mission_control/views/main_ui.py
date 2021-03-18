@@ -163,7 +163,7 @@ class MainUi:
 
 		#indicateur de TAS
 		original_img_TAS = QPixmap('resources/TAS_Graphic.JPG')
-		tas = 33
+		tas = 36
 		calculated_top = 100 - 9.803921569 * (tas-57)
 		top = round(calculated_top)
 		height = 300
@@ -197,22 +197,12 @@ class MainUi:
 		Attitude_display.addWidget(self._attitude)
 		# Attitude_value = QLabel('Pitch = -0.5 deg | Roll = 12.2 deg')
 		# Attitude_display.addWidget(Attitude_value)
-		self.set_attitude(pitch=20, roll=10)
-
-		# attitude_img = QLabel()
-		# update_img(bank_angle)
-		# attitude_img.setFrameStyle(QFrame.Box) #TODO: je suis rendu ici - Francois
-		# original_img_attitude = QPixmap('resources/Attitude_Graphic.JPG')
-
-		# #indicateur de VS graphique
-		# Altitude_display = bottom_layout.addWidget(Color('black'))
-		# #indicateur d'altitude
-		# VSI_graphic_display = bottom_layout.addWidget(Color('purple'))
+		self.set_attitude(pitch=10, roll=-30)
 
 
 		#indicateur de ALT
 		original_img_ALT = QPixmap('resources/ALT_Graphic.PNG')
-		alt = 64
+		alt = 69
 		calculated_top = 100 - 5.464490874 * (alt-94)
 		top = round(calculated_top)
 		height = 300

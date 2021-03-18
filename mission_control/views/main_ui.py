@@ -16,6 +16,9 @@ class MainUi:
 		self._main_window = main_window
 		self._main_window.show()
 
+		# Useful variables
+		self.data = {}
+
 		# Init main window
 		self._main_window.setWindowTitle('Avion-Cargo Mission Control')
 		# self._main_window.setWindowIcon(QIcon('resources/icons/nomad.ico'))
@@ -162,31 +165,28 @@ class MainUi:
 
 
 		#indicateur de TAS
-		original_img_TAS = QPixmap('resources/TAS_Graphic.JPG')
-		tas = 33
-		calculated_top = 100 - 9.803921569 * (tas-57)
-		top = round(calculated_top)
-		height = 300
-		def __update_img(adj=0):
-			global top1
-			top1 = max(0, min(top+adj, original_img_TAS.height()-height))
-			TAS_img.setPixmap(original_img_TAS.copy(QRect(0, top, original_img_TAS.width(), height)))
-		TAS_img = QLabel()
-		__update_img()
-		TAS_img.setFrameStyle(QFrame.Box)
-		TAS_value = QLabel(str(tas))
-		TAS_value.setFont(QFont('Arial',25))
-		TAS_value.setAlignment(Qt.AlignCenter)	
-		TAS_value.setFrameStyle(QFrame.Panel | QFrame.Raised)
-		TAS_value.setStyleSheet("background-color: black; color: white")
+		self.TAS_variables = {}
+		self.TAS_variables['height'] = 300
+		self.TAS_variables['original_img_TAS'] = QPixmap('resources/TAS_Graphic.JPG')
+		# original_img_TAS = QPixmap('resources/TAS_Graphic.JPG')
+		self.data['tas'] = 0
+		# height = 300
+		self.TAS_variables['TAS_img'] = QLabel()
+		self.TAS_variables['TAS_img'].setFrameStyle(QFrame.Box)
+		self.TAS_variables['TAS_value'] = QLabel()
+		self.TAS_variables['TAS_value'].setFont(QFont('Arial',25))
+		self.TAS_variables['TAS_value'].setAlignment(Qt.AlignCenter)	
+		self.TAS_variables['TAS_value'].setFrameStyle(QFrame.Panel | QFrame.Raised)
+		self.TAS_variables['TAS_value'].setStyleSheet("background-color: black; color: white")
 		dummy_widget = QWidget()
 		TAS_layout = QVBoxLayout(dummy_widget)
 		TAS_layout.setContentsMargins(5,0,5,0)
 		TAS_layout.addStretch(1)
-		TAS_layout.addWidget(TAS_value)
+		TAS_layout.addWidget(self.TAS_variables['TAS_value'])
 		TAS_layout.addStretch(1)
-		TAS_display.addWidget(TAS_img)
+		TAS_display.addWidget(self.TAS_variables['TAS_img'])
 		TAS_display.addWidget(dummy_widget)
+		self.set_TAS(self.data['tas'])
 
 		#Attitude
 		self._original_attitude_img = QPixmap('resources/Attitude_Graphic.png')
@@ -197,22 +197,12 @@ class MainUi:
 		Attitude_display.addWidget(self._attitude)
 		# Attitude_value = QLabel('Pitch = -0.5 deg | Roll = 12.2 deg')
 		# Attitude_display.addWidget(Attitude_value)
-		self.set_attitude(pitch=20, roll=10)
-
-		# attitude_img = QLabel()
-		# update_img(bank_angle)
-		# attitude_img.setFrameStyle(QFrame.Box) #TODO: je suis rendu ici - Francois
-		# original_img_attitude = QPixmap('resources/Attitude_Graphic.JPG')
-
-		# #indicateur de VS graphique
-		# Altitude_display = bottom_layout.addWidget(Color('black'))
-		# #indicateur d'altitude
-		# VSI_graphic_display = bottom_layout.addWidget(Color('purple'))
+		self.set_attitude(pitch=10, roll=-30)
 
 
 		#indicateur de ALT
 		original_img_ALT = QPixmap('resources/ALT_Graphic.PNG')
-		alt = 64
+		alt = 69
 		calculated_top = 100 - 5.464490874 * (alt-94)
 		top = round(calculated_top)
 		height = 300
@@ -247,6 +237,22 @@ class MainUi:
 		bottom_layout.addLayout( ALT_display )
 		# bottom_layout.addLayout( VSI_graphic_display )
 	
+	def set_TAS(self, TAS):
+		self.data['tas'] = TAS
+		calculated_top = 100 - 9.803921569 * (TAS-57)
+		top = round(calculated_top)
+		top1 = max(0, min(top, self.TAS_variables['original_img_TAS'].height()-self.TAS_variables['height']))
+		self.TAS_variables['TAS_img'].setPixmap(self.TAS_variables['original_img_TAS'].copy(QRect(0, top, self.TAS_variables['original_img_TAS'].width(), self.TAS_variables['height'])))
+		self.TAS_variables['TAS_value'].setText(str(int(TAS)))
+		limits = [0, 20, 50]
+		if TAS > limits[-1]:
+			self.TAS_variables['TAS_value'].setStyleSheet("background-color: red; color: white")
+		elif TAS > limits[-2]:
+			self.TAS_variables['TAS_value'].setStyleSheet("background-color: green; color: white")
+		else:
+			self.TAS_variables['TAS_value'].setStyleSheet("background-color: gray; color: white")
+
+
 	# Indicateur d'assiette
 	def set_attitude(self, pitch=None, roll=None):
 		pitch = pitch or self.pitch

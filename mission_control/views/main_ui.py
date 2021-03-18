@@ -269,7 +269,7 @@ class MainUi:
 		self._drop_history_layout = QGridLayout()
 	
 		labels = []
-		buttons = []
+		self.buttons = []
 
 		def clickme(self, btn):
 			btn.setStyleSheet("background-color: green")
@@ -278,11 +278,11 @@ class MainUi:
 			
 
 		def __create_button(text):
-			self.btn = QPushButton(text)
-			buttons.append(self.btn)
-			self.btn.setFont(QFont('Arial',32))
-			self.btn.setCheckable(True)
-			self.btn.clicked.connect(lambda self, btn=self.btn: clickme(self, btn))
+			btn = QPushButton(text)
+			self.buttons.append(btn)
+			btn.setFont(QFont('Arial',32))
+			btn.setCheckable(True)
+			btn.clicked.connect(lambda self, btn=btn: clickme(self, btn))
 
 		def __create_label(text):
 			labels.append(QLabel(text))
@@ -305,12 +305,14 @@ class MainUi:
 		for i in range(2):
 			for j in range(4):
 				if i == 0:
-					self._drop_history_layout.addWidget(buttons[j],j+1,0,1,2)
+					self._drop_history_layout.addWidget(self.buttons[j],j+1,0,1,2)
 				elif i == 1:
 					self._drop_history_layout.addWidget(labels[j],j+1,2,1,2)
 		
-		if buttons[0].isChecked():
-			buttons[1].clicked.connect(lambda self, btn=buttons[1]: clickme(self, btn))
+		if self.buttons[0].isChecked():
+			self.buttons[1].setChecked(True)
+			self.buttons[2].setChecked(False)
+			self.buttons[3].setDisabled(False)
 
 		def __record_altitude(self, drop, altitude):
 			pass

@@ -16,6 +16,9 @@ class MainUi:
 		self._main_window = main_window
 		self._main_window.show()
 
+		# Useful variables
+		self.data = {}
+
 		# Init main window
 		self._main_window.setWindowTitle('Avion-Cargo Mission Control')
 		# self._main_window.setWindowIcon(QIcon('resources/icons/nomad.ico'))
@@ -131,17 +134,17 @@ class MainUi:
 		self._PFD_layout.setContentsMargins(5,5,5,5)
 
 		#indicateur de GS
-		GS_label = QLabel('Ground speed (kts)')
+		GS_label = QLabel('Vitesse sol (nds)')
 		GS_label.setAlignment(Qt.AlignCenter)		
 		GS_display.addWidget(GS_label)
-		GS_value = QLabel('19')
+		GS_value = QLabel('30')
 		GS_value.setAlignment(Qt.AlignCenter)
 		GS_value.setFont(QFont('Arial',20))
 		GS_value.setFrameStyle(QFrame.Panel | QFrame.Sunken)
 		GS_display.addWidget(GS_value)
 
 		#indicateur de temps écoulé
-		Clock_label = QLabel('Time since beggining of flight')
+		Clock_label = QLabel('Temps écoulé depuis le début du vol')
 		Clock_label.setAlignment(Qt.AlignCenter)	
 		Clock_display.addWidget(Clock_label)
 		Clock_value = QLabel('01:22.1')
@@ -151,7 +154,7 @@ class MainUi:
 		Clock_display.addWidget(Clock_value)
 
 		#indicateur de vertical speed
-		VSI_label = QLabel('Vertical speed (fpm)')
+		VSI_label = QLabel('Vitesse verticale (fpm)')
 		VSI_label.setAlignment(Qt.AlignCenter)		
 		VSI_display.addWidget(VSI_label)
 		VSI_value = QLabel('+ 50')
@@ -162,31 +165,28 @@ class MainUi:
 
 
 		#indicateur de TAS
-		original_img_TAS = QPixmap('resources/TAS_Graphic.JPG')
-		tas = 33
-		calculated_top = 100 - 9.803921569 * (tas-57)
-		top = round(calculated_top)
-		height = 300
-		def __update_img(adj=0):
-			global top1
-			top1 = max(0, min(top+adj, original_img_TAS.height()-height))
-			TAS_img.setPixmap(original_img_TAS.copy(QRect(0, top, original_img_TAS.width(), height)))
-		TAS_img = QLabel()
-		__update_img()
-		TAS_img.setFrameStyle(QFrame.Box)
-		TAS_value = QLabel(str(tas))
-		TAS_value.setFont(QFont('Arial',25))
-		TAS_value.setAlignment(Qt.AlignCenter)	
-		TAS_value.setFrameStyle(QFrame.Panel | QFrame.Raised)
-		TAS_value.setStyleSheet("background-color: black; color: white")
+		self.TAS_variables = {}
+		self.TAS_variables['height'] = 300
+		self.TAS_variables['original_img_TAS'] = QPixmap('resources/TAS_Graphic.JPG')
+		# original_img_TAS = QPixmap('resources/TAS_Graphic.JPG')
+		self.data['tas'] = 0
+		# height = 300
+		self.TAS_variables['TAS_img'] = QLabel()
+		self.TAS_variables['TAS_img'].setFrameStyle(QFrame.Box)
+		self.TAS_variables['TAS_value'] = QLabel()
+		self.TAS_variables['TAS_value'].setFont(QFont('Arial',25))
+		self.TAS_variables['TAS_value'].setAlignment(Qt.AlignCenter)	
+		self.TAS_variables['TAS_value'].setFrameStyle(QFrame.Panel | QFrame.Raised)
+		self.TAS_variables['TAS_value'].setStyleSheet("background-color: black; color: white")
 		dummy_widget = QWidget()
 		TAS_layout = QVBoxLayout(dummy_widget)
 		TAS_layout.setContentsMargins(5,0,5,0)
 		TAS_layout.addStretch(1)
-		TAS_layout.addWidget(TAS_value)
+		TAS_layout.addWidget(self.TAS_variables['TAS_value'])
 		TAS_layout.addStretch(1)
-		TAS_display.addWidget(TAS_img)
+		TAS_display.addWidget(self.TAS_variables['TAS_img'])
 		TAS_display.addWidget(dummy_widget)
+		self.set_TAS(self.data['tas'])
 
 		#Attitude
 		self._original_attitude_img = QPixmap('resources/Attitude_Graphic.png')
@@ -197,22 +197,12 @@ class MainUi:
 		Attitude_display.addWidget(self._attitude)
 		# Attitude_value = QLabel('Pitch = -0.5 deg | Roll = 12.2 deg')
 		# Attitude_display.addWidget(Attitude_value)
-		self.set_attitude(pitch=20, roll=10)
-
-		# attitude_img = QLabel()
-		# update_img(bank_angle)
-		# attitude_img.setFrameStyle(QFrame.Box) #TODO: je suis rendu ici - Francois
-		# original_img_attitude = QPixmap('resources/Attitude_Graphic.JPG')
-
-		# #indicateur de VS graphique
-		# Altitude_display = bottom_layout.addWidget(Color('black'))
-		# #indicateur d'altitude
-		# VSI_graphic_display = bottom_layout.addWidget(Color('purple'))
+		self.set_attitude(pitch=10, roll=-30)
 
 
 		#indicateur de ALT
 		original_img_ALT = QPixmap('resources/ALT_Graphic.PNG')
-		alt = 64
+		alt = 69
 		calculated_top = 100 - 5.464490874 * (alt-94)
 		top = round(calculated_top)
 		height = 300
@@ -247,6 +237,22 @@ class MainUi:
 		bottom_layout.addLayout( ALT_display )
 		# bottom_layout.addLayout( VSI_graphic_display )
 	
+	def set_TAS(self, TAS):
+		self.data['tas'] = TAS
+		calculated_top = 100 - 9.803921569 * (TAS-57)
+		top = round(calculated_top)
+		top1 = max(0, min(top, self.TAS_variables['original_img_TAS'].height()-self.TAS_variables['height']))
+		self.TAS_variables['TAS_img'].setPixmap(self.TAS_variables['original_img_TAS'].copy(QRect(0, top, self.TAS_variables['original_img_TAS'].width(), self.TAS_variables['height'])))
+		self.TAS_variables['TAS_value'].setText(str(int(TAS)))
+		limits = [0, 20, 50]
+		if TAS > limits[-1]:
+			self.TAS_variables['TAS_value'].setStyleSheet("background-color: red; color: white")
+		elif TAS > limits[-2]:
+			self.TAS_variables['TAS_value'].setStyleSheet("background-color: green; color: white")
+		else:
+			self.TAS_variables['TAS_value'].setStyleSheet("background-color: gray; color: white")
+
+
 	# Indicateur d'assiette
 	def set_attitude(self, pitch=None, roll=None):
 		pitch = pitch or self.pitch
@@ -269,18 +275,37 @@ class MainUi:
 		self._drop_history_layout = QGridLayout()
 	
 		labels = []
-		buttons = []
+		self.buttons = []
+		# def set_drop_checked(boolqweqweqwe):
+		# 		self.buttons[0].setChecked(boolqweqweqwe)
+		# 		btn.setStyleSheet("background-color: " + colors[boolqweqweqwe])
 
-		def clickme(btn):
+		def click_drop_type(self, btn, checked):
+			# print(btn.text())
+			# colors = ("none", "green")
+			if btn.text() in ("Planeur 1", "Planeur 2"):
+				self.buttons[0].setChecked(checked)
+				# btn.setStyleSheet("background-color: " + colors[checked])
+				self.buttons[1].setChecked(checked)
+				# btn.setStyleSheet("background-color: green")
+				if checked:
+					self.buttons[2].setChecked(not checked)
+					# btn.setStyleSheet("background-color: green")
+					self.buttons[3].setChecked(not checked)
+					# btn.setStyleSheet("background-color: green")
+			elif btn.text() in ():
+				pass
 			btn.setStyleSheet("background-color: green")
+			if not btn.isChecked():
+				btn.setStyleSheet("background-color: none")
+			
 
 		def __create_button(text):
 			btn = QPushButton(text)
-			buttons.append(btn)
+			self.buttons.append(btn)
 			btn.setFont(QFont('Arial',32))
-			# clickme(123)
-			btn.clicked.connect(lambda btn=btn: clickme(btn))
-			# btn.clicked.emit()
+			btn.setCheckable(True)
+			btn.clicked.connect(lambda checked, self=self, btn=btn: click_drop_type(self, btn, checked))
 
 		def __create_label(text):
 			labels.append(QLabel(text))
@@ -303,18 +328,14 @@ class MainUi:
 		for i in range(2):
 			for j in range(4):
 				if i == 0:
-					self._drop_history_layout.addWidget(buttons[j],j+1,0,1,2)
+					self._drop_history_layout.addWidget(self.buttons[j],j+1,0,1,2)
 				elif i == 1:
 					self._drop_history_layout.addWidget(labels[j],j+1,2,1,2)
 		
-		# if labels[0].mousePressEvent or labels[1].mousePressEvent and labels[2].mousePressEvent or labels[3].mousePressEvent: #Verification que planeur et largage ne soient pas clicker en meme temps
-		# 	labels[2].setStyleSheet("background-color: red")
-		# 	labels[3].setStyleSheet("background-color: red")
-		# 	print("Erreur! Incompatibilité entre les composantes à larguer")
-
-		# for i in range(4): #Double click pour modifier le text et save l'altitude de largage
-		# 	if labels[i-1].mouseDoubleClickEvent is True:
-		# 		labels[i+4].setText(self.__record_altitude)
+		if self.buttons[0].isChecked():
+			self.buttons[1].setChecked(True)
+			self.buttons[2].setChecked(False)
+			self.buttons[3].setDisabled(False)
 
 		def __record_altitude(self, drop, altitude):
 			pass

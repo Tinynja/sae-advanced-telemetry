@@ -1,7 +1,7 @@
 #include "Wire.h"
 #include <MPU6050_light.h>
 #include <Adafruit_BMP085.h>
-
+#include <Adafruit_GPS.h>
 
 //******* PARAMÈTRE AJUSTABLES ******
 #define V1_PIN A1 // Pin d'entrée du capteur de voltage de la batterie principale
@@ -18,6 +18,7 @@ float m2ft = 3.28084;
 
 MPU6050 imu(Wire);
 Adafruit_BMP085 alt;
+Adafruit_GPS GPS(&Wire);
 
 long timer = 0;
 int32_t pressionSol;
@@ -31,6 +32,11 @@ void setup() {
   pinMode(V1_PIN, INPUT);
   pinMode(I1_PIN, INPUT);
   pinMode(V1_PIN, INPUT);
+
+  // Initialisation du GPS
+  GPS.begin(0x10);
+  GPS.sendCommand(PMTK_SET_NMEA_OUTPUT_RMCGGA);
+  GPS.sendCommand(PMTK_SET_NMEA_UPDATE_1HZ);
 
   // Initialisation de l'altimètre
   byte statusAlt = alt.begin();
@@ -74,8 +80,10 @@ void setup() {
 
 void loop() {
   imu.update(); // Mise à jour du IMU (Requis en raison de l'intégration des mesures)
-
+  
   if (millis() - timer > 250) { // Afficher données toutes les secondes
+
+  long startTime = millis();
 
     // Mesures du IMU
     Serial.println("--- IMU ---");
@@ -88,6 +96,23 @@ void loop() {
     Serial.print(" \tZ: "); Serial.println(imu.getAngleZ());
     Serial.println();
     
+    Serial.print("Fetch time: ");
+    Serial.print(millis()-startTime);
+    Serial.println(" ms");
+    startTime = millis();
+
+    // Mesures du GPS
+    Serial.println("--- GPS ---");
+    while(!GPS.newNMEAreceived()) {
+      GPS.read();
+    }
+    Serial.println(GPS.lastNMEA());
+    
+    Serial.print("Fetch time: ");
+    Serial.print(millis()-startTime);
+    Serial.println(" ms");
+    startTime = millis();
+    
     // Mesures de l'altimètre
     Serial.println("--- Altimètre ---");
     if (refMer) {
@@ -97,8 +122,13 @@ void loop() {
       Serial.print(F("ALTITUDE(m) : ")); Serial.println(alt.readAltitude(pressionSol));
       Serial.print(F("ALTITUDE(ft) : ")); Serial.println(m2ft * alt.readAltitude(pressionSol));
     }
+    
     Serial.print(F("TEMP(ALT): ")); Serial.println(alt.readTemperature());
 
+    Serial.print("Fetch time: ");
+    Serial.print(millis()-startTime);
+    Serial.println(" ms");
+    startTime = millis();
 
     // Mesures du pitot
     Serial.println("--- Pitot ---");
@@ -106,16 +136,21 @@ void loop() {
     Serial.print(F("VITESSE (m/s) : "));//Serial.println(pitot.getVelMs());
     Serial.print(F("TEMP(PIT): "));//Serial.println(pitot.getTemp());
 
-    // Mesures du GPS
-    Serial.println("--- GPS ---");
-    Serial.print(F("COORD : "));//Serial.println(pitot.getDeltaPa());
-    Serial.print(F("VEL : "));//Serial.println(pitot.getVelMs());
+    Serial.print("Fetch time: ");
+    Serial.print(millis()-startTime);
+    Serial.println(" ms");
+    startTime = millis();
 
     // Mesures Analog
     Serial.println("--- Analog ---");
     Serial.print(F("VOLTAGE BATT1: ")); Serial.println(analogRead(V1_PIN) * (5 / 1023)*facteur_V1);
     Serial.print(F("COURANT BATT1: ")); Serial.println(analogRead(I1_PIN) * (5 / 1023)*facteur_I1);
     Serial.print(F("VOLTAGE BATT2: ")); Serial.println(analogRead(V2_PIN) * (5 / 1023)*facteur_V2);
+
+    Serial.print("Fetch time: ");
+    Serial.print(millis()-startTime);
+    Serial.println(" ms");
+    startTime = millis();
     
     Serial.println();
     Serial.println(F("=====================================================\n"));

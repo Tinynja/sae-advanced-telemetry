@@ -270,8 +270,25 @@ class MainUi:
 	
 		labels = []
 		self.buttons = []
+		# def set_drop_checked(boolqweqweqwe):
+		# 		self.buttons[0].setChecked(boolqweqweqwe)
+		# 		btn.setStyleSheet("background-color: " + colors[boolqweqweqwe])
 
-		def clickme(self, btn):
+		def click_drop_type(self, btn, checked):
+			# print(btn.text())
+			# colors = ("none", "green")
+			if btn.text() in ("Planeur 1", "Planeur 2"):
+				self.buttons[0].setChecked(checked)
+				# btn.setStyleSheet("background-color: " + colors[checked])
+				self.buttons[1].setChecked(checked)
+				# btn.setStyleSheet("background-color: green")
+				if checked:
+					self.buttons[2].setChecked(not checked)
+					# btn.setStyleSheet("background-color: green")
+					self.buttons[3].setChecked(not checked)
+					# btn.setStyleSheet("background-color: green")
+			elif btn.text() in ():
+				pass
 			btn.setStyleSheet("background-color: green")
 			if not btn.isChecked():
 				btn.setStyleSheet("background-color: none")
@@ -282,7 +299,7 @@ class MainUi:
 			self.buttons.append(btn)
 			btn.setFont(QFont('Arial',32))
 			btn.setCheckable(True)
-			btn.clicked.connect(lambda self, btn=btn: clickme(self, btn))
+			btn.clicked.connect(lambda checked, self=self, btn=btn: click_drop_type(self, btn, checked))
 
 		def __create_label(text):
 			labels.append(QLabel(text))

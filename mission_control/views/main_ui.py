@@ -271,6 +271,38 @@ class MainUi:
 		crop = QRect(int(new_attitude.width()/2-x_center-width/2), int(new_attitude.height()/2-y_center-height/2), width, height)
 		self._attitude.setPixmap(new_attitude.copy(crop))
 
+	def set_color_label(self, altitude):
+		self.data['altitude'] = altitude
+		if self.buttons[0].isChecked():
+			self.buttons[2].setStyleSheet("background-color: none")
+			self.buttons[3].setStyleSheet("background-color: none")
+			limits = [0,50,100]
+			if altitude > limits[-1]:
+				self.buttons[0].setStyleSheet("background-color: red")
+				self.buttons[1].setStyleSheet("background-color: red")
+			elif altitude > limits[-2]:
+				self.buttons[0].setStyleSheet("background-color: green")
+				self.buttons[1].setStyleSheet("background-color: green")
+			else:
+				self.buttons[0].setStyleSheet("background-color: red")
+				self.buttons[1].setStyleSheet("background-color: red")
+		elif self.buttons[2].isChecked():
+			self.buttons[0].setStyleSheet("background-color: none")
+			self.buttons[1].setStyleSheet("background-color: none")
+			limits = [0,100]
+			if altitude > limits[-1]:
+				self.buttons[2].setStyleSheet("background-color: green")
+				self.buttons[3].setStyleSheet("background-color: green")
+			else: 
+				self.buttons[2].setStyleSheet("background-color: red")
+				self.buttons[3].setStyleSheet("background-color: red")
+		else:
+			self.buttons[0].setStyleSheet("background-color: none")
+			self.buttons[1].setStyleSheet("background-color: none")
+			self.buttons[2].setStyleSheet("background-color: none")
+			self.buttons[3].setStyleSheet("background-color: none")
+
+
 	def _create_drop_history(self):
 		self._drop_history_layout = QGridLayout()
 	
@@ -279,10 +311,9 @@ class MainUi:
 		# def set_drop_checked(boolqweqweqwe):
 		# 		self.buttons[0].setChecked(boolqweqweqwe)
 		# 		btn.setStyleSheet("background-color: " + colors[boolqweqweqwe])
-
+		
+			
 		def click_drop_type(self, btn, checked):
-			# print(btn.text())
-			# colors = ("none", "green")
 			if btn.text() in ("Planeur 1", "Planeur 2"):
 				self.buttons[0].setChecked(checked)
 				# btn.setStyleSheet("background-color: " + colors[checked])
@@ -293,11 +324,15 @@ class MainUi:
 					# btn.setStyleSheet("background-color: green")
 					self.buttons[3].setChecked(not checked)
 					# btn.setStyleSheet("background-color: green")
-			elif btn.text() in ():
-				pass
-			btn.setStyleSheet("background-color: green")
-			if not btn.isChecked():
-				btn.setStyleSheet("background-color: none")
+			elif btn.text() in ("Vivres", "Habitats"):
+				self.buttons[2].setChecked(checked)
+				self.buttons[3].setChecked(checked)
+				if checked:
+					self.buttons[0].setChecked(not checked)
+					self.buttons[1].setChecked(not checked)
+			# btn.setStyleSheet("background-color: green")
+			# if not btn.isChecked():
+			# 	btn.setStyleSheet("background-color: none")
 			
 
 		def __create_button(text):

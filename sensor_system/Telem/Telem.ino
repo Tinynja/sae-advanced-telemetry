@@ -2,6 +2,7 @@
 #include <MPU6050_light.h>
 #include <Adafruit_BMP085.h>
 #include <Adafruit_GPS.h>
+//include <CustomPitot.h>
 
 //******* PARAMÈTRE AJUSTABLES ******
 #define V1_PIN A1 // Pin d'entrée du capteur de voltage de la batterie principale
@@ -19,6 +20,7 @@ float m2ft = 3.28084;
 MPU6050 imu(Wire);
 Adafruit_BMP085 alt;
 Adafruit_GPS GPS(&Wire);
+//CustomPitot pitot;
 
 long timer = 0;
 int32_t pressionSol;
@@ -37,6 +39,11 @@ void setup() {
   GPS.begin(0x10);
   GPS.sendCommand(PMTK_SET_NMEA_OUTPUT_RMCGGA);
   GPS.sendCommand(PMTK_SET_NMEA_UPDATE_1HZ);
+
+  // Initialisation du Pitot
+  Wire.beginTransmission(0x28);
+  Wire.write(0x00);
+  Wire.endTransmission();
 
   // Initialisation de l'altimètre
   byte statusAlt = alt.begin();
@@ -79,11 +86,17 @@ void setup() {
 }
 
 void loop() {
+
+  long startTime = millis();
   imu.update(); // Mise à jour du IMU (Requis en raison de l'intégration des mesures)
+  
   
   if (millis() - timer > 250) { // Afficher données toutes les secondes
 
-  long startTime = millis();
+  Serial.print("Update time : ");
+  Serial.println(millis()-startTime);
+
+  startTime = millis();
 
     // Mesures du IMU
     Serial.println("--- IMU ---");
@@ -131,10 +144,30 @@ void loop() {
     startTime = millis();
 
     // Mesures du pitot
+    Wire.requestFrom(0x28,4);
+    
+    byte value1 = Wire.read();
+    byte value2 = Wire.read();
+    byte value3 = Wire.read();
+    byte value4 = Wire.read();
+    
+    int16_t dp = value1 << 8 | value2;
+    dp = (0x3FFF) & dp;
+    
+    int16_t dT = value3 << 8 | value4;
+    dT = ((0xFFE0) & dT) >> 5;
+    
+    const float P_min = -1.0f;
+    const float P_max = 1.0f;
+    const float conv = 6894.757;
+    float diff_psi = ((dp - 0.1f * 16383) * (P_max - P_min) / (0.8f * 16383) + P_min);
+    float diff_pa = diff_psi*conv;// - bias;
+    float pitotTemp = ((200.0f * dT) / 2047) - 50;
+    
     Serial.println("--- Pitot ---");
-    Serial.print(F("DELTA_P (Pa) : "));//Serial.println(pitot.getDeltaPa());
-    Serial.print(F("VITESSE (m/s) : "));//Serial.println(pitot.getVelMs());
-    Serial.print(F("TEMP(PIT): "));//Serial.println(pitot.getTemp());
+    Serial.print(F("DELTA_P (Pa) : "));Serial.println(diff_pa);
+    //Serial.print(F("VITESSE (m/s) : "));//Serial.println(pitot.getVelMs());
+    Serial.print(F("TEMP(PIT): "));Serial.println(pitotTemp);
 
     Serial.print("Fetch time: ");
     Serial.print(millis()-startTime);

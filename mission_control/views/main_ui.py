@@ -271,6 +271,38 @@ class MainUi:
 		crop = QRect(int(new_attitude.width()/2-x_center-width/2), int(new_attitude.height()/2-y_center-height/2), width, height)
 		self._attitude.setPixmap(new_attitude.copy(crop))
 
+	def set_color_label(self, altitude):
+		self.data['altitude'] = altitude
+		if self.buttons[0].isChecked():
+			self.buttons[2].setStyleSheet("background-color: none")
+			self.buttons[3].setStyleSheet("background-color: none")
+			limits = [0,50,100]
+			if altitude > limits[-1]:
+				self.buttons[0].setStyleSheet("background-color: red")
+				self.buttons[1].setStyleSheet("background-color: red")
+			elif altitude > limits[-2]:
+				self.buttons[0].setStyleSheet("background-color: green")
+				self.buttons[1].setStyleSheet("background-color: green")
+			else:
+				self.buttons[0].setStyleSheet("background-color: red")
+				self.buttons[1].setStyleSheet("background-color: red")
+		elif self.buttons[2].isChecked():
+			self.buttons[0].setStyleSheet("background-color: none")
+			self.buttons[1].setStyleSheet("background-color: none")
+			limits = [0,100]
+			if altitude > limits[-1]:
+				self.buttons[2].setStyleSheet("background-color: green")
+				self.buttons[3].setStyleSheet("background-color: green")
+			else: 
+				self.buttons[2].setStyleSheet("background-color: red")
+				self.buttons[3].setStyleSheet("background-color: red")
+		else:
+			self.buttons[0].setStyleSheet("background-color: none")
+			self.buttons[1].setStyleSheet("background-color: none")
+			self.buttons[2].setStyleSheet("background-color: none")
+			self.buttons[3].setStyleSheet("background-color: none")
+
+
 	def _create_drop_history(self):
 		self._drop_history_layout = QGridLayout()
 	
@@ -279,11 +311,10 @@ class MainUi:
 		# def set_drop_checked(boolqweqweqwe):
 		# 		self.buttons[0].setChecked(boolqweqweqwe)
 		# 		btn.setStyleSheet("background-color: " + colors[boolqweqweqwe])
-
+		
+			
 		def click_drop_type(self, btn, checked):
-			# print(btn.text())
-			# colors = ("none", "green")
-			if btn.text() in ("Planeur 1", "Planeur 2"):
+			if btn.text() in ("Glider 1", "Glider 2"):
 				self.buttons[0].setChecked(checked)
 				# btn.setStyleSheet("background-color: " + colors[checked])
 				self.buttons[1].setChecked(checked)
@@ -293,11 +324,15 @@ class MainUi:
 					# btn.setStyleSheet("background-color: green")
 					self.buttons[3].setChecked(not checked)
 					# btn.setStyleSheet("background-color: green")
-			elif btn.text() in ():
-				pass
-			btn.setStyleSheet("background-color: green")
-			if not btn.isChecked():
-				btn.setStyleSheet("background-color: none")
+			elif btn.text() in ("Front Door", "Back Door"):
+				self.buttons[2].setChecked(checked)
+				self.buttons[3].setChecked(checked)
+				if checked:
+					self.buttons[0].setChecked(not checked)
+					self.buttons[1].setChecked(not checked)
+			# btn.setStyleSheet("background-color: green")
+			# if not btn.isChecked():
+			# 	btn.setStyleSheet("background-color: none")
 			
 
 		def __create_button(text):
@@ -313,15 +348,15 @@ class MainUi:
 			labels[-1].setFrameStyle(QFrame.Box|QFrame.Plain)
 			labels[-1].setLineWidth(2)
 
-		__create_button("Planeur 1")
-		__create_button("Planeur 2")
-		__create_button("Vivres")
-		__create_button("Habitats")
+		__create_button("Glider 1")
+		__create_button("Glider 2")
+		__create_button("Front Door")
+		__create_button("Back Door")
 
-		__create_label("Altitude Planeur 1")
-		__create_label("Altitude Planeur 2")
-		__create_label("Altitude Vivres")
-		__create_label("Altitude Habitats")
+		__create_label("Altitude Glider 1")
+		__create_label("Altitude Glider 2")
+		__create_label("Altitude Front Door")
+		__create_label("Altitude Back Door")
 		
 		self._drop_history_layout.addWidget(QPushButton("Enregistrement"),0,2)
 		self._drop_history_layout.addWidget(QPushButton("Settings"),0,3)
@@ -337,8 +372,10 @@ class MainUi:
 			self.buttons[2].setChecked(False)
 			self.buttons[3].setDisabled(False)
 
-		def __record_altitude(self, drop, altitude):
-			pass
+	# def __record_altitude(self, switch, altitude):
+	# 	self.data['altitude']= altitude
+	# 	self.data['switch']= switch
+
 
 	def _create_MAP(self):
 		pass

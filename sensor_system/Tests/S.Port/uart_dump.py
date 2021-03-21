@@ -29,8 +29,9 @@ def listen_uart(uart, file, stop_event):
 		# print(f'\rRECORDING ({i})... Press Enter to pause recording. ', end='')
 		# i += 1
 		byte = uart.read()
-		print(byte.hex().upper(), end='', flush=True)
-		file.write(byte)
+		if byte:
+			print(byte.hex().upper()+' ', end='', flush=True)
+			file.write(byte)
 
 
 ################## MAIN CODE ##################
@@ -46,6 +47,7 @@ while 'uart' not in locals():
 		uart = serial.Serial(input('COM Port: '), 57600, timeout=2)
 	except serial.SerialException:
 		print('Couldn\'t connect, please retry. ', end='')
+# uart.baudrate = int(input('Baud (R1=115200, R8=57600): '))
 
 # Main recording loop
 stop_event = threading.Event()
@@ -63,7 +65,12 @@ while True:
 	print('Save file: ' + file_name)
 	f = open(file_name, 'wb', buffering=0)
 	command = input('Press Enter to start/pause recording, or write "new". ')
+	# baud = -1
+	# baud_list = [110, 150, 300, 1200, 2400, 4800, 9600, 19200, 38400, 57600, 115200, 230400, 460800, 921600]
 	while command.lower() != 'new':
+		# baud = (baud+1)%len(baud_list)
+		# print(baud_list[baud])
+		# uart.baudrate = baud_list[baud]
 		# Start the UART reader in another thread because calling input() will halt the current thread
 		uart_thread = threading.Thread(target=lambda: listen_uart(uart, f, stop_event))
 		uart_thread.start()

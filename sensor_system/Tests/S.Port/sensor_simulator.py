@@ -48,4 +48,5 @@ while 'uart' not in locals():
 		print('Couldn\'t connect, please retry. ', end='')
 
 while True:
-	
+	try:
+		input('')

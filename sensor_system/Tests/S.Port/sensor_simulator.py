@@ -21,6 +21,24 @@ class Reprint:
 		else:
 			self._last_print = text
 
+class UARTListener:
+	def __init__(self):
+		self.uart = serial.Serial()
+
+
+	
+	def connect_comport(self):
+		self.uart.close()
+		# List all the available COM port and prompt for selection
+		print('Scanning COM ports...')
+		ports = list_ports.comports()
+		for i,p in enumerate(ports):
+			print(f'{p.device}: {p.manufacturer} ({p.description})')
+		while 'uart' not in dir(self):
+			try:
+				self.uart = serial.Serial(input('COM Port: '), 57600, timeout=2)
+			except serial.SerialException:
+				print('Couldn\'t connect, please retry. ', end='')
 
 def listen_uart(uart, file, stop_event):
 	uart.reset_input_buffer()
@@ -36,17 +54,8 @@ def listen_uart(uart, file, stop_event):
 ################## MAIN CODE ##################
 reprint = Reprint()
 
-# List all the available COM port and prompt for selection
-print('Scanning COM ports...')
-ports = list_ports.comports()
-for i,p in enumerate(ports):
-	print(f'{p.device}: {p.manufacturer} ({p.description})')
-while 'uart' not in locals():
-	try:
-		uart = serial.Serial(input('COM Port: '), 115200, timeout=2)
-	except serial.SerialException:
-		print('Couldn\'t connect, please retry. ', end='')
 
 while True:
+
 	try:
 		input('')

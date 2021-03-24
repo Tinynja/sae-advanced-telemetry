@@ -320,7 +320,7 @@ class MainUi:
 	def _create_drop_history(self):
 		self._drop_history_layout = QGridLayout()
 	
-		labels = []
+		self.labels = []
 		self.buttons = []
 		# def set_drop_checked(boolqweqweqwe):
 		# 		self.buttons[0].setChecked(boolqweqweqwe)
@@ -357,10 +357,10 @@ class MainUi:
 			btn.clicked.connect(lambda checked, self=self, btn=btn: click_drop_type(self, btn, checked))
 
 		def __create_label(text):
-			labels.append(QLabel(text))
-			labels[-1].setFont(QFont('Arial',32))
-			labels[-1].setFrameStyle(QFrame.Box|QFrame.Plain)
-			labels[-1].setLineWidth(2)
+			self.labels.append(QLabel(text))
+			self.labels[-1].setFont(QFont('Arial',32))
+			self.labels[-1].setFrameStyle(QFrame.Box|QFrame.Plain)
+			self.labels[-1].setLineWidth(2)
 
 		__create_button("Glider 1")
 		__create_button("Glider 2")
@@ -379,16 +379,14 @@ class MainUi:
 				if i == 0:
 					self._drop_history_layout.addWidget(self.buttons[j],j+1,0,1,2)
 				elif i == 1:
-					self._drop_history_layout.addWidget(labels[j],j+1,2,1,2)
+					self._drop_history_layout.addWidget(self.labels[j],j+1,2,1,2)
 		
-		if self.buttons[0].isChecked():
-			self.buttons[1].setChecked(True)
-			self.buttons[2].setChecked(False)
-			self.buttons[3].setDisabled(False)
 
-	# def __record_altitude(self, switch, altitude):
+	# def record_altitude(self, label, altitude):
 	# 	self.data['altitude']= altitude
-	# 	self.data['switch']= switch
+	# 	# self.data['switch']= switch
+	# 	# if switch > 1023:
+	# 	self.labels[label].setText(altitude)
 
 
 	def _create_MAP(self):

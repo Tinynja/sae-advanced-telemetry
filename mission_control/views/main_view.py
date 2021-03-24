@@ -26,18 +26,23 @@ class MainView(QMainWindow):
 		# self._ui.buttons_drop_history[0].clicked.connect...
 	
 	def _update_data(self, src, data):
-		print(f'{src}:{data[0]}')
+		if src == "switch_glider1":
+			label = 1
+			if float(data[0])>1024:
+				self._ui.record_altitude(label,self.variables('altitude'))
 		if src == 'TAS':
 			self._ui.set_TAS(float(data[0]))
 		elif src == "altitude":
 			#print(f'{src}:{data[0]}')
 			self._ui.set_color_label(float(data[0]))
 	
-	#def __record_altitude(self, input_command, src, data)
-
-			# self._ui.
+	# def __record_altitude(self, input_command, src, data):
+	# 	if src == "switch_glider1":
+	# 		if float(data[0])>1024:
+	# 			self._ui._crea
+			
 		# elif src == 'TX_LAR':
-			# self._ui.
+		# 	self._ui.
 
 	# 	if src == 'altitude':
 	# 		pass

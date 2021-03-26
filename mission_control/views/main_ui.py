@@ -262,7 +262,7 @@ class MainUi:
 		top = round(calculated_top)
 		top1 = max(0, min(top, self.ALT_variables['original_img_ALT'].height()-self.ALT_variables['height']))
 		self.ALT_variables['ALT_img'].setPixmap(self.ALT_variables['original_img_ALT'].copy(QRect(0, top, self.ALT_variables['original_img_ALT'].width(), self.ALT_variables['height'])))
-		self.ALT_variables['ALT_value'].setText(str(int(ALT)))
+		self.ALT_variables['ALT_value'].setText(str(int(ALT))+ ' ft')
 		limits = [0, 50, 100]
 		if ALT > limits[-1]:
 			self.ALT_variables['ALT_value'].setStyleSheet("background-color: gray; color: white")

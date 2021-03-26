@@ -134,14 +134,23 @@ class MainUi:
 		self._PFD_layout.setContentsMargins(5,5,5,5)
 
 		#indicateur de GS
-		GS_label = QLabel('Vitesse sol (m/s)')
-		GS_label.setAlignment(Qt.AlignCenter)		
-		GS_display.addWidget(GS_label)
-		GS_value = QLabel('12.3')
-		GS_value.setAlignment(Qt.AlignCenter)
-		GS_value.setFont(QFont('Arial',20))
-		GS_value.setFrameStyle(QFrame.Panel | QFrame.Sunken)
-		GS_display.addWidget(GS_value)
+		self.GS_variables={}
+		self.GS_variables['label']=QLabel('Vitesse sol (m/s)')
+		self.GS_variables['label'].setAlignment(Qt.AlignCenter)
+		self.GS_variables['value']= QLabel('12.3')
+		self.GS_variables['value'].setAlignment(Qt.AlignCenter)
+		self.GS_variables['value'].setFont(QFont('Arial',20))
+		self.GS_variables['value'].setFrameStyle(QFrame.Panel | QFrame.Sunken)
+		GS_display.addWidget(self.GS_variables['label'])
+		GS_display.addWidget(self.GS_variables['value'])
+		# GS_label = QLabel('Vitesse sol (m/s)')
+		# GS_label.setAlignment(Qt.AlignCenter)		
+		# GS_display.addWidget(GS_label)
+		# GS_value = QLabel('12.3')
+		# GS_value.setAlignment(Qt.AlignCenter)
+		# GS_value.setFont(QFont('Arial',20))
+		# GS_value.setFrameStyle(QFrame.Panel | QFrame.Sunken)
+		# GS_display.addWidget(GS_value)
 
 		#indicateur de temps écoulé
 		Clock_label = QLabel('Temps écoulé depuis le début du vol')
@@ -243,7 +252,7 @@ class MainUi:
 		top = round(calculated_top)
 		top1 = max(0, min(top, self.TAS_variables['original_img_TAS'].height()-self.TAS_variables['height']))
 		self.TAS_variables['TAS_img'].setPixmap(self.TAS_variables['original_img_TAS'].copy(QRect(0, top, self.TAS_variables['original_img_TAS'].width(), self.TAS_variables['height'])))
-		self.TAS_variables['TAS_value'].setText(str(int(TAS)))
+		self.TAS_variables['TAS_value'].setText(str(int(TAS)) + ' m/s')
 		limits = [0, 20, 50]
 		if TAS > limits[-1]:
 			self.TAS_variables['TAS_value'].setStyleSheet("background-color: red; color: white")
@@ -386,7 +395,7 @@ class MainUi:
 		self.data['ALT']= ALT
 		# self.data['switch']= switch
 		# if switch > 1023:
-		self.labels[label].setText(f'{ALT:.1f}')
+		self.labels[label].setText(f'{ALT:.1f}'+ " ft")
 
 
 	def _create_MAP(self):

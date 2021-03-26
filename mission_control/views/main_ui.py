@@ -382,11 +382,11 @@ class MainUi:
 					self._drop_history_layout.addWidget(self.labels[j],j+1,2,1,2)
 		
 
-	# def record_altitude(self, label, altitude):
-	# 	self.data['altitude']= altitude
-	# 	# self.data['switch']= switch
-	# 	# if switch > 1023:
-	# 	self.labels[label].setText(altitude)
+	def record_altitude(self, label, altitude):
+		self.data['altitude']= altitude
+		# self.data['switch']= switch
+		# if switch > 1023:
+		self.labels[label].setText(f'{altitude:.1f}')
 
 
 	def _create_MAP(self):

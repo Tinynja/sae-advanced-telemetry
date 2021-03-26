@@ -26,20 +26,28 @@ class MainView(QMainWindow):
 		# self._ui.buttons_drop_history[0].clicked.connect...
 	
 	def _update_data(self, src, data):
+		# Save the data in self._ui for later use
+		value, update_time = float(data[0]), int(data[1])
+		# Do action based on type of data received
 		if src == "switch_glider1":
-			label = 1
-			if float(data[0])>1024:
-				self._ui.record_altitude(label,self.variables('altitude'))
+			print(value)
+			if value > 0 and 'altitude' in self._ui.data and ('switch_glider1' in self._ui.data and self._ui.data['switch_glider1'] < 0):
+				self._ui.record_altitude(0, self._ui.data['altitude'])	
+				self._ui.data[src] = value
+			elif 'switch_glider1' not in self._ui.data or self._ui.data['switch_glider1'] < 0:
+				self._ui.data[src] = value
+
 		if src == 'TAS':
-			self._ui.set_TAS(float(data[0]))
+			self._ui.set_TAS(value)
+			self._ui.data[src] = value
 		elif src == "altitude":
-			#print(f'{src}:{data[0]}')
-			self._ui.set_color_label(float(data[0]))
+			self._ui.set_color_label(value)
+			self._ui.data[src] = value
 	
-	# def __record_altitude(self, input_command, src, data):
-	# 	if src == "switch_glider1":
-	# 		if float(data[0])>1024:
-	# 			self._ui._crea
+	def __record_altitude(self, input_command, src, data):
+		if src == "switch_glider1":
+			if float(data[0])>1023:
+				self._ui._crea
 			
 		# elif src == 'TX_LAR':
 		# 	self._ui.

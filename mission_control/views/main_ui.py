@@ -143,14 +143,7 @@ class MainUi:
 		self.GS_variables['value'].setFrameStyle(QFrame.Panel | QFrame.Sunken)
 		GS_display.addWidget(self.GS_variables['label'])
 		GS_display.addWidget(self.GS_variables['value'])
-		# GS_label = QLabel('Vitesse sol (m/s)')
-		# GS_label.setAlignment(Qt.AlignCenter)		
-		# GS_display.addWidget(GS_label)
-		# GS_value = QLabel('12.3')
-		# GS_value.setAlignment(Qt.AlignCenter)
-		# GS_value.setFont(QFont('Arial',20))
-		# GS_value.setFrameStyle(QFrame.Panel | QFrame.Sunken)
-		# GS_display.addWidget(GS_value)
+
 
 		#indicateur de temps écoulé
 		Clock_label = QLabel('Temps écoulé depuis le début du vol')
@@ -210,30 +203,32 @@ class MainUi:
 
 
 		#indicateur de ALT
-		original_img_ALT = QPixmap('resources/ALT_Graphic.PNG')
-		alt = 69
-		calculated_top = 100 - 5.464490874 * (alt-94)
-		top = round(calculated_top)
-		height = 300
-		def __update_img(adj=0):
-			global top1
-			top1 = max(0, min(top+adj, original_img_ALT.height()-height))
-			ALT_img.setPixmap(original_img_ALT.copy(QRect(0, top, original_img_ALT.width(), height)))
-		ALT_img = QLabel()
-		__update_img()
-		ALT_value = QLabel(str(alt))
-		ALT_value.setFrameStyle(QFrame.Box)
-		ALT_value.setFont(QFont('Arial',25))
-		ALT_value.setAlignment(Qt.AlignCenter)	
-		ALT_value.setFrameStyle(QFrame.Panel | QFrame.Raised)
-		ALT_value.setStyleSheet("background-color: green; color: white")
+		self.ALT_variables={}
+		self.ALT_variables['height']=300
+		self.ALT_variables['original_img_ALT']=QPixmap('resources/ALT_Graphic.PNG')
+		self.data['ALT']=69
+		# calculated_top = 100 - 5.464490874 * (alt-94)
+		# top = round(calculated_top)
+		# def __update_img(adj=0):
+		# 	global top1
+		# 	top1 = max(0, min(top+adj, original_img_ALT.height()-height))
+		# 	ALT_img.setPixmap(original_img_ALT.copy(QRect(0, top, original_img_ALT.width(), height)))
+		self.ALT_variables['ALT_img']=QLabel()
+		self.ALT_variables['ALT_img'].setFrameStyle(QFrame.Box)
+		self.ALT_variables['ALT_value']=QLabel()
+		self.ALT_variables['ALT_value'].setFrameStyle(QFrame.Box)
+		self.ALT_variables['ALT_value'].setFont(QFont('Arial',25))
+		self.ALT_variables['ALT_value'].setAlignment(Qt.AlignCenter)
+		self.ALT_variables['ALT_value'].setFrameStyle(QFrame.Panel | QFrame.Raised)
+		self.ALT_variables['ALT_value'].setStyleSheet("background-color: green; color: white")
+		# __update_img()
 		alt_dummy_widget = QWidget()
 		ALT_layout = QVBoxLayout(alt_dummy_widget)
 		ALT_layout.setContentsMargins(5,0,5,0)
 		ALT_layout.addStretch(1)
-		ALT_layout.addWidget(ALT_value)
+		ALT_layout.addWidget(self.ALT_variables['ALT_value'])
 		ALT_layout.addStretch(1)
-		ALT_display.addWidget(ALT_img)
+		ALT_display.addWidget(self.ALT_variables['ALT_img'])
 		ALT_display.addWidget(alt_dummy_widget)
 
 		#Assemblage de top_layout et bottom_layout

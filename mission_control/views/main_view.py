@@ -58,6 +58,7 @@ class MainView(QMainWindow):
 			self._ui.data[src] = value
 		elif src == "ALT":
 			self._ui.set_color_label(value)
+			self._ui.set_ALT(value)
 			self._ui.data[src] = value
 		elif src == 'GS':
 			self._ui.GS_variables['value'].setText(f'{float(data[0]):.1f}')

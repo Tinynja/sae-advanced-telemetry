@@ -29,30 +29,34 @@ class MainView(QMainWindow):
 		# Save the data in self._ui for later use
 		value, update_time = float(data[0]), int(data[1])
 		# Do action based on type of data received
-		if src == "switch_glider1":
+		if src == "GLI1":
 			print(value)
-			if value > 0 and 'altitude' in self._ui.data and ('switch_glider1' in self._ui.data and self._ui.data['switch_glider1'] < 0):
-				self._ui.record_altitude(0, self._ui.data['altitude'])	
+			if value > 0 and 'ALT' in self._ui.data and ('GLI1' in self._ui.data and self._ui.data['GLI1'] < 0):
+				self._ui.record_altitude(0, self._ui.data['ALT'])	
 				self._ui.data[src] = value
-			elif 'switch_glider1' not in self._ui.data or self._ui.data['switch_glider1'] < 0:
+			elif 'GLI1' not in self._ui.data or self._ui.data['GLI1'] > 0: #@amine si on met < lorsque sa commence positif sa foire alors jai change pour > mais sa fait que si l<operateur switch off et back on ca va record une 2e fois
+					self._ui.data[src] = value
+		elif src == "GLI2":
+			if value > 0 and 'ALT' in self._ui.data and ('GLI2' in self._ui.data and self._ui.data['GLI2'] < 0):
+				self._ui.record_altitude(1, self._ui.data['ALT'])	
 				self._ui.data[src] = value
-
-		if src == 'TAS':
+			elif 'GLI2' not in self._ui.data or self._ui.data['GLI2'] > 0:
+				self._ui.data[src] = value
+		elif src == "FDOR":
+			if value > 0 and 'ALT' in self._ui.data and ('FDOR' in self._ui.data and self._ui.data['FDOR'] < 0):
+				self._ui.record_altitude(2, self._ui.data['ALT'])	
+				self._ui.data[src] = value
+			elif 'FDOR' not in self._ui.data or self._ui.data['FDOR'] > 0:
+				self._ui.data[src] = value
+		elif src == "BDOR":
+			if value > 0 and 'ALT' in self._ui.data and ('BDOR' in self._ui.data and self._ui.data['BDOR'] < 0):
+				self._ui.record_altitude(3, self._ui.data['ALT'])	
+				self._ui.data[src] = value
+			elif 'BDOR' not in self._ui.data or self._ui.data['BDOR'] > 0:
+				self._ui.data[src] = value
+		elif src == 'TAS':
 			self._ui.set_TAS(value)
 			self._ui.data[src] = value
-		elif src == "altitude":
+		elif src == "ALT":
 			self._ui.set_color_label(value)
 			self._ui.data[src] = value
-	
-	def __record_altitude(self, input_command, src, data):
-		if src == "switch_glider1":
-			if float(data[0])>1023:
-				self._ui._crea
-			
-		# elif src == 'TX_LAR':
-		# 	self._ui.
-
-	# 	if src == 'altitude':
-	# 		pass
-	# 	if src == 'switch':
-	# 		if 

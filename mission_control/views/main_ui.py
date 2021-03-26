@@ -285,16 +285,16 @@ class MainUi:
 		crop = QRect(int(new_attitude.width()/2-x_center-width/2), int(new_attitude.height()/2-y_center-height/2), width, height)
 		self._attitude.setPixmap(new_attitude.copy(crop))
 
-	def set_color_label(self, altitude):
-		self.data['altitude'] = altitude
+	def set_color_label(self, ALT):
+		self.data['ALT'] = ALT
 		if self.buttons[0].isChecked():
 			self.buttons[2].setStyleSheet("background-color: none")
 			self.buttons[3].setStyleSheet("background-color: none")
 			limits = [0,50,100]
-			if altitude > limits[-1]:
+			if ALT > limits[-1]:
 				self.buttons[0].setStyleSheet("background-color: red")
 				self.buttons[1].setStyleSheet("background-color: red")
-			elif altitude > limits[-2]:
+			elif ALT > limits[-2]:
 				self.buttons[0].setStyleSheet("background-color: green")
 				self.buttons[1].setStyleSheet("background-color: green")
 			else:
@@ -304,7 +304,7 @@ class MainUi:
 			self.buttons[0].setStyleSheet("background-color: none")
 			self.buttons[1].setStyleSheet("background-color: none")
 			limits = [0,100]
-			if altitude > limits[-1]:
+			if ALT > limits[-1]:
 				self.buttons[2].setStyleSheet("background-color: green")
 				self.buttons[3].setStyleSheet("background-color: green")
 			else: 
@@ -382,11 +382,11 @@ class MainUi:
 					self._drop_history_layout.addWidget(self.labels[j],j+1,2,1,2)
 		
 
-	def record_altitude(self, label, altitude):
-		self.data['altitude']= altitude
+	def record_altitude(self, label, ALT):
+		self.data['ALT']= ALT
 		# self.data['switch']= switch
 		# if switch > 1023:
-		self.labels[label].setText(f'{altitude:.1f}')
+		self.labels[label].setText(f'{ALT:.1f}')
 
 
 	def _create_MAP(self):

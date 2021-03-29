@@ -30,7 +30,6 @@ class MainView(QMainWindow):
 		value, update_time = float(data[0]), int(data[1])
 		# Do action based on type of data received
 		if src == "GLI1":
-			print(value)
 			if value > 0 and 'ALT' in self._ui.data and ('GLI1' in self._ui.data and self._ui.data['GLI1'] < 0):
 				self._ui.record_altitude(0, self._ui.data['ALT'])	
 				self._ui.data[src] = value
@@ -59,4 +58,7 @@ class MainView(QMainWindow):
 			self._ui.data[src] = value
 		elif src == "ALT":
 			self._ui.set_color_label(value)
+			self._ui.set_ALT(value)
 			self._ui.data[src] = value
+		elif src == 'GS':
+			self._ui.GS_variables['value'].setText(f'{float(data[0]):.1f}')

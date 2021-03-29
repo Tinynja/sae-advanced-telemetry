@@ -2,7 +2,6 @@
 	#define SPORTHUB_H
 
 	#include <SPort.h>
-	#include <SoftwareSerial.h> //debug
 
 	class SPortHub {
 		public:
@@ -15,8 +14,6 @@
 			void SendData(sportData data, int header);
 			void SendByte(byte B);
 			byte GetChecksum(byte data[], int len);
-
-			SoftwareSerial* mySerial; //debug
 
 			SPortSensor** _sensors;
 			int _hubId;

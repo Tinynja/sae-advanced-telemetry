@@ -3,13 +3,10 @@
 SPortHub::SPortHub(int hubId):
 	_hubId(hubId), // Range: 0-27
 	_sensorIndex(0) {
-	// mySerial = new SoftwareSerial(2,3);
 }
 
 void SPortHub::begin() {
 	Serial.begin(SPORT_BAUD);
-	// mySerial->begin(57600); //debug
-	// mySerial->println("Test!"); //debug
 }
 
 void SPortHub::registerSensor(SPortSensor& sensor) {
@@ -51,9 +48,6 @@ void SPortHub::SendSensor() {
 		return;
 	}
 	//Send the data of the current sensor
-	// mySerial->println("New data!");
-	// mySerial->println(_sensors[_sensorIndex]->sensorId);
-	// mySerial->println(_sensors[_sensorIndex]->precision);
 	sportData data = _sensors[_sensorIndex]->getData();
 	SendData(data, SPORT_HEADER_DATA);
 	//If the current sensor is dataSent sending its data (e.g. GPS must
@@ -69,7 +63,6 @@ void SPortHub::SendData(sportData data, int header) {
 	//longHelper helps to swap endianness of a long
     longHelper lh;
     lh.longValue = data.value;
-	// mySerial->println(data.value);
 	//Construct the frame (with the correct endianness)
 	byte frame[8];
 	frame[0] = header;    

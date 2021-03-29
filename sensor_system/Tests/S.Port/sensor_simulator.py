@@ -152,12 +152,12 @@ print('Sensor IDs: https://www.ordinoscope.net/static/arduino-frskysp/docs/html/
 print('Data IDs: https://www.ordinoscope.net/static/arduino-frskysp/docs/html/_frsky_s_p_8h.html')
 print()
 
-# sensor.interactive_data_input()
+sensor.interactive_data_input()
 while True:
 	try:
 		# time.sleep(10)
-		sensor.interactive_data_input()
-		# sensor.new_value()
+		# sensor.interactive_data_input()
+		sensor.new_value()
 		# sensor.programmed_data_input()
 		# sensor.loop_data_input()
 		# print(f'Waiting for receiver to poll sensor 0x{sensor.sensor_id.hex().upper()}...')

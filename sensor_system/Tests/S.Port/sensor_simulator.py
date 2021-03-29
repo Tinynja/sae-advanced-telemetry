@@ -1,7 +1,7 @@
 # Built-in libraries
 import serial
 from serial.tools import list_ports
-import threading, time
+import threading, time, random
 
 
 ################## FUNCTIONS & CLASSES ##################
@@ -62,6 +62,8 @@ class UARTListener:
 
 class SPortSensor:
 	def __init__(self):
+		self.endian = 'little'
+
 		self.last_request = b''
 		self.clear_reponse_info()
 		
@@ -70,44 +72,75 @@ class SPortSensor:
 		self.uart_listener.start_comport_listener(self.respond)
 
 	def respond(self, request):
-		self.last_request = request
 		# Only send a response if we are ready to respond (data ready, got 0x7E header, correct sensor_id was polled)
-		if not (self.sensor_id and self.data_id and self.value) or self.last_request != b'\x7E' or request != self.sensor_id: return
+		if None in (self.sensor_id, self.data_id, self.value) or self.last_request != b'\x7E' or request != self.sensor_id:
+			if request: self.last_request = request
+			return
 		# We are ready to respond
-		packet = b'\x10' + self.sensor_id + self.data_id + self.value
-		packet += self.calculate_crc(packet)
-		print(f"Sending packet: {[f'{B:X} ' + ('  ' if i in [0, 2, 6] else '') for i,B in enumerate(packet)]}")
-		self.uart_listener.uart.write(packet)
-		self.clear_reponse_info()
+		# self.programmed_data_input()
+		self.uart_listener.uart.write(self.packet)
+		# self.clear_reponse_info()
+		self.last_request = request
+	
+	def generate_packet(self):
+		self.packet = b'\x10' + self.data_id + self.value
+		self.packet += self.calculate_crc(self.packet)
 	
 	def interactive_data_input(self):
 		# Sensor physical ID
-		self.sensor_id = int(input('Sensor ID (1B): 0x'), 16)
-		assert self.sensor_id < 0xFF
-		self.sensor_id = self.sensor_id.to_bytes(1, 'little')
+		# sensor_id = 0
+		sensor_id = int(input('Sensor ID (1B): 0x'), 16)
+		assert sensor_id < 0xFF
 		# Data ID
-		self.data_id = int(input('Data ID (2B): 0x'), 16)
-		assert self.data_id < 0xFFFF
-		self.data_id = self.data_id.to_bytes(2, 'little')
+		data_id = int(input('Data ID (2B): 0x'), 16)
+		assert data_id < 0xFFFF
 		# Data ID
-		self.value = int(input('Value (4B): '))
-		assert self.value < 0xFFFFFFFF
-		self.value = self.value.to_bytes(4, 'little')
+		value = int(eval(input('Value (4B): ')))
+		assert value < 0xFFFFFFFF
+		# Save new sensor information
+		self.sensor_id = sensor_id.to_bytes(1, self.endian)
+		self.data_id = data_id.to_bytes(2, self.endian)
+		self.value = value.to_bytes(4, self.endian)
+		self.generate_packet()
+	
+	def new_value(self):
+		# Data ID
+		value = int(eval(input('Value (4B): ')))
+		assert value < 0xFFFFFFFF
+		self.value = value.to_bytes(4, self.endian)
+		self.generate_packet()
+
+	def loop_data_input(self):
+		input()
+		# self.packet = b'\x10' + self.data_id + self.value
+		# self.crc = (self.crc+1)%0x100
+		# self.packet = self.packet + self.crc.to_bytes(1, self.endian)
+		self.data_id = ((int.from_bytes(self.data_id, self.endian)+0x10)%0xFFFF).to_bytes(4, self.endian)
+		# self.value = int(random.random()*0xFFFFFFFF).to_bytes(4, self.endian)
+		# print(f'Using value: {self.value[::-1].hex()}')
+		self.generate_packet()
+
+	def programmed_data_input(self):
+		self.sensor_id = int('00'.replace(' ',''), 16).to_bytes(1, self.endian)
+		self.data_id = int('04 00'.replace(' ',''), 16).to_bytes(2, self.endian)
+		self.value = int(123).to_bytes(4, self.endian)
+		self.generate_packet()
 	
 	def clear_reponse_info(self):
 		self.sensor_id = None
 		self.data_id = None
 		self.value = None
+		self.crc = 0xFF
 	
 	def calculate_crc(self, data):
 		# https://www.digi.com/resources/documentation/Digidocs/90002002/Tasks/t_calculate_checksum.htm?TocPath=API%20Operation%7CAPI%20frame%20format%7C_____1
 		# 1. Add all bytes of the packet
 		CRC = sum(data)
-		# 2. Keep only the lowest 8 bits from the result
-		CRC &= 0xFF
+		# 2. Add the carry bits so that we only have 8 bits
+		CRC = (CRC & 0xFF) + (CRC >> 8)
 		# 3. Subtract this quantity from 0xFF
 		CRC = 0xFF-CRC
-		return CRC.to_bytes(1, 'little')
+		return CRC.to_bytes(1, self.endian)
 
 ################## MAIN CODE ##################
 reprint = Reprint()
@@ -119,21 +152,26 @@ print('Sensor IDs: https://www.ordinoscope.net/static/arduino-frskysp/docs/html/
 print('Data IDs: https://www.ordinoscope.net/static/arduino-frskysp/docs/html/_frsky_s_p_8h.html')
 print()
 
+# sensor.interactive_data_input()
 while True:
 	try:
+		# time.sleep(10)
 		sensor.interactive_data_input()
-		print(f'Waiting for receiver to poll sensor 0x{sensor.sensor_id.hex().upper()}...')
-		timer = 0
-		while sensor.sensor_id is not None and timer < 2:
-			time.sleep(0.1)
-			timer += 0.1
-			if timer > 2:
-				print('Timed out!')
-				sensor.clear_reponse_info
+		# sensor.new_value()
+		# sensor.programmed_data_input()
+		# sensor.loop_data_input()
+		# print(f'Waiting for receiver to poll sensor 0x{sensor.sensor_id.hex().upper()}...')
+		print(f"New packet to send: {' '.join([f'{B:02X}' + ('  ' if i in [0, 2,  6] else '') for i,B in enumerate(sensor.packet)])}")
+		# start_time = time.time()
+		# while sensor.sensor_id is not None:
+		# 	if time.time()-start_time > 2:
+		# 		print('Timed out!')
+		# 		sensor.clear_reponse_info()
+		# 		break
 	except KeyboardInterrupt:
 		print('\nExiting...')
 		sensor.uart_listener.stop_comport_listener()
 		exit()
 	except:
 		print('ERROR: Incorrect value!')
-		SPortSensor.clear_reponse_info
+		# SPortSensor.clear_reponse_info

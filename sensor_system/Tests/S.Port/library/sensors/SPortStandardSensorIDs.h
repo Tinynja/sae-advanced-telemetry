@@ -1,0 +1,62 @@
+#ifndef SPORTSTANDARDSENSORIDS_H
+	#define SPORTSTANDARDSENSORIDS_H
+
+	// These are the data_id associated with the sensor types
+	// 16 data_ids are actually available for each sensor type,
+	// from 0xXXX0 to 0xXXXF
+	#define SPORT_SENSOR_ALT			0x0100
+	#define SPORT_SENSOR_VARIO			0x0110
+	#define SPORT_SENSOR_CURR			0x0200
+	#define SPORT_SENSOR_VFAS			0x0210
+	#define SPORT_SENSOR_CELLS			0x0300
+	#define SPORT_SENSOR_T1				0x0400
+	#define SPORT_SENSOR_T2				0x0410
+	#define SPORT_SENSOR_RPM			0x0500
+	#define SPORT_SENSOR_FUEL			0x0600
+	#define SPORT_SENSOR_ACCX			0x0700
+	#define SPORT_SENSOR_ACCY			0x0710
+	#define SPORT_SENSOR_ACCZ			0x0720
+	#define SPORT_SENSOR_GPS_LONG_LATI	0x0800
+	#define SPORT_SENSOR_GPS_ALT		0x0820
+	#define SPORT_SENSOR_GPS_SPEED		0x0830
+	#define SPORT_SENSOR_GPS_COURSE		0x0840 // Heading
+	#define SPORT_SENSOR_GPS_TIME_DATE	0x0850
+	#define SPORT_SENSOR_A3				0x0900
+	#define SPORT_SENSOR_A4				0x0910
+	#define SPORT_SENSOR_AIR_SPEED		0x0a00
+	#define SPORT_SENSOR_FUEL_QTY		0x0a10
+	#define SPORT_SENSOR_POWERBOX_BATT1	0x0b00
+	#define SPORT_SENSOR_POWERBOX_BATT2	0x0b10
+	#define SPORT_SENSOR_POWERBOX_STATE	0x0b20
+	#define SPORT_SENSOR_POWERBOX_CNSP	0x0b30
+	#define SPORT_SENSOR_CHAN			0x0b40
+	#define SPORT_SENSOR_ESC_V_A		0x0b50
+	#define SPORT_SENSOR_ESC_RPM_ENERGY	0x0b60
+	#define SPORT_SENSOR_ESC_TEMP		0x0b70
+	#define SPORT_SENSOR_RBES			0x0b80
+	#define SPORT_SENSOR_CH1A_CH2A		0x0b90
+	#define SPORT_SENSOR_CH3A_CH4A		0x0ba0
+	#define SPORT_SENSOR_CH5A_CH6A		0x0bb0
+	#define SPORT_SENSOR_CH7A_CH8A		0x0bc0
+	#define SPORT_SENSOR_ENG_T1			0x0d00
+	#define SPORT_SENSOR_ENG_T2			0x0d10
+	#define SPORT_SENSOR_ENG_RPM		0x0d20
+	#define SPORT_SENSOR_ENG_FUEL		0x0d30
+	#define SPORT_SENSOR_ENG_PERC		0x0d40
+	#define SPORT_SENSOR_ENG_FUEL_FLOW	0x0d50
+	#define SPORT_SENSOR_ENG_MFI		0x0d60
+	#define SPORT_SENSOR_ENG_AFI		0x0d70
+	#define SPORT_SENSOR_BEC			0x0e50
+
+	// These sensors are special as there can only be a single instance
+	#define SPORT_SENSOR_RSSI			0xf101
+	#define SPORT_SENSOR_A1				0xf102
+	#define SPORT_SENSOR_A2				0xf103
+
+	// #define SPORT_SENSOR_SP2UART_A	0xfd00
+	// #define SPORT_SENSOR_SP2UART_B	0xfd01
+	// #define SPORT_SENSOR_BATT		0xf104
+	// #define SPORT_SENSOR_SWR			0xf105
+	// #define SPORT_SENSOR_XJT_VERSION	0xf106
+
+#endif

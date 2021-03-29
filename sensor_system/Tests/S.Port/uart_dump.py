@@ -49,7 +49,7 @@ while 'uart' not in locals():
 		print('Couldn\'t connect, please retry. ', end='')
 while 'baud' not in locals():
 	try:
-		baud = int(input('Baud (default=57600): '))
+		baud = int(input('Baud (default=57600): ') or 57600)
 		uart.baudrate = baud
 	except ValueError:
 		print('Please enter an integer. ', end='')

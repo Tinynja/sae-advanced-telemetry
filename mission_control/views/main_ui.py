@@ -1,5 +1,6 @@
 # Built-in libraries
 from math import cos, sin, radians
+import time
 
 # Pipy libraries
 from PyQt5.QtGui import *
@@ -149,12 +150,17 @@ class MainUi:
 		Clock_label = QLabel('Temps écoulé depuis le début du vol')
 		Clock_label.setAlignment(Qt.AlignCenter)	
 		Clock_display.addWidget(Clock_label)
-		Clock_value = QLabel('01:22.1')
+		Clock_value = QLabel('1:30:29')
 		Clock_value.setAlignment(Qt.AlignCenter)	
 		Clock_value.setFont(QFont('Arial',20))
 		Clock_value.setFrameStyle(QFrame.Panel | QFrame.Sunken)
 		Clock_display.addWidget(Clock_value)
-
+		start_time = time.time()
+		#delay = time.sleep(0.5)
+		current_time = time.time()
+		while current_time != start_time:
+			Clock_value = QLabel(f'{current_time-start_time}')
+			current_time = time.time()
 		#indicateur de vertical speed
 		VSI_label = QLabel('Vitesse verticale (fpm)')
 		VSI_label.setAlignment(Qt.AlignCenter)		

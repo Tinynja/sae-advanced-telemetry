@@ -134,14 +134,16 @@ class MainUi:
 		self._PFD_layout.setContentsMargins(5,5,5,5)
 
 		#indicateur de GS
-		GS_label = QLabel('Vitesse sol (m/s)')
-		GS_label.setAlignment(Qt.AlignCenter)		
-		GS_display.addWidget(GS_label)
-		GS_value = QLabel('12.3')
-		GS_value.setAlignment(Qt.AlignCenter)
-		GS_value.setFont(QFont('Arial',20))
-		GS_value.setFrameStyle(QFrame.Panel | QFrame.Sunken)
-		GS_display.addWidget(GS_value)
+		self.GS_variables={}
+		self.GS_variables['label']=QLabel('Vitesse sol (m/s)')
+		self.GS_variables['label'].setAlignment(Qt.AlignCenter)
+		self.GS_variables['value']= QLabel('12.3')
+		self.GS_variables['value'].setAlignment(Qt.AlignCenter)
+		self.GS_variables['value'].setFont(QFont('Arial',20))
+		self.GS_variables['value'].setFrameStyle(QFrame.Panel | QFrame.Sunken)
+		GS_display.addWidget(self.GS_variables['label'])
+		GS_display.addWidget(self.GS_variables['value'])
+
 
 		#indicateur de temps écoulé
 		Clock_label = QLabel('Temps écoulé depuis le début du vol')
@@ -201,30 +203,32 @@ class MainUi:
 
 
 		#indicateur de ALT
-		original_img_ALT = QPixmap('resources/ALT_Graphic.PNG')
-		alt = 69
-		calculated_top = 100 - 5.464490874 * (alt-94)
-		top = round(calculated_top)
-		height = 300
-		def __update_img(adj=0):
-			global top1
-			top1 = max(0, min(top+adj, original_img_ALT.height()-height))
-			ALT_img.setPixmap(original_img_ALT.copy(QRect(0, top, original_img_ALT.width(), height)))
-		ALT_img = QLabel()
-		__update_img()
-		ALT_value = QLabel(str(alt))
-		ALT_value.setFrameStyle(QFrame.Box)
-		ALT_value.setFont(QFont('Arial',25))
-		ALT_value.setAlignment(Qt.AlignCenter)	
-		ALT_value.setFrameStyle(QFrame.Panel | QFrame.Raised)
-		ALT_value.setStyleSheet("background-color: green; color: white")
+		self.ALT_variables={}
+		self.ALT_variables['height']=300
+		self.ALT_variables['original_img_ALT']=QPixmap('resources/ALT_Graphic.PNG')
+		self.data['ALT']=69
+		# calculated_top = 100 - 5.464490874 * (alt-94)
+		# top = round(calculated_top)
+		# def __update_img(adj=0):
+		# 	global top1
+		# 	top1 = max(0, min(top+adj, original_img_ALT.height()-height))
+		# 	ALT_img.setPixmap(original_img_ALT.copy(QRect(0, top, original_img_ALT.width(), height)))
+		self.ALT_variables['ALT_img']=QLabel()
+		self.ALT_variables['ALT_img'].setFrameStyle(QFrame.Box)
+		self.ALT_variables['ALT_value']=QLabel()
+		self.ALT_variables['ALT_value'].setFrameStyle(QFrame.Box)
+		self.ALT_variables['ALT_value'].setFont(QFont('Arial',25))
+		self.ALT_variables['ALT_value'].setAlignment(Qt.AlignCenter)
+		self.ALT_variables['ALT_value'].setFrameStyle(QFrame.Panel | QFrame.Raised)
+		self.ALT_variables['ALT_value'].setStyleSheet("background-color: green; color: white")
+		# __update_img()
 		alt_dummy_widget = QWidget()
 		ALT_layout = QVBoxLayout(alt_dummy_widget)
 		ALT_layout.setContentsMargins(5,0,5,0)
 		ALT_layout.addStretch(1)
-		ALT_layout.addWidget(ALT_value)
+		ALT_layout.addWidget(self.ALT_variables['ALT_value'])
 		ALT_layout.addStretch(1)
-		ALT_display.addWidget(ALT_img)
+		ALT_display.addWidget(self.ALT_variables['ALT_img'])
 		ALT_display.addWidget(alt_dummy_widget)
 
 		#Assemblage de top_layout et bottom_layout
@@ -243,7 +247,7 @@ class MainUi:
 		top = round(calculated_top)
 		top1 = max(0, min(top, self.TAS_variables['original_img_TAS'].height()-self.TAS_variables['height']))
 		self.TAS_variables['TAS_img'].setPixmap(self.TAS_variables['original_img_TAS'].copy(QRect(0, top, self.TAS_variables['original_img_TAS'].width(), self.TAS_variables['height'])))
-		self.TAS_variables['TAS_value'].setText(str(int(TAS)))
+		self.TAS_variables['TAS_value'].setText(str(int(TAS)) + ' m/s')
 		limits = [0, 20, 50]
 		if TAS > limits[-1]:
 			self.TAS_variables['TAS_value'].setStyleSheet("background-color: red; color: white")
@@ -258,7 +262,7 @@ class MainUi:
 		top = round(calculated_top)
 		top1 = max(0, min(top, self.ALT_variables['original_img_ALT'].height()-self.ALT_variables['height']))
 		self.ALT_variables['ALT_img'].setPixmap(self.ALT_variables['original_img_ALT'].copy(QRect(0, top, self.ALT_variables['original_img_ALT'].width(), self.ALT_variables['height'])))
-		self.ALT_variables['ALT_value'].setText(str(int(ALT)))
+		self.ALT_variables['ALT_value'].setText(str(int(ALT))+ ' ft')
 		limits = [0, 50, 100]
 		if ALT > limits[-1]:
 			self.ALT_variables['ALT_value'].setStyleSheet("background-color: gray; color: white")
@@ -285,16 +289,16 @@ class MainUi:
 		crop = QRect(int(new_attitude.width()/2-x_center-width/2), int(new_attitude.height()/2-y_center-height/2), width, height)
 		self._attitude.setPixmap(new_attitude.copy(crop))
 
-	def set_color_label(self, altitude):
-		self.data['altitude'] = altitude
+	def set_color_label(self, ALT):
+		self.data['ALT'] = ALT
 		if self.buttons[0].isChecked():
 			self.buttons[2].setStyleSheet("background-color: none")
 			self.buttons[3].setStyleSheet("background-color: none")
 			limits = [0,50,100]
-			if altitude > limits[-1]:
+			if ALT > limits[-1]:
 				self.buttons[0].setStyleSheet("background-color: red")
 				self.buttons[1].setStyleSheet("background-color: red")
-			elif altitude > limits[-2]:
+			elif ALT > limits[-2]:
 				self.buttons[0].setStyleSheet("background-color: green")
 				self.buttons[1].setStyleSheet("background-color: green")
 			else:
@@ -304,7 +308,7 @@ class MainUi:
 			self.buttons[0].setStyleSheet("background-color: none")
 			self.buttons[1].setStyleSheet("background-color: none")
 			limits = [0,100]
-			if altitude > limits[-1]:
+			if ALT > limits[-1]:
 				self.buttons[2].setStyleSheet("background-color: green")
 				self.buttons[3].setStyleSheet("background-color: green")
 			else: 
@@ -320,7 +324,7 @@ class MainUi:
 	def _create_drop_history(self):
 		self._drop_history_layout = QGridLayout()
 	
-		labels = []
+		self.labels = []
 		self.buttons = []
 		# def set_drop_checked(boolqweqweqwe):
 		# 		self.buttons[0].setChecked(boolqweqweqwe)
@@ -357,10 +361,10 @@ class MainUi:
 			btn.clicked.connect(lambda checked, self=self, btn=btn: click_drop_type(self, btn, checked))
 
 		def __create_label(text):
-			labels.append(QLabel(text))
-			labels[-1].setFont(QFont('Arial',32))
-			labels[-1].setFrameStyle(QFrame.Box|QFrame.Plain)
-			labels[-1].setLineWidth(2)
+			self.labels.append(QLabel(text))
+			self.labels[-1].setFont(QFont('Arial',32))
+			self.labels[-1].setFrameStyle(QFrame.Box|QFrame.Plain)
+			self.labels[-1].setLineWidth(2)
 
 		__create_button("Glider 1")
 		__create_button("Glider 2")
@@ -379,16 +383,14 @@ class MainUi:
 				if i == 0:
 					self._drop_history_layout.addWidget(self.buttons[j],j+1,0,1,2)
 				elif i == 1:
-					self._drop_history_layout.addWidget(labels[j],j+1,2,1,2)
+					self._drop_history_layout.addWidget(self.labels[j],j+1,2,1,2)
 		
-		if self.buttons[0].isChecked():
-			self.buttons[1].setChecked(True)
-			self.buttons[2].setChecked(False)
-			self.buttons[3].setDisabled(False)
 
-	# def __record_altitude(self, switch, altitude):
-	# 	self.data['altitude']= altitude
-	# 	self.data['switch']= switch
+	def record_altitude(self, label, ALT):
+		self.data['ALT']= ALT
+		# self.data['switch']= switch
+		# if switch > 1023:
+		self.labels[label].setText(f'{ALT:.1f}'+ " ft")
 
 
 	def _create_MAP(self):

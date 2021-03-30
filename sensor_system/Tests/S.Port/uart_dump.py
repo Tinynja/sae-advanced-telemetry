@@ -47,7 +47,12 @@ while 'uart' not in locals():
 		uart = serial.Serial(input('COM Port: '), 57600, timeout=2)
 	except serial.SerialException:
 		print('Couldn\'t connect, please retry. ', end='')
-# uart.baudrate = int(input('Baud (R1=115200, R8=57600): '))
+while 'baud' not in locals():
+	try:
+		baud = int(input('Baud (default=57600): ') or 57600)
+		uart.baudrate = baud
+	except ValueError:
+		print('Please enter an integer. ', end='')
 
 # Main recording loop
 stop_event = threading.Event()

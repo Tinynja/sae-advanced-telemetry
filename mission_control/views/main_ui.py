@@ -258,18 +258,28 @@ class MainUi:
 
 	def set_ALT(self, ALT):
 		self.data['alt'] = ALT
+		if self.buttons[0].isChecked():
+			self.ALT_variables['original_img_ALT']=QPixmap('resources/ALT_Graphic.PNG')
+			limits = [0, 50, 100]
+			if ALT > limits[-1]:
+				self.ALT_variables['ALT_value'].setStyleSheet("background-color: gray; color: white")
+			elif ALT > limits[-2]:
+				self.ALT_variables['ALT_value'].setStyleSheet("background-color: green; color: white")
+			else:
+				self.ALT_variables['ALT_value'].setStyleSheet("background-color: gray; color: white")
+		elif self.buttons[2].isChecked():
+			self.ALT_variables['original_img_ALT']=QPixmap('resources/ALT_Graphic_LARG.PNG')
+			limits = [0,100]
+			if ALT > limits[-1]:
+				self.ALT_variables['ALT_value'].setStyleSheet("background-color: green; color: white")
+			else:
+				self.ALT_variables['ALT_value'].setStyleSheet("background-color: gray; color: white")
 		calculated_top = 100 - 5.464490874 * (ALT-94)
 		top = round(calculated_top)
 		top1 = max(0, min(top, self.ALT_variables['original_img_ALT'].height()-self.ALT_variables['height']))
 		self.ALT_variables['ALT_img'].setPixmap(self.ALT_variables['original_img_ALT'].copy(QRect(0, top, self.ALT_variables['original_img_ALT'].width(), self.ALT_variables['height'])))
 		self.ALT_variables['ALT_value'].setText(str(int(ALT))+ ' ft')
-		limits = [0, 50, 100]
-		if ALT > limits[-1]:
-			self.ALT_variables['ALT_value'].setStyleSheet("background-color: gray; color: white")
-		elif ALT > limits[-2]:
-			self.ALT_variables['ALT_value'].setStyleSheet("background-color: green; color: white")
-		else:
-			self.ALT_variables['ALT_value'].setStyleSheet("background-color: gray; color: white")
+
 
 	# Indicateur d'assiette
 	def set_attitude(self, pitch=None, roll=None):

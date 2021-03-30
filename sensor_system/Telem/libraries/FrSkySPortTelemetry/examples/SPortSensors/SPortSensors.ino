@@ -1,3 +1,10 @@
+// Most receivers require an inverter on the sport line to work with the hardware serial of an Arduino
+// Known receivers that DON'T need an inverter:
+//		Jumper R8
+//		*any that is directly compatible with Pixhawk
+// Connect any S.Port pin on your receiver to the RX pin of the Arduino
+// Put a 10K resistor between TX and RX of the Arduino
+
 #include <SPort.h>                  //Include the SPort library
 #include <math.h>
 

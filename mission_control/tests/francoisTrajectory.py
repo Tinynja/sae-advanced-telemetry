@@ -99,21 +99,21 @@ print('dz      = ' + str(dz_parcouru))
 print('diff h  = ' + str(diff_hauteur/(dt*(Gz2 + Gz)/2)*100) + '%')
 
 
-fig = plt.figure()
-ax = fig.add_subplot(111, projection='3d')
-X = arr_dx
-Y = arr_dy
-Z = (-arr_dz + hauteur)/0.3048
-ax.scatter(X, Y, Z, c='r', marker='o')
-ax.set_xlabel('X longitude relative (m)')
-ax.set_ylabel('Y latitude relative (m)')
-ax.set_zlabel('Z Altitude (ft)')
-# Create cubic bounding box to simulate equal aspect ratio
-max_range = np.array([X.max()-X.min(), Y.max()-Y.min(), Z.max()-Z.min()]).max()
-Xb = 0.5*max_range*np.mgrid[-1:2:2,-1:2:2,-1:2:2][0].flatten() + 0.5*(X.max()+X.min())
-Yb = 0.5*max_range*np.mgrid[-1:2:2,-1:2:2,-1:2:2][1].flatten() + 0.5*(Y.max()+Y.min())
-Zb = 0.5*max_range*np.mgrid[-1:2:2,-1:2:2,-1:2:2][2].flatten() + 0.5*(Z.max()+Z.min())
-# Comment or uncomment following both lines to test the fake bounding box:
-for xb, yb, zb in zip(Xb, Yb, Zb):
-   ax.plot([xb], [yb], [zb], 'w')
-plt.show()
+# fig = plt.figure()
+# ax = fig.add_subplot(111, projection='3d')
+# X = arr_dx
+# Y = arr_dy
+# Z = (-arr_dz + hauteur)/0.3048
+# ax.scatter(X, Y, Z, c='r', marker='o')
+# ax.set_xlabel('X longitude relative (m)')
+# ax.set_ylabel('Y latitude relative (m)')
+# ax.set_zlabel('Z Altitude (ft)')
+# # Create cubic bounding box to simulate equal aspect ratio
+# max_range = np.array([X.max()-X.min(), Y.max()-Y.min(), Z.max()-Z.min()]).max()
+# Xb = 0.5*max_range*np.mgrid[-1:2:2,-1:2:2,-1:2:2][0].flatten() + 0.5*(X.max()+X.min())
+# Yb = 0.5*max_range*np.mgrid[-1:2:2,-1:2:2,-1:2:2][1].flatten() + 0.5*(Y.max()+Y.min())
+# Zb = 0.5*max_range*np.mgrid[-1:2:2,-1:2:2,-1:2:2][2].flatten() + 0.5*(Z.max()+Z.min())
+# # Comment or uncomment following both lines to test the fake bounding box:
+# for xb, yb, zb in zip(Xb, Yb, Zb):
+#    ax.plot([xb], [yb], [zb], 'w')
+# plt.show()

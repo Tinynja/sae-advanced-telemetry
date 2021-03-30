@@ -226,7 +226,7 @@ class MainUi:
 		self.ALT_variables['ALT_value'].setFont(QFont('Arial',25))
 		self.ALT_variables['ALT_value'].setAlignment(Qt.AlignCenter)
 		self.ALT_variables['ALT_value'].setFrameStyle(QFrame.Panel | QFrame.Raised)
-		self.ALT_variables['ALT_value'].setStyleSheet("background-color: green; color: white")
+		self.ALT_variables['ALT_value'].setStyleSheet("background-color: gray; color: white")
 		# __update_img()
 		alt_dummy_widget = QWidget()
 		ALT_layout = QVBoxLayout(alt_dummy_widget)
@@ -268,18 +268,20 @@ class MainUi:
 			self.ALT_variables['original_img_ALT']=QPixmap('resources/ALT_Graphic.PNG')
 			limits = [0, 50, 100]
 			if ALT > limits[-1]:
-				self.ALT_variables['ALT_value'].setStyleSheet("background-color: gray; color: white")
+				self.ALT_variables['ALT_value'].setStyleSheet("background-color: red; color: white")
 			elif ALT > limits[-2]:
 				self.ALT_variables['ALT_value'].setStyleSheet("background-color: green; color: white")
 			else:
-				self.ALT_variables['ALT_value'].setStyleSheet("background-color: gray; color: white")
+				self.ALT_variables['ALT_value'].setStyleSheet("background-color: red; color: white")
 		elif self.buttons[2].isChecked():
 			self.ALT_variables['original_img_ALT']=QPixmap('resources/ALT_Graphic_LARG.PNG')
 			limits = [0,100]
 			if ALT > limits[-1]:
 				self.ALT_variables['ALT_value'].setStyleSheet("background-color: green; color: white")
 			else:
-				self.ALT_variables['ALT_value'].setStyleSheet("background-color: gray; color: white")
+				self.ALT_variables['ALT_value'].setStyleSheet("background-color: red; color: white")
+		else:
+			self.ALT_variables['ALT_value'].setStyleSheet("background-color: gray; color: white")
 		calculated_top = 100 - 5.464490874 * (ALT-94)
 		top = round(calculated_top)
 		top1 = max(0, min(top, self.ALT_variables['original_img_ALT'].height()-self.ALT_variables['height']))
@@ -372,13 +374,13 @@ class MainUi:
 		def __create_button(text):
 			btn = QPushButton(text)
 			self.buttons.append(btn)
-			btn.setFont(QFont('Arial',32))
+			btn.setFont(QFont('Arial',75))
 			btn.setCheckable(True)
 			btn.clicked.connect(lambda checked, self=self, btn=btn: click_drop_type(self, btn, checked))
 
 		def __create_label(text):
 			self.labels.append(QLabel(text))
-			self.labels[-1].setFont(QFont('Arial',32))
+			self.labels[-1].setFont(QFont('Arial',75))
 			self.labels[-1].setFrameStyle(QFrame.Box|QFrame.Plain)
 			self.labels[-1].setLineWidth(2)
 

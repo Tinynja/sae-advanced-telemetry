@@ -36,7 +36,7 @@ long SPortSensor::prepareValue() {
 			//  b30: N/E(0) or S/W(1)
 			//	b31: Lat(0) or Long(1)
 			int degrees = abs(rawValue.value0)/100;
-			float minutes = fmod(abs(rawValue.value0),100);
+			float minutes = fmod(fabs(rawValue.value0),100);
 			long isLongitude = pollCount;
 			long isSouthOrWest = rawValue.value0 < 0;
 			return (long) ((degrees*60+minutes)*precision+0.5) | (isLongitude << 31) | (isSouthOrWest << 30);

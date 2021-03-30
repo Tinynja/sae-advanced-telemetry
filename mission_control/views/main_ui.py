@@ -1,5 +1,6 @@
 # Built-in libraries
 from math import cos, sin, radians
+import time
 
 # Pipy libraries
 from PyQt5.QtGui import *
@@ -149,12 +150,17 @@ class MainUi:
 		Clock_label = QLabel('Temps écoulé depuis le début du vol')
 		Clock_label.setAlignment(Qt.AlignCenter)	
 		Clock_display.addWidget(Clock_label)
-		Clock_value = QLabel('01:22.1')
+		Clock_value = QLabel('1:30:29')
 		Clock_value.setAlignment(Qt.AlignCenter)	
 		Clock_value.setFont(QFont('Arial',20))
 		Clock_value.setFrameStyle(QFrame.Panel | QFrame.Sunken)
 		Clock_display.addWidget(Clock_value)
-
+		start_time = time.time()
+		#delay = time.sleep(0.5)
+		current_time = time.time()
+		while current_time != start_time:
+			Clock_value = QLabel(f'{current_time-start_time}')
+			current_time = time.time()
 		#indicateur de vertical speed
 		VSI_label = QLabel('Vitesse verticale (fpm)')
 		VSI_label.setAlignment(Qt.AlignCenter)		
@@ -220,7 +226,7 @@ class MainUi:
 		self.ALT_variables['ALT_value'].setFont(QFont('Arial',25))
 		self.ALT_variables['ALT_value'].setAlignment(Qt.AlignCenter)
 		self.ALT_variables['ALT_value'].setFrameStyle(QFrame.Panel | QFrame.Raised)
-		self.ALT_variables['ALT_value'].setStyleSheet("background-color: green; color: white")
+		self.ALT_variables['ALT_value'].setStyleSheet("background-color: gray; color: white")
 		# __update_img()
 		alt_dummy_widget = QWidget()
 		ALT_layout = QVBoxLayout(alt_dummy_widget)
@@ -258,18 +264,30 @@ class MainUi:
 
 	def set_ALT(self, ALT):
 		self.data['alt'] = ALT
+		if self.buttons[0].isChecked():
+			self.ALT_variables['original_img_ALT']=QPixmap('resources/ALT_Graphic.PNG')
+			limits = [0, 50, 100]
+			if ALT > limits[-1]:
+				self.ALT_variables['ALT_value'].setStyleSheet("background-color: red; color: white")
+			elif ALT > limits[-2]:
+				self.ALT_variables['ALT_value'].setStyleSheet("background-color: green; color: white")
+			else:
+				self.ALT_variables['ALT_value'].setStyleSheet("background-color: red; color: white")
+		elif self.buttons[2].isChecked():
+			self.ALT_variables['original_img_ALT']=QPixmap('resources/ALT_Graphic_LARG.PNG')
+			limits = [0,100]
+			if ALT > limits[-1]:
+				self.ALT_variables['ALT_value'].setStyleSheet("background-color: green; color: white")
+			else:
+				self.ALT_variables['ALT_value'].setStyleSheet("background-color: red; color: white")
+		else:
+			self.ALT_variables['ALT_value'].setStyleSheet("background-color: gray; color: white")
 		calculated_top = 100 - 5.464490874 * (ALT-94)
 		top = round(calculated_top)
 		top1 = max(0, min(top, self.ALT_variables['original_img_ALT'].height()-self.ALT_variables['height']))
 		self.ALT_variables['ALT_img'].setPixmap(self.ALT_variables['original_img_ALT'].copy(QRect(0, top, self.ALT_variables['original_img_ALT'].width(), self.ALT_variables['height'])))
 		self.ALT_variables['ALT_value'].setText(str(int(ALT))+ ' ft')
-		limits = [0, 50, 100]
-		if ALT > limits[-1]:
-			self.ALT_variables['ALT_value'].setStyleSheet("background-color: gray; color: white")
-		elif ALT > limits[-2]:
-			self.ALT_variables['ALT_value'].setStyleSheet("background-color: green; color: white")
-		else:
-			self.ALT_variables['ALT_value'].setStyleSheet("background-color: gray; color: white")
+
 
 	# Indicateur d'assiette
 	def set_attitude(self, pitch=None, roll=None):
@@ -356,13 +374,13 @@ class MainUi:
 		def __create_button(text):
 			btn = QPushButton(text)
 			self.buttons.append(btn)
-			btn.setFont(QFont('Arial',32))
+			btn.setFont(QFont('Arial',75))
 			btn.setCheckable(True)
 			btn.clicked.connect(lambda checked, self=self, btn=btn: click_drop_type(self, btn, checked))
 
 		def __create_label(text):
 			self.labels.append(QLabel(text))
-			self.labels[-1].setFont(QFont('Arial',32))
+			self.labels[-1].setFont(QFont('Arial',75))
 			self.labels[-1].setFrameStyle(QFrame.Box|QFrame.Plain)
 			self.labels[-1].setLineWidth(2)
 

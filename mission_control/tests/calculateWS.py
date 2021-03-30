@@ -19,6 +19,6 @@ def calculate_wind_direction_and_velocity(TAS, HDG_TAS, GS, HDG_GS):
 
 
 #            calculate_wind_direction(TAS,       HDG_TAS,       GS,   HDG_GS)
-HDG_WS, WS = calculate_wind_direction(2.236068, 26.56505, 1.802775, 326.3099)
+HDG_WS, WS = calculate_wind_direction_and_velocity(2.236068, 26.56505, 1.802775, 326.3099)
 print(HDG_WS)
 print(WS)

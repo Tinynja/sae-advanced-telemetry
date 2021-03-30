@@ -14,6 +14,7 @@
 
 SoftwareSerial mySerial(2,3); //debug
 unsigned long debugTimer;
+unsigned long debugTimer2;
 
 
 //******* PARAMÈTRE AJUSTABLES ******
@@ -104,17 +105,33 @@ void setup() {
 }
 
 void loop() {
-  
+  debugTimer = millis();
   imu.update();
-  
-  sAlt.setValue(alt.readAltitude(pressionSol));
+  mySerial.print("IMU update : ");
+  mySerial.print(millis()-debugTimer);
+  mySerial.print(" ms");
 
+  debugTimer = millis();
+  sAlt.setValue(alt.readAltitude(pressionSol));
+  mySerial.print("Alt : ");
+  mySerial.print(millis()-debugTimer);
+  mySerial.print(" ms");
+
+  debugTimer = millis();
   GPS.read();
   if(GPS.newNMEAreceived()) {
     GPS.parse(GPS.lastNMEA());    
   }
-  
+  mySerial.print("GPS Parse : ");
+  mySerial.print(millis()-debugTimer);
+  mySerial.print(" ms");
+
+  debugTimer2 = millis();
 	hub.handle();
+  mySerial.print("SPort Handle : ");
+  mySerial.print(millis()-debugTimer);
+  mySerial.print(" ms");
+ 
 }
 
 void gps_lat_long(SPortSensor* sensor) {
@@ -126,7 +143,7 @@ void gps_lat_long(SPortSensor* sensor) {
 		//Latitude
     sensor->setValue(GPS.latitude * (GPS.lat == 'E' ? 1 : -1));
 	}
-  mySerial.print("GPS : ");
+  mySerial.print("GPS Send : ");
   mySerial.print(millis()-debugTimer);
   mySerial.print(" ms");
 }

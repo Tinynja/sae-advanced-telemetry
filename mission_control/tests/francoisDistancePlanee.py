@@ -54,7 +54,7 @@ def calculate_glide(finesse_planeur, vitesse_verticale_planeur, plane_alt, targe
 	ecart_angle_entre_WS_dGS = HDG_target - HDG_WS - 180
 	crosswind = WS * math.sin(math.pi/180 * ecart_angle_entre_WS_dGS) #positif si provient de la gauche
 	# crosswind = sin(beta)*vitesse_horizontale_planeur
-	beta_rad = math.asin(crosswind, vitesse_horizontale_planeur) #TODO TODO TODO on perd le signe négatif si vent de dos...
+	beta_rad = math.asin(crosswind/vitesse_horizontale_planeur) #TODO TODO TODO on perd le signe négatif si vent de dos...
 	headwind = math.cos(beta_rad)*vitesse_horizontale_planeur# donc le vent de face ressenti est équivalent au headwind
 
 	dx = distance_franchie_sans_vent

@@ -11,7 +11,6 @@ from PyQt5.QtWidgets import *
 from lib.analog_gauge_widget import AnalogGaugeWidget
 
 
-
 class MainUi:
 	def __init__(self, main_window):
 		self._main_window = main_window

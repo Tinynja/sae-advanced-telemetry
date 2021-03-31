@@ -33,28 +33,28 @@ class MainView(QMainWindow):
 		value, update_time = float(data[0]), int(data[1])
 		# Do action based on type of data received
 		if src == "ch1":
-			if value > 0 and 'ALT' in self._ui.data and ('ch1' in self._ui.data and self._ui.data['ch1'] < 0):
-				self._ui.record_altitude(0, self._ui.data['ALT'])	
+			if value > 0 and 'Alt' in self._ui.data and ('ch1' in self._ui.data and self._ui.data['ch1'] < 0):
+				self._ui.record_altitude(0, self._ui.data['Alt'])	
 				self._ui.data[src] = value
 			elif 'ch1' not in self._ui.data or self._ui.data['ch1'] > 0: #@amine si on met < lorsque sa commence positif sa foire alors jai change pour > mais sa fait que si l<operateur switch off et back on ca va record une 2e fois
 					self._ui.data[src] = value
 		elif src == "ch2":
-			if value > 0 and 'ALT' in self._ui.data and ('ch2' in self._ui.data and self._ui.data['ch2'] < 0):
-				self._ui.record_altitude(1, self._ui.data['ALT'])	
+			if value > 0 and 'Alt' in self._ui.data and ('ch2' in self._ui.data and self._ui.data['ch2'] < 0):
+				self._ui.record_altitude(1, self._ui.data['Alt'])	
 				self._ui.data[src] = value
 			elif 'ch2' not in self._ui.data or self._ui.data['ch2'] > 0:
 				self._ui.data[src] = value
-		elif src == "FDOR":
-			if value > 0 and 'ALT' in self._ui.data and ('FDOR' in self._ui.data and self._ui.data['FDOR'] < 0):
-				self._ui.record_altitude(2, self._ui.data['ALT'])	
+		elif src == "ch3":
+			if value > 0 and 'Alt' in self._ui.data and ('ch3' in self._ui.data and self._ui.data['ch3'] < 0):
+				self._ui.record_altitude(2, self._ui.data['Alt'])	
 				self._ui.data[src] = value
-			elif 'FDOR' not in self._ui.data or self._ui.data['FDOR'] > 0:
+			elif 'ch3' not in self._ui.data or self._ui.data['ch3'] > 0:
 				self._ui.data[src] = value
-		elif src == "BDOR":
-			if value > 0 and 'ALT' in self._ui.data and ('BDOR' in self._ui.data and self._ui.data['BDOR'] < 0):
-				self._ui.record_altitude(3, self._ui.data['ALT'])	
+		elif src == "ch4":
+			if value > 0 and 'Alt' in self._ui.data and ('ch4' in self._ui.data and self._ui.data['ch4'] < 0):
+				self._ui.record_altitude(3, self._ui.data['Alt'])	
 				self._ui.data[src] = value
-			elif 'BDOR' not in self._ui.data or self._ui.data['BDOR'] > 0:
+			elif 'ch4' not in self._ui.data or self._ui.data['ch4'] > 0:
 				self._ui.data[src] = value
 		elif src == 'TAS':
 			self._ui.set_TAS(value)

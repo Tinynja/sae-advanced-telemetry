@@ -135,6 +135,10 @@ class UartModel(QObject):
 		if new_port_list != self.available_ports:
 			self.portListChanged.emit(new_port_list)
 		self.available_ports = new_port_list
+	
+	def stop_model(self):
+		self.stop_port_listing()
+		self.stop_port_polling()
 
 	# def _inherit_signals(self):
 	# 	for name in dir(self._signals):

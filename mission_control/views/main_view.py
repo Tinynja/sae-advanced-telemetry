@@ -8,11 +8,13 @@ from views.main_ui import MainUi
 
 
 class MainView(QMainWindow):
-	def __init__(self, data_model, config_model):
+	def __init__(self, data_model, config_model, debug=False):
 		super().__init__()
 		self._ui = MainUi(self)
 		self._data_model = data_model
 
+		self._debug = debug
+		
 		self._connect_signals()
 	
 	def _connect_signals(self):
@@ -26,20 +28,21 @@ class MainView(QMainWindow):
 		# self._ui.buttons_drop_history[0].clicked.connect...
 	
 	def _update_data(self, src, data):
+		if self._debug: print(f'{src}: {data}')
 		# Save the data in self._ui for later use
 		value, update_time = float(data[0]), int(data[1])
 		# Do action based on type of data received
-		if src == "GLI1":
-			if value > 0 and 'ALT' in self._ui.data and ('GLI1' in self._ui.data and self._ui.data['GLI1'] < 0):
+		if src == "ch1":
+			if value > 0 and 'ALT' in self._ui.data and ('ch1' in self._ui.data and self._ui.data['ch1'] < 0):
 				self._ui.record_altitude(0, self._ui.data['ALT'])	
 				self._ui.data[src] = value
-			elif 'GLI1' not in self._ui.data or self._ui.data['GLI1'] > 0: #@amine si on met < lorsque sa commence positif sa foire alors jai change pour > mais sa fait que si l<operateur switch off et back on ca va record une 2e fois
+			elif 'ch1' not in self._ui.data or self._ui.data['ch1'] > 0: #@amine si on met < lorsque sa commence positif sa foire alors jai change pour > mais sa fait que si l<operateur switch off et back on ca va record une 2e fois
 					self._ui.data[src] = value
-		elif src == "GLI2":
-			if value > 0 and 'ALT' in self._ui.data and ('GLI2' in self._ui.data and self._ui.data['GLI2'] < 0):
+		elif src == "ch2":
+			if value > 0 and 'ALT' in self._ui.data and ('ch2' in self._ui.data and self._ui.data['ch2'] < 0):
 				self._ui.record_altitude(1, self._ui.data['ALT'])	
 				self._ui.data[src] = value
-			elif 'GLI2' not in self._ui.data or self._ui.data['GLI2'] > 0:
+			elif 'ch2' not in self._ui.data or self._ui.data['ch2'] > 0:
 				self._ui.data[src] = value
 		elif src == "FDOR":
 			if value > 0 and 'ALT' in self._ui.data and ('FDOR' in self._ui.data and self._ui.data['FDOR'] < 0):
@@ -56,7 +59,7 @@ class MainView(QMainWindow):
 		elif src == 'TAS':
 			self._ui.set_TAS(value)
 			self._ui.data[src] = value
-		elif src == "ALT":
+		elif src == "Alt":
 			self._ui.set_color_label(value)
 			self._ui.set_ALT(value)
 			self._ui.data[src] = value

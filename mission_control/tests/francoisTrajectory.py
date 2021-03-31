@@ -11,9 +11,7 @@ mass          = 0.117
 CD            = 0.350
 #pour l'instant, les valeurs ci-dessus sont des valeurs bidons
 
-
-
-
+import time
 
 
 from mpl_toolkits.mplot3d import Axes3D
@@ -47,7 +45,7 @@ def calculate_acceleration(CD, Area, m, rho, Gx, Gy, Gz, Wx, Wy, Wz):
 
 #Initial parameters
 t = 0
-dt = 0.02
+dt = 0.01
 dx_parcouru = 0
 dy_parcouru = 0
 dz_parcouru = 0
@@ -62,6 +60,9 @@ arr_t = np.array([t])
 arr_dx = np.array([dx_parcouru])
 arr_dy = np.array([dy_parcouru])
 arr_dz = np.array([dz_parcouru])
+
+
+start_time = time.time()
 
 while dz_parcouru < hauteur:
 	#            calculate_acceleration(CD, Area, mass,   rho,  Gx, Gy, Gz, Wx, Wy, Wz)
@@ -89,6 +90,7 @@ while dz_parcouru < hauteur:
 
 diff_hauteur = hauteur - dz_parcouru
 
+print('t calcul = ' + str(time.time()-start_time))
 print('t total = ' + str(t))
 print('ax      = ' + str(ax))
 print('ay      = ' + str(ay))

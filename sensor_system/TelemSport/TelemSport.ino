@@ -10,25 +10,24 @@
 #include <MPU6050_light.h>
 #include <Adafruit_BMP085.h>
 #include <Adafruit_GPS.h>
-#include <SoftwareSerial.h> //debug
 
-SoftwareSerial mySerial(2,3); //debug
-unsigned long debugTimer;
-unsigned long debugTimer2;
-
+// Pitot variables, clean up later
+#define PITOT_ADDR 0x28
+float pitotBias;
 
 //******* PARAMÈTRE AJUSTABLES ******
 #define V1_PIN A1 // Pin d'entrée du capteur de voltage de la batterie principale
 #define I1_PIN A2 // Pin d'entrée du capteur de courant de la batterie principale
 #define V2_PIN A3 // Pin d'entrée du capteur de voltage de la batterie télémétrie
-float   facteur_V1 = 1;
-float   facteur_I1 = 1;
-float   facteur_V2 = 1;
+const float facteur_V1 = 1;
+const float facteur_I1 = 1;
+const float facteur_V2 = 1;
+
+// Pression au sol, pour altimètre
 int32_t pressionSol; // Pression au niveau de la mer, en Pa
-bool    refMer = false; // True pour altitude p/r au niveau de la mer, false pour altitude p/r au sol
 
 // Variables de conversion
-float m2ft = 3.28084;
+const float m2ft = 3.28084;
 
 // Enregtistrement de Capteurs - I2C
 MPU6050 imu(Wire);
@@ -46,33 +45,53 @@ void imu_ang_X(SPortSensor* sensor);
 void imu_ang_Y(SPortSensor* sensor);
 void imu_ang_Z(SPortSensor* sensor);
 
+void anal_cour_1(SPortSensor* sensor);
+void anal_volt_1(SPortSensor* sensor);
+void anal_volt_2(SPortSensor* sensor);
+
+void pitot_press(SPortSensor* sensor);
+
 
 // Enregristrement de capteurs - SPort
 SPortHub hub(0xFF); // Physical ID 
-SPortSensor sAlt(SPORT_SENSOR_ALT); // Altimètre
-SPortSensor sRoll(0x310,  imu_ang_X); // IMU
+// Altimètre
+SPortSensor sAlt(SPORT_SENSOR_ALT);
+// IMU
+SPortSensor sRoll(0x310, imu_ang_X);
 SPortSensor sPitch(0x320, imu_ang_Y);
-SPortSensor sYaw(0x330,   imu_ang_Z);
+SPortSensor sYaw(0x330, imu_ang_Z);
 SPortSensor sAccX(SPORT_SENSOR_ACCX, imu_acc_X);
 SPortSensor sAccY(SPORT_SENSOR_ACCY, imu_acc_Y);
 SPortSensor sAccZ(SPORT_SENSOR_ACCZ, imu_acc_Z);
-SPortSensor sLatLong(SPORT_SENSOR_GPS_LATI_LONG, gps_lat_long); // GPS
-//SPortSensor sTimeDate(SPORT_SENSOR_GPS_TIME_DATE, gps_time_date);
+// GPS
+SPortSensor sLatLong(SPORT_SENSOR_GPS_LATI_LONG, gps_lat_long);
+// Analog
+SPortSensor sCurr1(SPORT_SENSOR_CURR, anal_cour_1);
+SPortSensor sVolt1(SPORT_SENSOR_A3,   anal_volt_1);
+SPortSensor sVolt2(SPORT_SENSOR_A4,   anal_volt_2);
+// Pitot
+SPortSensor sPitot(0x340, pitot_press);
 
 void setup() {
-  mySerial.begin(115200); //debug
-
   // Initialisation SPort
-  hub.registerSensor(sRoll);
+  // Altimetre
   hub.registerSensor(sAlt);
+  // IMU
+  hub.registerSensor(sRoll);
   hub.registerSensor(sRoll);
   hub.registerSensor(sPitch);
   hub.registerSensor(sYaw);
   hub.registerSensor(sAccY);
   hub.registerSensor(sAccX);
   hub.registerSensor(sAccZ);
+  // GPS
   hub.registerSensor(sLatLong);
-  //hub.registerSensor(sensor4);
+  // Pitot
+  hub.registerSensor(sPitot);
+  // Courant et voltage
+  hub.registerSensor(sCurr1);
+  hub.registerSensor(sVolt1);
+  hub.registerSensor(sVolt2);
   hub.begin();                  //Begin the serial interface for S.Port
 
   // Initialisation des pins analog
@@ -89,6 +108,7 @@ void setup() {
   Wire.beginTransmission(0x28);
   Wire.write(0x00);
   Wire.endTransmission();
+  pitotBias = pitotCalibrate(100);
 
   // Initialisation de l'altimètre
   byte statusAlt = alt.begin();
@@ -105,37 +125,45 @@ void setup() {
 }
 
 void loop() {
-  debugTimer = millis();
   imu.update();
-  mySerial.print("IMU update : ");
-  mySerial.print(millis()-debugTimer);
-  mySerial.print(" ms");
 
-  debugTimer = millis();
   sAlt.setValue(alt.readAltitude(pressionSol));
-  mySerial.print("Alt : ");
-  mySerial.print(millis()-debugTimer);
-  mySerial.print(" ms");
 
-  debugTimer = millis();
   GPS.read();
   if(GPS.newNMEAreceived()) {
     GPS.parse(GPS.lastNMEA());    
   }
-  mySerial.print("GPS Parse : ");
-  mySerial.print(millis()-debugTimer);
-  mySerial.print(" ms");
+  
+  hub.handle();
+}
 
-  debugTimer2 = millis();
-	hub.handle();
-  mySerial.print("SPort Handle : ");
-  mySerial.print(millis()-debugTimer);
-  mySerial.print(" ms");
- 
+float pitotCalibrate(int nSamples){
+
+   float sum = 0;
+   for (int i = 0; i < nSamples; i++) {
+      Wire.requestFrom(PITOT_ADDR,2);
+
+      byte value1 = Wire.read();
+      byte value2 = Wire.read();
+    
+      int16_t dp = value1 << 8 | value2;
+      dp = (0x3FFF) & dp;
+
+      const float P_min = -1.0f;
+      const float P_max = 1.0f;
+      const float conv = 6894.757;
+      float diff_psi = ((dp - 0.1f * 16383) * (P_max - P_min) / (0.8f * 16383) + P_min);
+      float diff_pa = diff_psi*conv;
+
+      sum += diff_pa;
+      delay(50);
+  
+  }
+  
+  return sum / nSamples;
 }
 
 void gps_lat_long(SPortSensor* sensor) {
-  debugTimer = millis();
 	if (sensor->pollCount) {
 		//Longitude
     sensor->setValue(GPS.longitude * (GPS.lon == 'N' ? 1 : -1));
@@ -143,9 +171,6 @@ void gps_lat_long(SPortSensor* sensor) {
 		//Latitude
     sensor->setValue(GPS.latitude * (GPS.lat == 'E' ? 1 : -1));
 	}
-  mySerial.print("GPS Send : ");
-  mySerial.print(millis()-debugTimer);
-  mySerial.print(" ms");
 }
 
 void gps_time_date(SPortSensor* sensor) {
@@ -158,50 +183,31 @@ void gps_time_date(SPortSensor* sensor) {
 	}
 }
 
-void imu_acc_X(SPortSensor* sensor) { 
-  debugTimer = millis();
-  sensor->setValue(imu.getAccX()); 
-  mySerial.print("AccX : ");
-  mySerial.print(millis()-debugTimer);
-  mySerial.print(" ms");
- }
+void imu_acc_X(SPortSensor* sensor) { sensor->setValue(imu.getAccX()); }
+void imu_acc_Y(SPortSensor* sensor) { sensor->setValue(imu.getAccY()); }
+void imu_acc_Z(SPortSensor* sensor) { sensor->setValue(imu.getAccZ()); }
+void imu_ang_X(SPortSensor* sensor) { sensor->setValue(imu.getAngleX()); }
+void imu_ang_Y(SPortSensor* sensor) { sensor->setValue(imu.getAngleY()); }
+void imu_ang_Z(SPortSensor* sensor) { sensor->setValue(imu.getAngleZ()); }
 
-void imu_acc_Y(SPortSensor* sensor) {
-  debugTimer = millis(); 
-  sensor->setValue(imu.getAccY()); 
-  mySerial.print("AccY : ");
-  mySerial.print(millis()-debugTimer);
-  mySerial.print(" ms");
-}
+void anal_cour_1(SPortSensor* sensor) { sensor->setValue(analogRead(I1_PIN*facteur_I1)); }
+void anal_volt_1(SPortSensor* sensor) { sensor->setValue(analogRead(V1_PIN*facteur_V1)); }
+void anal_volt_2(SPortSensor* sensor) { sensor->setValue(analogRead(V2_PIN*facteur_V2)); }
 
-void imu_acc_Z(SPortSensor* sensor) { 
-  debugTimer = millis();
-  sensor->setValue(imu.getAccZ());
-  mySerial.print("AccZ : ");
-  mySerial.print(millis()-debugTimer);
-  mySerial.print(" ms");
-}
+void pitot_press(SPortSensor* sensor) {
+  Wire.requestFrom(0x28,2);
 
-void imu_ang_X(SPortSensor* sensor) { 
-  debugTimer = millis();
-  sensor->setValue(imu.getAngleX());
-  mySerial.print("AngX : ");
-  mySerial.print(millis()-debugTimer);
-  mySerial.print(" ms");
-}
+  byte value1 = Wire.read();
+  byte value2 = Wire.read();
 
-void imu_ang_Y(SPortSensor* sensor) { 
-  debugTimer = millis();
-  sensor->setValue(imu.getAngleY());
-  mySerial.print("AngY : ");
-  mySerial.print(millis()-debugTimer);
-  mySerial.print(" ms");
-}
+  int16_t dp = value1 << 8 | value2;
+  dp = (0x3FFF) & dp;
 
-void imu_ang_Z(SPortSensor* sensor) { 
-  debugTimer = millis();
-  sensor->setValue(imu.getAngleZ());
-  mySerial.print("AngZ : ");
-  mySerial.print(millis()-debugTimer);
-  mySerial.print(" ms");
+  const float P_min = -1.0f;
+  const float P_max = 1.0f;
+  const float conv = 6894.757;
+  float diff_psi = ((dp - 0.1f * 16383) * (P_max - P_min) / (0.8f * 16383) + P_min);
+  float diff_pa = diff_psi*conv -pitotBias;
+
+  sensor->setValue(diff_pa);
 }

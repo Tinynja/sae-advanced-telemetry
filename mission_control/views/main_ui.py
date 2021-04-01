@@ -17,6 +17,7 @@ class MainUi:
 
 		# Useful variables
 		self.data = {}
+		self.data_time = {}
 
 		# Init main window
 		self._main_window.setWindowTitle('Avion-Cargo Mission Control')
@@ -155,13 +156,6 @@ class MainUi:
 		Clock_value.setFont(QFont('Arial',20))
 		Clock_value.setFrameStyle(QFrame.Panel | QFrame.Sunken)
 		Clock_display.addWidget(Clock_value)
-		start_time = time.time()
-		delay = time.sleep(0.5)
-		current_time = time.time()
-		while True:
-			# print(current_time, start_time)
-			Clock_value = QLabel(f'{current_time-start_time}')
-			current_time = time.time()
 		#indicateur de vertical speed
 		VSI_label = QLabel('Vitesse verticale (fpm)')
 		VSI_label.setAlignment(Qt.AlignCenter)		

@@ -14,7 +14,6 @@ from lib.analog_gauge_widget import AnalogGaugeWidget
 class MainUi:
 	def __init__(self, main_window):
 		self._main_window = main_window
-		self._main_window.show()
 
 		# Useful variables
 		self.data = {}
@@ -32,6 +31,8 @@ class MainUi:
 
 		# Merge all sub-layouts to the main layout
 		self._create_main_layout()
+		
+		self._main_window.show()
 	
 	def _create_main_layout(self):
 		main_layout = QVBoxLayout(self._main_window.centralWidget())
@@ -155,9 +156,10 @@ class MainUi:
 		Clock_value.setFrameStyle(QFrame.Panel | QFrame.Sunken)
 		Clock_display.addWidget(Clock_value)
 		start_time = time.time()
-		#delay = time.sleep(0.5)
+		delay = time.sleep(0.5)
 		current_time = time.time()
-		while current_time != start_time:
+		while True:
+			# print(current_time, start_time)
 			Clock_value = QLabel(f'{current_time-start_time}')
 			current_time = time.time()
 		#indicateur de vertical speed

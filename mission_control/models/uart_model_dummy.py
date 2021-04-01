@@ -16,7 +16,7 @@ class DummySerial:
 	def __init__(self, *args, **kwargs):
 		self.max_step = 0.3
 		self.delay = 0.1
-		self.variables = {'ALT':[0, 200], 'TAS':[0, 60], 'GS':[0,50],'voltage': [10, 14], 'GLI1':[-1024, 1024], 'GLI2':[-1024, 1024], 'FDOR':[-1024, 1024], 'BDOR':[-1024, 1024]}
+		self.variables = {'Alt':[0, 200], 'TAS':[0, 60], 'GS':[0,50],'voltage': [10, 14], 'ch1':[-1024, 1024], 'ch2':[-1024, 1024], 'ch3':[-1024, 1024], 'ch4':[-1024, 1024]}
 
 		# Set a random initial value for each variable so they get phase shifted (sinusoid)
 		self._last_values = [2*pi*random.random() for limits in self.variables]

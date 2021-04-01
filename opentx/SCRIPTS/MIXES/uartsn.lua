@@ -2,7 +2,7 @@
 
 local function init()
 	-- called once when model is loaded
-	sources = {}
+	uart_sources = {}
 	local file = io.open('/SCRIPTS/MIXES/sources.txt', 'r')
 	local char = '\r'
 	-- loop until end of file ('') is reached
@@ -18,28 +18,41 @@ local function init()
 			src = src .. char
 			char = io.read(file, 1)
 		end
-		-- append src to sources
-		table.insert(sources, src)
+		-- figure out the identifier of the source (getting value by identifier is faster than by name)
+		src = getFieldInfo(src)
+		-- check if src exists
+		if src ~= nil then
+			-- save some memory
+			src['desc'] = nil
+			src['unit'] = nil
+			-- append src to uart_sources
+			table.insert(uart_sources, src)
+		end
 	end
 	io.close(file)
 end
 
 local function run()
 	-- called periodically
-	packet = ''
-	for i,src in ipairs(sources) do
-		-- protocol: \x01 + [type] + \x02 + [name] + \x03 + \x01 + [type] + \x02 + [value] + \x03
+	local packet = ''
+	for i,src in ipairs(uart_sources) do
+		-- protocol: \x01 + [type] + \x02 + [source] + \x03 + \x01 + [type] + \x02 + [value] + \x03
 		
 		-- 		type :=
-		-- 			0: name
-		-- 			1: value
+		-- 			s: source
+		-- 			v: value
 		
 		-- 		\x01: start_of_heading
 		-- 		\x02: start_of_text
 		-- 		\x03: end_of_text
-		
-		packet = packet .. '\x01' .. '0' .. '\x02' .. src .. '\x03'
-		packet = packet .. '\x01' .. '1' .. '\x02' .. getValue(src) .. '\x03'
+		local value = getValue(src['id'])
+		if src['name'] == 'GPS' then
+			-- GPS source returns a table so it requires unpacking
+			value = tostring(value['lat']) .. ',' .. tostring(value['lon'])
+		end
+		-- Assemble the packet
+		packet = packet .. '\x01' .. 's' .. '\x02' .. src['name'] .. '\x03'
+		packet = packet .. '\x01' .. 'v' .. '\x02' .. value .. '\x03'
 	end
 	packet = packet .. '\n'
 	serialWrite(packet)

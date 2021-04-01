@@ -17,6 +17,7 @@ class MainUi:
 
 		# Useful variables
 		self.data = {}
+		self.data_time={}
 
 		# Init main window
 		self._main_window.setWindowTitle('Avion-Cargo Mission Control')
@@ -155,23 +156,22 @@ class MainUi:
 		Clock_value.setFont(QFont('Arial',20))
 		Clock_value.setFrameStyle(QFrame.Panel | QFrame.Sunken)
 		Clock_display.addWidget(Clock_value)
-		start_time = time.time()
-		delay = time.sleep(0.5)
-		current_time = time.time()
-		while True:
-			# print(current_time, start_time)
-			Clock_value = QLabel(f'{current_time-start_time}')
-			current_time = time.time()
-		#indicateur de vertical speed
-		VSI_label = QLabel('Vitesse verticale (fpm)')
-		VSI_label.setAlignment(Qt.AlignCenter)		
-		VSI_display.addWidget(VSI_label)
-		VSI_value = QLabel('+ 50')
-		VSI_value.setAlignment(Qt.AlignCenter)
-		VSI_value.setFrameStyle(QFrame.Panel | QFrame.Sunken)
-		VSI_value.setFont(QFont('Arial',20))
-		VSI_display.addWidget(VSI_value)
 
+		#indicateur de vertical speed
+		self.VSI_variables={}
+		self.VSI_variables['label']= QLabel('Vitesse verticale (fpm)')
+		self.VSI_variables['label'].setAlignment(Qt.AlignCenter)
+		self.VSI_variables['value']= QLabel('+ 50')
+		self.VSI_variables['value'].setAlignment(Qt.AlignCenter)
+		self.VSI_variables['value'].setFrameStyle(QFrame.Panel | QFrame.Sunken)
+		self.VSI_variables['value'].setFont(QFont('Arial',20))
+		VSI_display.addWidget(self.VSI_variables['label'])
+		VSI_display.addWidget(self.VSI_variables['value'])
+	
+	# def set_VSI(self,src, altitude, time):
+	# 	self.data['alt']= altitude
+	# 	self.data_time['time'] = time
+		# self.VSI_variables['value'].setText(f'{(altitude-self._ui.data(src))/(time-self._ui.data_time(src))}')
 
 		#indicateur de TAS
 		self.TAS_variables = {}

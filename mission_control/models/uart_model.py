@@ -76,8 +76,8 @@ class UartModel(QObject):
 	def _port_polling_task(self):
 		# protocol: \x01 + [type] + \x02 + [name] + \x03 + \x01 + [type] + \x02 + [value] + \x03
 		# 	type :=
-		# 		0: name
-		# 		1: value
+		# 		n: name
+		# 		v: value
 		# 	\x01: start_of_heading
 		# 	\x02: start_of_text
 		# 	\x03: end_of_text
@@ -100,12 +100,12 @@ class UartModel(QObject):
 					# Protocol match
 					response = response.decode()
 					last_response_time = time.time()
-					if response[1] == '0':
+					if response[1] == 's':
 						# Got a data name
 						last_response = response
-					elif response[1] == '1':
+					elif response[1] == 'v':
 						# Got a data value
-						if last_response[1] == '0':
+						if last_response[1] == 's':
 							# Got a data_name/data_value pair
 							name = last_response[3:-1]
 							value = response[3:-1]

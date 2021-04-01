@@ -15,9 +15,25 @@ from PyQt5.QtWidgets import QApplication
 class DummySerial:
 	def __init__(self, *args, **kwargs):
 		self.max_step = 0.3
-		self.delay = 0.1
-		self.variables = {'Alt':[0, 200], 'TAS':[0, 60], 'GS':[0,50],'voltage': [10, 14], 'ch1':[-1024, 1024], 'ch2':[-1024, 1024], 'ch3':[-1024, 1024], 'ch4':[-1024, 1024]}
-
+		self.variables = {
+			'Roll':[-180, 180],
+			'Ptch':[-180, 180],
+			'Yaw':[0, 360],
+			'AccX':[-5, 5],
+			'AccY':[-5, 5],
+			'AccZ':[-5, 5],
+			'dPrs':[0, 50],			# Delta_P Pitot
+			'Bat1':[0, 30],
+			'Curr':[2.5, 5],
+			'Bat2':[0, 9],
+			'Alt':[-10, 100],
+			'ch1':[-1024, 1024],
+			'ch2':[-1024, 1024],
+			'ch3':[-1024, 1024],
+			'ch4':[-1024, 1024]
+		}
+		# We want to get 5Hz data refresh rate
+		self.delay = 1/5/len(self.variables)/2
 		# Set a random initial value for each variable so they get phase shifted (sinusoid)
 		self._last_values = [2*pi*random.random() for limits in self.variables]
 		# Keep track of the last data sent (since uart.read_until splits the text)
@@ -31,12 +47,12 @@ class DummySerial:
 		src = list(self.variables)[int(self._last_data_sent/2)]
 		if not self._last_data_sent % 2:
 			# even: variable name
-			packet = f'\x010\x02{src}\x03'
+			packet = f'\x01s\x02{src}\x03'
 		else:
 			# odd: variable value
 			self._last_values[idx] = (self._last_values[idx]+self.max_step*random.random())%(2*pi)
 			limits = self.variables[src]
-			packet = f'\x011\x02{(limits[1]-limits[0])/2*sin(self._last_values[idx])+(limits[1]+limits[0])/2}\x03\n'
+			packet = f'\x01v\x02{(limits[1]-limits[0])/2*sin(self._last_values[idx])+(limits[1]+limits[0])/2}\x03\n'
 		time.sleep(self.delay)
 		return packet.encode()
 
@@ -134,12 +150,12 @@ class UartDummyModel(QObject):
 					# Protocol match
 					response = response.decode()
 					last_response_time = time.time()
-					if response[1] == '0':
+					if response[1] == 's':
 						# Got a data name
 						last_response = response
-					elif response[1] == '1':
+					elif response[1] == 'v':
 						# Got a data value
-						if last_response[1] == '0':
+						if last_response[1] == 's':
 							# Got a data_name/data_value pair
 							name = last_response[3:-1]
 							value = response[3:-1]

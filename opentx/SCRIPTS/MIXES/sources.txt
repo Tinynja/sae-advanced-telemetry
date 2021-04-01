@@ -2,6 +2,7 @@ RSSI
 Roll
 Ptch
 Yaw
+GPS
 Curr
 AccX
 AccY

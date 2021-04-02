@@ -28,6 +28,7 @@ class MainView(QMainWindow):
 		# self._ui.buttons_drop_history[0].clicked.connect...
 	
 	def _process_data_change(self, src, data):
+		#self._ui.set_clock()
 		if self._debug: print(f'{src}: {data}')
 		value, data_time = float(data[0]), float(data[1])
 		# Do action based on type of data received

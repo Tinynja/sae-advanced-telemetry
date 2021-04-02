@@ -6,6 +6,7 @@ import time
 from PyQt5.QtGui import *
 from PyQt5.QtCore import *
 from PyQt5.QtWidgets import *
+from PyQt5.QtCore import QTimer,QDateTime
 
 # User libraries
 from lib.analog_gauge_widget import AnalogGaugeWidget
@@ -148,14 +149,15 @@ class MainUi:
 
 
 		#indicateur de temps écoulé
-		Clock_label = QLabel('Temps écoulé depuis le début du vol')
-		Clock_label.setAlignment(Qt.AlignCenter)	
-		Clock_display.addWidget(Clock_label)
-		Clock_value = QLabel('1:30:29')
-		Clock_value.setAlignment(Qt.AlignCenter)	
-		Clock_value.setFont(QFont('Arial',20))
-		Clock_value.setFrameStyle(QFrame.Panel | QFrame.Sunken)
-		Clock_display.addWidget(Clock_value)
+		self.Clock_variables ={}
+		self.Clock_variables['label']= QLabel('Temps écoulé depuis le début du vol')
+		self.Clock_variables['label'].setAlignment(Qt.AlignCenter)
+		self.Clock_variables['value']=QLabel('1:30:29')
+		self.Clock_variables['value'].setAlignment(Qt.AlignCenter)
+		self.Clock_variables['value'].setFont(QFont('Arial',20))
+		self.Clock_variables['value'].setFrameStyle(QFrame.Panel | QFrame.Sunken)
+		Clock_display.addWidget(self.Clock_variables['label'])
+		Clock_display.addWidget(self.Clock_variables['value'])
 
 		#indicateur de vertical speed
 		self.VSI_variables={}
@@ -244,10 +246,29 @@ class MainUi:
 		bottom_layout.addLayout( ALT_display )
 		# bottom_layout.addLayout( VSI_graphic_display )
 
+	def set_clock(self):
+		#start_time=time.time()
+		self.timer=QTimer(self)
+		self.timer.timeout.connect(self.showTime)
+		print(timer)
+	
+	def showTime(self):
+		self.timer.start(1000)
+		time=QDateTime.currentDateTime()
+		timeDisplay=time.strftime('%M:%S')
+		self.Clock_variables['value'].setText(timer)
+		#current_time=time.time()
+		# while True:
+		# 	diff_time = current_time-start_time
+		# 	time_elapse = diff_time.strftime('%M:%S')
+		# 	self.Clock_variables['value'].setText(f'{time_elapse}')
+		# 	#time.now().strftime('%M:%S')
+		
+
+
 	def set_VSI(self,src, altitude, time):
 		# self.data['Alt']= altitude
 		# self.data_time['time'] = time
-		print(altitude, self.data['Alt'])
 		self.VSI_variables['value'].setText(f'{(altitude-self.data[src])/(time-self.data_time[src]):.1f}')
 	
 	def set_TAS(self, TAS):

@@ -29,7 +29,7 @@ class MainView(QMainWindow):
 	
 	def _process_data_change(self, src, data):
 		if self._debug: print(f'{src}: {data}')
-		value, data_time = float(data[0]), int(data[1])
+		value, data_time = float(data[0]), float(data[1])
 		# Do action based on type of data received
 		if src == 'ch1':
 			if 'Alt' in self._ui.data and value > 0 and 'ch1' in self._ui.data and self._ui.data['ch1'] < 0:
@@ -67,9 +67,9 @@ class MainView(QMainWindow):
 		elif src == 'Alt':
 			self._ui.set_color_label(value)
 			self._ui.set_ALT(value)
-			#self._ui.VSI_variables['value'].setText(f'{(value-self._ui.data[src][-1])/(update_time-self._ui.data_time[src][-1])}')
-			self._ui.data[src] = value
-			self._ui.data_time[src]= update_time
+			if 'Alt' in self._ui.data_time:
+				self._ui.set_VSI(src, value, data_time)
+				#self._ui.VSI_variables['value'].setText(f'{(value-self._ui.data[src])/(data_time-self._ui.data_time[src])}')
 		elif src == 'GS':
 			self._ui.GS_variables['value'].setText(f'{float(data[0]):.1f}')
 		# Save the data in self._ui for later use

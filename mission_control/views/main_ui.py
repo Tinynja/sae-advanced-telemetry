@@ -9,7 +9,7 @@ from PyQt5.QtWidgets import *
 from PyQt5.QtCore import QTimer,QDateTime
 
 # User libraries
-from lib.analog_gauge_widget import AnalogGaugeWidget
+from analoggaugewidget import AnalogGaugeWidget
 
 
 class MainUi:
@@ -83,35 +83,51 @@ class MainUi:
 		self._gauges_layout.addLayout(activation_layout)
 
 
+		def __create_label_gauge(text):
+			self.labels.append(QLabel(text))
+			self.labels[-1].setFont(QFont('Arial',11))
+			self.labels[-1].setFrameStyle(QFrame.Box|QFrame.Plain)
+			self.labels[-1].setLineWidth(2)
 		#Jauges
 		#Module pour Jauges 
 
 		jauges = QGridLayout()
 
 		#Jauge de la puissance
-		puissance = AnalogGaugeWidget()
-		puissance.update_value(233)
-		jauges.addWidget(puissance, 0, 0)
+		self.puissance = AnalogGaugeWidget()
+		self.puissance.update_value(5)
+		self.puissance.value_min=0
+		self.puissance.value_max=10
+		jauges.addWidget(self.puissance, 0, 0)
+		__create_label_gauge("Puissance")
 
 		#Jauge du voltage de l'avion mère
-		volt_Avion = AnalogGaugeWidget()
-		volt_Avion.update_value(200)
-		jauges.addWidget(volt_Avion, 1, 0)
+		self.volt_Avion = AnalogGaugeWidget()
+		self.volt_Avion.update_value(5)
+		self.volt_Avion.value_min=0
+		self.volt_Avion.value_max=12
+		jauges.addWidget(self.volt_Avion, 1, 0)
 
 		#Jauge du voltage de la télémétrie
-		volt_telem = AnalogGaugeWidget()
-		volt_telem.update_value(350)
-		jauges.addWidget(volt_telem, 2, 0)
+		self.volt_telem = AnalogGaugeWidget()
+		self.volt_telem.update_value(5)
+		self.volt_telem.value_min=0
+		self.volt_telem.value_max=12
+		jauges.addWidget(self.volt_telem, 2, 0)
 
 		#Jauge de l'accéléromètre en X
-		acc_x = AnalogGaugeWidget()
-		acc_x.update_value(350)
-		jauges.addWidget(acc_x, 0, 1)
+		self.acc_x = AnalogGaugeWidget()
+		self.acc_x.update_value(30)
+		self.acc_x.value_min=0
+		self.acc_x.value_max=100
+		jauges.addWidget(self.acc_x, 0, 1)
 
-		#Jauge de l'accéléromètre en Y
-		acc_y = AnalogGaugeWidget()
-		acc_y.update_value(350)
-		jauges.addWidget(acc_y, 1, 1)
+		#Jauge de l'accéléromètre en Z
+		self.acc_y = AnalogGaugeWidget()
+		self.acc_y.update_value(30)
+		self.acc_y.value_min=0
+		self.acc_y.value_max=100
+		jauges.addWidget(self.acc_y, 1, 1)
 
 		self._gauges_layout.addLayout(jauges)
 

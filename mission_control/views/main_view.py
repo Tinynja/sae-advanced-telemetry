@@ -32,6 +32,7 @@ class MainView(QMainWindow):
 		if self._debug: print(f'{src}: {data}')
 		value, data_time = float(data[0]), float(data[1])
 		# Do action based on type of data received
+		self._ui.set_clock(data_time)
 		if src == 'ch1':
 			if 'Alt' in self._ui.data and value > 0 and 'ch1' in self._ui.data and self._ui.data['ch1'] < 0:
 				# Only record altitude if:

@@ -6,6 +6,7 @@ import time
 from PyQt5.QtGui import *
 from PyQt5.QtCore import *
 from PyQt5.QtWidgets import *
+from PyQt5.QtCore import QTimer,QDateTime
 
 # User libraries
 from lib.analog_gauge_widget import AnalogGaugeWidget
@@ -164,14 +165,15 @@ class MainUi:
 
 
 		#indicateur de temps écoulé
-		Clock_label = QLabel('Temps écoulé depuis le début du vol')
-		Clock_label.setAlignment(Qt.AlignCenter)	
-		Clock_display.addWidget(Clock_label)
-		Clock_value = QLabel('1:30:29')
-		Clock_value.setAlignment(Qt.AlignCenter)	
-		Clock_value.setFont(QFont('Arial',20))
-		Clock_value.setFrameStyle(QFrame.Panel | QFrame.Sunken)
-		Clock_display.addWidget(Clock_value)
+		self.Clock_variables ={}
+		self.Clock_variables['label']= QLabel('Temps écoulé depuis le début du vol')
+		self.Clock_variables['label'].setAlignment(Qt.AlignCenter)
+		self.Clock_variables['value']=QLabel('1:30:29')
+		self.Clock_variables['value'].setAlignment(Qt.AlignCenter)
+		self.Clock_variables['value'].setFont(QFont('Arial',20))
+		self.Clock_variables['value'].setFrameStyle(QFrame.Panel | QFrame.Sunken)
+		Clock_display.addWidget(self.Clock_variables['label'])
+		Clock_display.addWidget(self.Clock_variables['value'])
 
 		#indicateur de vertical speed
 		self.VSI_variables={}
@@ -184,10 +186,6 @@ class MainUi:
 		VSI_display.addWidget(self.VSI_variables['label'])
 		VSI_display.addWidget(self.VSI_variables['value'])
 	
-	# def set_VSI(self,src, altitude, time):
-	# 	self.data['alt']= altitude
-	# 	self.data_time['time'] = time
-		# self.VSI_variables['value'].setText(f'{(altitude-self._ui.data(src))/(time-self._ui.data_time(src))}')
 
 		#indicateur de TAS
 		self.TAS_variables = {}
@@ -229,7 +227,7 @@ class MainUi:
 		self.ALT_variables={}
 		self.ALT_variables['height']=300
 		self.ALT_variables['original_img_ALT']=QPixmap('resources/ALT_Graphic.PNG')
-		self.data['ALT']=69
+		self.data['Alt']=69
 		# calculated_top = 100 - 5.464490874 * (alt-94)
 		# top = round(calculated_top)
 		# def __update_img(adj=0):
@@ -263,6 +261,31 @@ class MainUi:
 		bottom_layout.addLayout( Attitude_display )
 		bottom_layout.addLayout( ALT_display )
 		# bottom_layout.addLayout( VSI_graphic_display )
+
+	def set_clock(self):
+		#start_time=time.time()
+		self.timer=QTimer(self)
+		self.timer.timeout.connect(self.showTime)
+		print(timer)
+	
+	def showTime(self):
+		self.timer.start(1000)
+		time=QDateTime.currentDateTime()
+		timeDisplay=time.strftime('%M:%S')
+		self.Clock_variables['value'].setText(timer)
+		#current_time=time.time()
+		# while True:
+		# 	diff_time = current_time-start_time
+		# 	time_elapse = diff_time.strftime('%M:%S')
+		# 	self.Clock_variables['value'].setText(f'{time_elapse}')
+		# 	#time.now().strftime('%M:%S')
+		
+
+
+	def set_VSI(self,src, altitude, time):
+		# self.data['Alt']= altitude
+		# self.data_time['time'] = time
+		self.VSI_variables['value'].setText(f'{(altitude-self.data[src])/(time-self.data_time[src]):.1f}')
 	
 	def set_TAS(self, TAS):
 		self.data['tas'] = TAS
@@ -280,7 +303,7 @@ class MainUi:
 			self.TAS_variables['TAS_value'].setStyleSheet("background-color: gray; color: white")
 
 	def set_ALT(self, ALT):
-		self.data['alt'] = ALT
+		# self.data['Alt'] = ALT
 		if self.buttons[0].isChecked():
 			self.ALT_variables['original_img_ALT']=QPixmap('resources/ALT_Graphic.PNG')
 			limits = [0, 50, 100]
@@ -325,7 +348,7 @@ class MainUi:
 		self._attitude.setPixmap(new_attitude.copy(crop))
 
 	def set_color_label(self, ALT):
-		self.data['ALT'] = ALT
+		#self.data['Alt'] = ALT
 		if self.buttons[0].isChecked():
 			self.buttons[2].setStyleSheet("background-color: none")
 			self.buttons[3].setStyleSheet("background-color: none")
@@ -422,7 +445,7 @@ class MainUi:
 		
 
 	def record_altitude(self, label, ALT):
-		self.data['ALT']= ALT
+		#self.data['Alt']= ALT
 		# self.data['switch']= switch
 		# if switch > 1023:
 		self.labels[label].setText(f'{ALT:.1f}'+ " ft")

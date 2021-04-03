@@ -14,7 +14,7 @@ from views.main_view import MainView
 
 
 parser = ArgumentParser()
-parser.add_argument('-d', '--dummy', help='use dummy data for testing', action='store_true')
+parser.add_argument('-d', '--dummy', help='use dummy data for testing', action='store_false')
 parser.add_argument('--debug', help='enable debug mode', action='store_true')
 args = parser.parse_args().__dict__
 
@@ -22,7 +22,6 @@ args = parser.parse_args().__dict__
 class MissionControl(QApplication):
 	def __init__(self, dummy=False, debug=False):
 		super().__init__([])
-		dummy = True # DEBUG
 
 		# Needed in order to load resources correctly
 		self._goto_mc_root_directory()
@@ -35,8 +34,10 @@ class MissionControl(QApplication):
 			self.uart_model.start_port_polling()
 		else:
 			self.uart_model = UartModel()
+			self.uart_model.configure_comport('COM8')
+			self.uart_model.start_port_polling()
 		
-		self.main_view = MainView(self.uart_model, self.config_model)
+		self.main_view = MainView(self.uart_model, self.config_model, debug)
 		self.main_view.show()
 	
 	def run(self):

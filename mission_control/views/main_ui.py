@@ -82,14 +82,7 @@ class MainUi:
 
 		self._gauges_layout.addLayout(activation_layout)
 
-
-		def __create_label_gauge(text):
-			self.labels.append(QLabel(text))
-			self.labels[-1].setFont(QFont('Arial',11))
-			self.labels[-1].setFrameStyle(QFrame.Box|QFrame.Plain)
-			self.labels[-1].setLineWidth(2)
 		#Jauges
-		#Module pour Jauges 
 
 		jauges = QGridLayout()
 
@@ -101,18 +94,21 @@ class MainUi:
 		jauges.addWidget(self.puissance, 0, 0)
 		
 
-		#Jauge du voltage de l'avion mère
+		#Jauge du voltage de l'avion mère (6*4.2=25.2V)
+		nb_cell_avion=6
 		self.volt_Avion = AnalogGaugeWidget()
 		self.volt_Avion.update_value(5)
 		self.volt_Avion.value_min=0
-		self.volt_Avion.value_max=12
+		self.volt_Avion.value_max=nb_cell_avion*4.2
 		jauges.addWidget(self.volt_Avion, 1, 0)
 
-		#Jauge du voltage de la télémétrie
+		#Jauge du voltage de la télémétrie (2*4.2=8.4V max)
+		nb_cell_tel=2
 		self.volt_telem = AnalogGaugeWidget()
 		self.volt_telem.update_value(5)
 		self.volt_telem.value_min=0
-		self.volt_telem.value_max=12
+		self.volt_telem.value_max=nb_cell_tel*4.2
+
 		jauges.addWidget(self.volt_telem, 2, 0)
 
 		#Jauge de l'accéléromètre en X
@@ -123,11 +119,11 @@ class MainUi:
 		jauges.addWidget(self.acc_x, 0, 1)
 
 		#Jauge de l'accéléromètre en Z
-		self.acc_y = AnalogGaugeWidget()
-		self.acc_y.update_value(30)
-		self.acc_y.value_min=0
-		self.acc_y.value_max=100
-		jauges.addWidget(self.acc_y, 1, 1)
+		self.acc_z = AnalogGaugeWidget()
+		self.acc_z.update_value(30)
+		self.acc_z.value_min=0
+		self.acc_z.value_max=100
+		jauges.addWidget(self.acc_z, 1, 1)
 
 		self._gauges_layout.addLayout(jauges)
 

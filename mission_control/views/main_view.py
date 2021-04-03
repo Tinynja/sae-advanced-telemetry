@@ -73,6 +73,22 @@ class MainView(QMainWindow):
 				#self._ui.VSI_variables['value'].setText(f'{(value-self._ui.data[src])/(data_time-self._ui.data_time[src])}')
 		elif src == 'GS':
 			self._ui.GS_variables['value'].setText(f'{float(data[0]):.1f}')
+		elif src == 'Bat1':
+			#Bat1==voltage avion mère
+			self._ui.volt_Avion.update_value(value)
+			# self._ui.gauge.update_value
+		elif src == 'Bat2':
+			#Bat2==voltage système de télémétrie
+			self._ui.volt_telem.update_value(value)
+		elif src == 'Curr':
+			voltage = self._ui.data['Bat1']
+			self.puissance.update_value(value*voltage)
+		elif src == 'AccX':
+			self._ui.acc_x.update_value(value)
+		elif src == 'AccY':
+			self._ui.acc_y.update_value(value)
+		elif src == 'AccZ':
+			self._ui.acc_z.update_value(value)
 		# Save the data in self._ui for later use
 		self._ui.data[src] = value
 		self._ui.data_time[src] = data_time

@@ -32,9 +32,9 @@ def calculate_glide(finesse_planeur, taux_descente_planeur, plane_alt, target_al
 	Wx = WS * math.cos(math.pi/180 * (90 - HDG_WS)) 
 	Wy = WS * math.sin(math.pi/180 * (90 - HDG_WS))
 	Wz = 0
-	Ax = Gx - Wx
-	Ay = Gy - Wy
-	Az = Gz - Wz
+	Ax = Gx - Wx 
+	Ay = Gy - Wy 
+	Az = Gz - Wz 
 	Airspeed  = math.sqrt(pow(Ax, 2) + pow(Ay, 2) + pow(Az, 2))
 
 	# m g h = ratio * 0.5 m v2 --> h = ratio * 0.5 * v2 /g
@@ -67,9 +67,9 @@ def calculate_glide(finesse_planeur, taux_descente_planeur, plane_alt, target_al
 #EXEMPLE DE ROULEMENT DE LA FONCTION POUR LES PARAMÈTRES SUIVANTS
 GS            = 11.1
 HDG_GS        = 360
-WS            = 5
+WS            = 5.2
 HDG_WS        = 135
-HDG_target    = 360
+HDG_target    = 135
 Initial_Vertical_Speed = 0.0
 target_alt    = 0.0
 plane_alt     = 55
@@ -77,7 +77,7 @@ finesse_planeur = 2.36
 taux_descente_planeur = 4.35
 #
 distance_franchissable_en_planee, t, crosswind, headwind, beta_deg, best_glide_speed, erreur, GS_planeur_vers_target = calculate_glide(finesse_planeur, taux_descente_planeur, plane_alt, target_alt, GS, HDG_GS, WS, HDG_WS, Initial_Vertical_Speed, HDG_target)
-print('distance_franchissable_en_planee en ft = ' + str(distance_franchissable_en_planee/0.3048))
+print('distance_franchissable_en_planee en ft = ' + str(distance_franchissable_en_planee))
 print('temps de plannée              = ' + str(t))
 print('vitesse de meilleure plannée  = ' + str(best_glide_speed))
 print('Crosswind                     = ' + str(crosswind))
@@ -125,13 +125,13 @@ glide_range = []
 # array = [-3, 0, 3, 6, 7]
 # for Initial_Vertical_Speed in array:
 
-# input = 'HDG target (where is target from airplane?)'
-# array = [0, 60, 90, 120, 150, 180, 210, 240, 270, 300, 330]
-# for HDG_target in array:
+input = 'HDG target (where is target from airplane?)'
+array = [0, 60, 90, 120, 150, 180, 210, 240, 270, 300, 330]
+for HDG_target in array:
 
 
 	par1, par2, par3, par4, par5, par6, par7, par8 = calculate_glide(finesse_planeur, taux_descente_planeur, plane_alt, target_alt, GS, HDG_GS, WS, HDG_WS, Initial_Vertical_Speed, HDG_target)
-	glide_range.append(par1/0.3048)
+	glide_range.append(par1)
 
 plt.plot(array, glide_range)
 plt.ylabel('distance franchissable')

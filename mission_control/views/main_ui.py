@@ -174,6 +174,8 @@ class MainUi:
 		self.Clock_variables['value'].setFrameStyle(QFrame.Panel | QFrame.Sunken)
 		Clock_display.addWidget(self.Clock_variables['label'])
 		Clock_display.addWidget(self.Clock_variables['value'])
+		self.clock = []
+		self.clock.append(time.time())
 
 		#indicateur de vertical speed
 		self.VSI_variables={}
@@ -262,11 +264,8 @@ class MainUi:
 		bottom_layout.addLayout( ALT_display )
 		# bottom_layout.addLayout( VSI_graphic_display )
 
-	def set_clock(self):
-		#start_time=time.time()
-		self.timer=QTimer(self)
-		self.timer.timeout.connect(self.showTime)
-		print(timer)
+	def set_clock(self,time):
+		self.Clock_variables['value'].setText(f'{time-self.clock[0]:.1f}')
 	
 	def showTime(self):
 		self.timer.start(1000)

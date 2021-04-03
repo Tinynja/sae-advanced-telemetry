@@ -8,7 +8,7 @@ from PyQt5.QtCore import *
 from PyQt5.QtWidgets import *
 
 # User libraries
-from analoggaugewidget import AnalogGaugeWidget
+from lib.analog_gauge_widget import AnalogGaugeWidget
 
 
 class MainUi:
@@ -98,7 +98,7 @@ class MainUi:
 		self.puissance.value_min=0
 		self.puissance.value_max=10
 		jauges.addWidget(self.puissance, 0, 0)
-		__create_label_gauge("Puissance")
+		
 
 		#Jauge du voltage de l'avion mère
 		self.volt_Avion = AnalogGaugeWidget()

@@ -54,11 +54,12 @@ def calculate_glide(finesse_planeur, taux_descente_planeur, plane_alt, target_al
 	# crosswind = sin(beta)*vitesse_horizontale_planeur
 	if vitesse_horizontale_planeur<crosswind:
 		erreur = 'vent trop fort et de travers, impossible de compenser'
-		#mettre un break ici TODO-->Amine
-	beta_rad = math.asin(crosswind/vitesse_horizontale_planeur)
-	beta_deg = beta_rad * 180/math.pi
-	GS_planeur_vers_target = vitesse_horizontale_planeur - headwind
-	distance_franchissable_en_planee = distance_franchissable_en_planee + t * GS_planeur_vers_target
+	else:
+		beta_rad = math.asin(crosswind/vitesse_horizontale_planeur)
+		beta_deg = beta_rad * 180/math.pi
+		GS_planeur_vers_target = vitesse_horizontale_planeur - headwind
+		distance_franchissable_en_planee = distance_franchissable_en_planee + t * GS_planeur_vers_target
+
 
 	return distance_franchissable_en_planee, t, crosswind, headwind, beta_deg, best_glide_speed, erreur, GS_planeur_vers_target
 	
@@ -69,7 +70,7 @@ GS            = 11.1
 HDG_GS        = 360
 WS            = 5.2
 HDG_WS        = 135
-HDG_target    = 135
+HDG_target    = 125
 Initial_Vertical_Speed = 0.0
 target_alt    = 0.0
 plane_alt     = 55
@@ -125,16 +126,16 @@ glide_range = []
 # array = [-3, 0, 3, 6, 7]
 # for Initial_Vertical_Speed in array:
 
-input = 'HDG target (where is target from airplane?)'
-array = [0, 60, 90, 120, 150, 180, 210, 240, 270, 300, 330]
-for HDG_target in array:
+# input = 'HDG target (where is target from airplane?)'
+# array = [0, 60, 90, 120, 150, 180, 210, 240, 270, 300, 330]
+# for HDG_target in array:
 
 
-	par1, par2, par3, par4, par5, par6, par7, par8 = calculate_glide(finesse_planeur, taux_descente_planeur, plane_alt, target_alt, GS, HDG_GS, WS, HDG_WS, Initial_Vertical_Speed, HDG_target)
-	glide_range.append(par1)
+# 	par1, par2, par3, par4, par5, par6, par7, par8 = calculate_glide(finesse_planeur, taux_descente_planeur, plane_alt, target_alt, GS, HDG_GS, WS, HDG_WS, Initial_Vertical_Speed, HDG_target)
+# 	glide_range.append(par1)
 
-plt.plot(array, glide_range)
-plt.ylabel('distance franchissable')
-plt.xlabel(input)
-plt.ylim([0, max(glide_range)])
-plt.show()
+# plt.plot(array, glide_range)
+# plt.ylabel('distance franchissable')
+# plt.xlabel(input)
+# plt.ylim([0, max(glide_range)])
+# plt.show()

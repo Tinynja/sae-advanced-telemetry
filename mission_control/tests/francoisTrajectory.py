@@ -1,8 +1,8 @@
 # Pour que ce programme fonctionne, il a besoin de recevoir les variables suivantes : 
 GS            = 11.1
 HDG_GS        = 270
-WS            = 15
-HDG_WS        = 90
+WS            = 0.1
+HDG_WS        = 180
 VerticalSpeed = 0.0
 target_alt    = 0.0
 plane_alt     = 150

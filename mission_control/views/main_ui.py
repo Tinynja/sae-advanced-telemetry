@@ -73,15 +73,19 @@ class MainUi:
 		activation_layout.addWidget(self.b2)
 
 		# Batterie Avion mère
+		self.Label_avion=QLabel("Charge de l'avion")
 		self.Bat1 = QProgressBar()
-		self.Bat1.setGeometry(30,40,200,75)
+		self.Bat1.setGeometry(30,40,200,175)
 		#self.Bat1.setValue(self.charge1)
+		activation_layout.addWidget(self.Label_avion)
 		activation_layout.addWidget(self.Bat1)
 		self._gauges_layout.addLayout(activation_layout)
 
 		# Battérie télémétrie
+		self.Label_tel=QLabel('Charge de la télémétrie')
 		self.Bat2 = QProgressBar()
 		#self.Bat2.setValue(self.charge2)
+		activation_layout.addWidget(self.Label_tel)
 		activation_layout.addWidget(self.Bat2)
 		self._gauges_layout.addLayout(activation_layout)		
 		#Jauges

@@ -59,9 +59,9 @@ class MainUi:
 		
 		# #Switch active/stand by
 		activation_layout = QHBoxLayout()
-		b1 = QPushButton("ACTIVE")
-		b1.setGeometry(0,0,60,50)
-		b1.setStyleSheet("background-color: green; color: white")
+		self.b1 = QPushButton("ACTIVE")
+		self.b1.setGeometry(0,0,60,50)
+		self.b1.setStyleSheet("background-color: green; color: white")
 
 		self.b2 = QPushButton("Stand by")
 		self.b2.setGeometry(0,0,60,50)
@@ -69,58 +69,44 @@ class MainUi:
 		self.b2.move(60,0)
 		self.b2.clicked.connect(lambda: print('Inactif'))
 
-		activation_layout.addWidget(b1)
+		activation_layout.addWidget(self.b1)
 		activation_layout.addWidget(self.b2)
 
-		# # #Batterie
-		Bat = QProgressBar()
-		Bat.setGeometry(30,40,200,75)
-		step = 25
-		Bat.setValue(step)
-
-		activation_layout.addWidget(Bat)
-
+		# Batterie Avion mère
+		self.Bat1 = QProgressBar()
+		self.Bat1.setGeometry(30,40,200,75)
+		#self.Bat1.setValue(self.charge1)
+		activation_layout.addWidget(self.Bat1)
 		self._gauges_layout.addLayout(activation_layout)
 
+		# Battérie télémétrie
+		self.Bat2 = QProgressBar()
+		#self.Bat2.setValue(self.charge2)
+		activation_layout.addWidget(self.Bat2)
+		self._gauges_layout.addLayout(activation_layout)		
 		#Jauges
 
 		jauges = QGridLayout()
 
 		#Jauge de la puissance
 		self.puissance = AnalogGaugeWidget()
-		self.puissance.update_value(5)
+		#self.puissance.update_value(5)
 		self.puissance.value_min=0
 		self.puissance.value_max=10
 		jauges.addWidget(self.puissance, 0, 0)
 		
-
-		#Jauge du voltage de l'avion mère (6*4.2=25.2V)
-		nb_cell_avion=6
-		self.volt_Avion = AnalogGaugeWidget()
-		self.volt_Avion.update_value(5)
-		self.volt_Avion.value_min=0
-		self.volt_Avion.value_max=nb_cell_avion*4.2
-		jauges.addWidget(self.volt_Avion, 1, 0)
-
-		#Jauge du voltage de la télémétrie (2*4.2=8.4V max)
-		nb_cell_tel=2
-		self.volt_telem = AnalogGaugeWidget()
-		self.volt_telem.update_value(5)
-		self.volt_telem.value_min=0
-		self.volt_telem.value_max=nb_cell_tel*4.2
-
-		jauges.addWidget(self.volt_telem, 2, 0)
+		# # # Jauges de voltage remplacées par afficheur de batterie # # # 
 
 		#Jauge de l'accéléromètre en X
 		self.acc_x = AnalogGaugeWidget()
-		self.acc_x.update_value(30)
+		#self.acc_x.update_value(30)
 		self.acc_x.value_min=0
 		self.acc_x.value_max=100
 		jauges.addWidget(self.acc_x, 0, 1)
 
 		#Jauge de l'accéléromètre en Z
 		self.acc_z = AnalogGaugeWidget()
-		self.acc_z.update_value(30)
+		#self.acc_z.update_value(30)
 		self.acc_z.value_min=0
 		self.acc_z.value_max=100
 		jauges.addWidget(self.acc_z, 1, 1)

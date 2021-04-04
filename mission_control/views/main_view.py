@@ -32,7 +32,6 @@ class MainView(QMainWindow):
 		if self._debug: print(f'{src}: {data}')
 		value, data_time = float(data[0]), float(data[1])
 		# Do action based on type of data received
-		self._ui.set_clock(data_time)
 		if src == 'ch1':
 			if 'Alt' in self._ui.data and value > 0 and 'ch1' in self._ui.data and self._ui.data['ch1'] < 0:
 				# Only record altitude if:
@@ -74,20 +73,66 @@ class MainView(QMainWindow):
 				#self._ui.VSI_variables['value'].setText(f'{(value-self._ui.data[src])/(data_time-self._ui.data_time[src])}')
 		elif src == 'GS':
 			self._ui.GS_variables['value'].setText(f'{float(data[0]):.1f}')
-		elif src == 'Bat1':
-			#Bat1==voltage avion mère
-			self._ui.volt_Avion.update_value(value)
+		elif src == 'Bat1': #Bat1==voltage avion mère
+			nb_cell_avion=6
+			if value >= nb_cell_avion * 4.2:
+				self._ui.Bat1.setValue(100)
+			elif value < nb_cell_avion * 4.2 and value >=4.11:
+				self._ui.Bat1.setValue(90)
+			elif value < nb_cell_avion * 4.11 and value >=4.02:
+				self._ui.Bat1.setValue(80)
+			elif value < nb_cell_avion * 4.02 and value >=3.95:
+				self._ui.Bat1.setValue(70)
+			elif value < nb_cell_avion * 3.95 and value >=3.87:
+				self._ui.Bat1.setValue(60)
+			elif value < nb_cell_avion * 3.87 and value >=3.84:
+				self._ui.Bat1.setValue(50)
+			elif value < nb_cell_avion * 3.84 and value >=3.82:
+				self._ui.Bat1.setValue(40)
+			elif value < nb_cell_avion * 3.82 and value >=3.77:
+				self._ui.Bat1.setValue(30)
+			elif value < nb_cell_avion * 3.77 and value >=3.73:
+				self._ui.Bat1.setValue(20)
+			elif value < nb_cell_avion * 3.73 and value >=3.69:
+				self._ui.Bat1.setValue(10)
+			elif value < nb_cell_avion * 3.69:
+				self._ui.Bat1.setValue(0)
+			
+			#self._ui.volt_Avion.update_value(value)
 			# self._ui.gauge.update_value
-		elif src == 'Bat2':
-			#Bat2==voltage système de télémétrie
-			self._ui.volt_telem.update_value(value)
+		elif src == 'Bat2': #Bat2==voltage système de télémétrie
+			nb_cell_tel=2
+			if value >= nb_cell_tel * 4.2:
+				self._ui.Bat2.setValue(100)
+			elif value < nb_cell_tel * 4.2 and value >=4.11:
+				self._ui.Bat2.setValue(90)
+			elif value < nb_cell_tel * 4.11 and value >=4.02:
+				self._ui.Bat2.setValue(80)
+			elif value < nb_cell_tel * 4.02 and value >=3.95:
+				self._ui.Bat2.setValue(70)
+			elif value < nb_cell_tel * 3.95 and value >=3.87:
+				self._ui.Bat2.setValue(60)
+			elif value < nb_cell_tel * 3.87 and value >=3.84:
+				self._ui.Bat2.setValue(50)
+			elif value < nb_cell_tel * 3.84 and value >=3.82:
+				self._ui.Bat2.setValue(40)
+			elif value < nb_cell_tel * 3.82 and value >=3.77:
+				self._ui.Bat2.setValue(30)
+			elif value < nb_cell_tel * 3.77 and value >=3.73:
+				self._ui.Bat2.setValue(20)
+			elif value < nb_cell_tel * 3.73 and value >=3.69:
+				self._ui.Bat2.setValue(10)
+			elif value < nb_cell_tel * 3.69:
+				self._ui.Bat2.setValue(0)
+			#self._ui.volt_telem.update_value(value)
 		elif src == 'Curr':
 			voltage = self._ui.data['Bat1']
 			self.puissance.update_value(value*voltage)
 		elif src == 'AccX':
 			self._ui.acc_x.update_value(value)
 		elif src == 'AccY':
-			self._ui.acc_y.update_value(value)
+			#self._ui.acc_y.update_value(value)
+			pass
 		elif src == 'AccZ':
 			self._ui.acc_z.update_value(value)
 		# Save the data in self._ui for later use

@@ -67,9 +67,9 @@ class MainView(QMainWindow):
 		elif src == 'Alt':
 			self._ui.set_color_label(value)
 			self._ui.set_ALT(value)
-			#self._ui.VSI_variables['value'].setText(f'{(value-self._ui.data[src][-1])/(update_time-self._ui.data_time[src][-1])}')
+			#self._ui.VSI_variables['value'].setText(f'{(value-self._ui.data[src][-1])/(data_time-self._ui.data_time[src][-1])}')
 			self._ui.data[src] = value
-			self._ui.data_time[src]= update_time
+			self._ui.data_time[src]= data_time
 		elif src == 'GS':
 			self._ui.GS_variables['value'].setText(f'{float(data[0]):.1f}')
 		# Save the data in self._ui for later use

@@ -250,23 +250,15 @@ class MainUi:
 		bottom_layout.addLayout( ALT_display )
 		# bottom_layout.addLayout( VSI_graphic_display )
 
+	def convert(self, seconds):
+		min, sec = divmod(seconds, 60)
+		return "%02d:%02d" % (min, sec)
+
 	def set_clock(self,time):
-		self.Clock_variables['value'].setText(f'{time-self.clock[0]:.1f}')
+		current_time = time-self.clock[0]
+		self.Clock_variables['value'].setText(self.convert(current_time))
+		#self.Clock_variables['value'].setText(f'{time-self.clock[0]:.1f}')
 	
-	def showTime(self):
-		self.timer.start(1000)
-		time=QDateTime.currentDateTime()
-		timeDisplay=time.strftime('%M:%S')
-		self.Clock_variables['value'].setText(timer)
-		#current_time=time.time()
-		# while True:
-		# 	diff_time = current_time-start_time
-		# 	time_elapse = diff_time.strftime('%M:%S')
-		# 	self.Clock_variables['value'].setText(f'{time_elapse}')
-		# 	#time.now().strftime('%M:%S')
-		
-
-
 	def set_VSI(self,src, altitude, time):
 		# self.data['Alt']= altitude
 		# self.data_time['time'] = time

@@ -28,10 +28,10 @@ class MainView(QMainWindow):
 		# self._ui.buttons_drop_history[0].clicked.connect...
 	
 	def _process_data_change(self, src, data):
-		#self._ui.set_clock()
 		if self._debug: print(f'{src}: {data}')
 		value, data_time = float(data[0]), float(data[1])
 		# Do action based on type of data received
+		self._ui.set_clock(data_time)
 		if src == 'ch1':
 			if 'Alt' in self._ui.data and value > 0 and 'ch1' in self._ui.data and self._ui.data['ch1'] < 0:
 				# Only record altitude if:
@@ -127,7 +127,7 @@ class MainView(QMainWindow):
 			#self._ui.volt_telem.update_value(value)
 		elif src == 'Curr':
 			voltage = self._ui.data['Bat1']
-			self.puissance.update_value(value*voltage)
+			self._ui.puissance.update_value(value*voltage)
 		elif src == 'AccX':
 			self._ui.acc_x.update_value(value)
 		elif src == 'AccY':

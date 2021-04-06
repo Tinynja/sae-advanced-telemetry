@@ -1,7 +1,7 @@
 import gmplot
 
 # Create the map plotter:
-apikey = 'AIzaSyAO0J7Fri9wM6gyy2jTkP-R1kCOPGo5NYo' # (your API key here)
+apikey = '' # (your API key here)
 gmap = gmplot.GoogleMapPlotter(37.766956, -122.448481, 14, apikey=apikey)
 
 # Mark a hidden gem:

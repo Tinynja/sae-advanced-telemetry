@@ -14,6 +14,9 @@ from PyQt5.QtWidgets import QApplication
 
 class DummySerial:
 	def __init__(self, *args, **kwargs):
+		self.is_open = (True if 'port' in kwargs else False)
+		self.close = lambda: None
+
 		self.max_step = 0.3
 		self.variables = {
 			'Roll':[-180, 180],
@@ -57,7 +60,7 @@ class DummySerial:
 		return packet.encode()
 
 
-class UartDummyModel(QObject):
+class UartModelDummy(QObject):
 	# Configure the model signals:
 	# 	linkStatusChanged :=
 	#		0: bad
@@ -78,22 +81,30 @@ class UartDummyModel(QObject):
 		# Initialize properties
 		self.link_status = -1
 		self.data = {} # {data_name: [value, update_time], ...}
-		self.available_ports = None
+		self.available_ports = {}
 
 		# Set a dummy serial port (or else errors will get raised)
-		self._serial_port = None
+		self._serial_port = DummySerial()
 
 		# Start the port listing loop
 		self.start_port_listing()
+	
+	def stop_model(self):
+		self._stop_port_listing()
+		self._stop_port_polling()
+		self._stop_comport_config()
 
 	def start_port_listing(self):
 		self._do_port_listing = True
 		self._port_listing_thread = threading.Thread(target=self._port_listing_task)
 		self._port_listing_thread.start()
 	
-	def stop_port_listing(self):
-		self._do_port_listing = False
-		self._port_listing_thread.join()
+	def _stop_port_listing(self):
+		try:
+			self._do_port_listing = False
+			self._port_listing_thread.join()
+		except (AttributeError, RuntimeError) as e:
+			pass
 	
 	def _port_listing_task(self, delay=1):
 		while self._do_port_listing:
@@ -102,25 +113,50 @@ class UartDummyModel(QObject):
 			# Wait at least `delay` seconds until next port list
 			time.sleep(max(0, last_listing_time + delay - time.time()))
 
+	def _update_port_list(self, new_port_list):
+		if new_port_list != self.available_ports:
+			self.portListChanged.emit(new_port_list)
+		self.available_ports = new_port_list
+
 	def configure_comport(self, port=None, timeout=1, **kwargs):
+		# Safely stop the current serial port
+		self._stop_port_polling()
+		self._serial_port.close()
+		# Save the disered config for later use (useful when trying to reconnect)
 		self.comport_config = {'port': port, 'timeout':timeout, **kwargs}
-		# if isinstance(self._serial_port, serial.Serial):
-		# 	self._serial_port.close()
-		while port is None or self.available_ports is None or port in self.available_ports:
+		# Stop the comport_config thread if it is already running
+		self._stop_comport_config()
+		# Launch the comport configuration thread
+		self._comport_config_thread = threading.Thread(target=self._comport_config_task, kwargs=self.comport_config)
+		self._do_comport_config = True
+		self._comport_config_thread.start()
+
+	def _stop_comport_config(self):
+		try:
+			self._do_comport_config = False
+			self._comport_config_thread.join()
+		except (AttributeError, RuntimeError) as e:
+			pass
+			
+	def _comport_config_task(self, *args, **kwargs):
+		while self._do_comport_config and not self._serial_port.is_open: # (port is None or self.available_ports == {} or port in self.available_ports):
 			try:
-				self._serial_port = DummySerial(port=port, timeout=timeout, **kwargs)
-				break
+				self._serial_port = DummySerial(**self.comport_config)
+				self._start_port_polling()
 			except SerialException:
 				time.sleep(0.5)
 	
-	def start_port_polling(self):
+	def _start_port_polling(self):
 		self._do_port_polling = True
 		self._port_polling_thread = threading.Thread(target=self._port_polling_task)
 		self._port_polling_thread.start()
 
-	def stop_port_polling(self):
-		self._do_port_polling = False
-		self._port_polling_thread.join()
+	def _stop_port_polling(self):
+		try:
+			self._do_port_polling = False
+			self._port_polling_thread.join()
+		except (AttributeError, RuntimeError) as e:
+			pass
 
 	def _port_polling_task(self):
 		# protocol: \x01 + [type] + \x02 + [name] + \x03 + \x01 + [type] + \x02 + [value] + \x03
@@ -181,15 +217,6 @@ class UartDummyModel(QObject):
 			self.linkStatusChanged.emit(new_link_status)
 		self.link_status = new_link_status
 
-	def _update_port_list(self, new_port_list):
-		if new_port_list != self.available_ports:
-			self.portListChanged.emit(new_port_list)
-		self.available_ports = new_port_list
-	
-	def stop_model(self):
-		self.stop_port_listing()
-		self.stop_port_polling()
-
 	# def _inherit_signals(self):
 	# 	for name in dir(self._signals):
 	# 		if isinstance((attr := getattr(self._signals, name)), pyqtBoundSignal):
@@ -197,12 +224,14 @@ class UartDummyModel(QObject):
 
 
 if __name__ == '__main__':
+	# Init
 	app = QApplication([])
-	mdl = UartDummyModel()
+	mdl = UartModelDummy()
+	# Signal connections
 	mdl.portListChanged.connect(lambda ports: print(list(ports.keys())))
 	mdl.linkStatusChanged.connect(lambda link_status: print(f'Link status: {("BAD", "DATA LOSS", "GOOD")[link_status]}'))
 	mdl.dataChanged.connect(lambda name, value: print(f'{name}: {value}'))
 	# mdl.configure_comport('COM4', timeout=1, baudrate=115200, parity=serial.PARITY_NONE, stopbits=serial.STOPBITS_ONE)
-	mdl.configure_comport('DUMMY1')
-	mdl.start_port_polling()
+	# Config
+	mdl.configure_comport('DUMMY3')
 	app.exec()

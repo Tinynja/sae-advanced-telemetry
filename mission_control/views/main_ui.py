@@ -179,18 +179,18 @@ class MainUi:
 		self.Clock_variables ={}
 		self.Clock_variables['label']= QLabel('Temps écoulé depuis le début du vol')
 		self.Clock_variables['label'].setAlignment(Qt.AlignCenter)
-		self.Clock_variables['value']=QLabel('1:30:29')
+		self.Clock_variables['value']=QLabel('00:00')
 		self.Clock_variables['value'].setAlignment(Qt.AlignCenter)
 		self.Clock_variables['value'].setFont(QFont('Arial',20))
 		self.Clock_variables['value'].setFrameStyle(QFrame.Panel | QFrame.Sunken)
 		Clock_display.addWidget(self.Clock_variables['label'])
 		Clock_display.addWidget(self.Clock_variables['value'])
 		self.clock = []
-		self.clock.append(time.time())
+		#self.clock.append(time.time())
 
 		#indicateur de vertical speed
 		self.VSI_variables={}
-		self.VSI_variables['label']= QLabel('Vitesse verticale (fpm)')
+		self.VSI_variables['label']= QLabel('Vitesse verticale (fps)')
 		self.VSI_variables['label'].setAlignment(Qt.AlignCenter)
 		self.VSI_variables['value']= QLabel('+ 50')
 		self.VSI_variables['value'].setAlignment(Qt.AlignCenter)
@@ -436,7 +436,10 @@ class MainUi:
 		__create_label("Altitude Front Door")
 		__create_label("Altitude Back Door")
 		
-		self._drop_history_layout.addWidget(QPushButton("Enregistrement"),0,2)
+		self.record_button = QPushButton("Enregistrement")
+		self.record_button.setCheckable(True)
+
+		self._drop_history_layout.addWidget(self.record_button,0,2)
 		self._drop_history_layout.addWidget(QPushButton("Settings"),0,3)
 		for i in range(2):
 			for j in range(4):
@@ -444,6 +447,7 @@ class MainUi:
 					self._drop_history_layout.addWidget(self.buttons[j],j+1,0,1,2)
 				elif i == 1:
 					self._drop_history_layout.addWidget(self.labels[j],j+1,2,1,2)
+		
 		
 
 	def record_altitude(self, label, ALT):

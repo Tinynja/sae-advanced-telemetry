@@ -16,12 +16,15 @@ class DummySerial:
 	def __init__(self, *args, **kwargs):
 		self.is_open = (True if 'port' in kwargs else False)
 		self.close = lambda: None
+		self.device = kwargs.pop('port', None)
+		self.description = 'Dummy Serial Port'
 
 		self.max_step = 0.3
 		self.variables = {
 			'Roll':[-180, 180],
 			'Ptch':[-180, 180],
 			'Yaw':[0, 360],
+			'GPS': [[4538.43528, 4538.77854], [-7344.64902, -7344.75814]],
 			'AccX':[-5, 5],
 			'AccY':[-5, 5],
 			'AccZ':[-5, 5],
@@ -38,7 +41,7 @@ class DummySerial:
 		# We want to get 5Hz data refresh rate
 		self.delay = 1/5/len(self.variables)/2
 		# Set a random initial value for each variable so they get phase shifted (sinusoid)
-		self._last_values = [2*pi*random.random() for limits in self.variables]
+		self._last_values = [(2*pi*random.random() if src != 'GPS' else [2*pi*random.random(), 2*pi*random.random()]) for src in self.variables]
 		# Keep track of the last data sent (since uart.read_until splits the text)
 		# even: variable name
 		# odd: variable value
@@ -53,9 +56,19 @@ class DummySerial:
 			packet = f'\x01s\x02{src}\x03'
 		else:
 			# odd: variable value
-			self._last_values[idx] = (self._last_values[idx]+self.max_step*random.random())%(2*pi)
-			limits = self.variables[src]
-			packet = f'\x01v\x02{(limits[1]-limits[0])/2*sin(self._last_values[idx])+(limits[1]+limits[0])/2}\x03\n'
+			if src == 'GPS':
+				values = []
+				for i in range(2):
+					self._last_values[idx][i] = (self._last_values[idx][i]+self.max_step*random.random())%(2*pi)
+					limits = self.variables[src][i]
+					value = (limits[1]-limits[0])/2*sin(self._last_values[idx][i])+(limits[1]+limits[0])/2
+					values.append(value)
+				value = ','.join(map(str,values))
+			else:
+				self._last_values[idx] = (self._last_values[idx]+self.max_step*random.random())%(2*pi)
+				limits = self.variables[src]
+				value = (limits[1]-limits[0])/2*sin(self._last_values[idx])+(limits[1]+limits[0])/2
+			packet = f'\x01v\x02{value}\x03\n'
 		time.sleep(self.delay)
 		return packet.encode()
 
@@ -73,7 +86,7 @@ class UartModelDummy(QObject):
 	
 	linkStatusChanged = pyqtSignal(int)
 	dataChanged = pyqtSignal(str, object)
-	portListChanged = pyqtSignal(dict)
+	portListChanged = pyqtSignal(list)
 
 	def __init__(self):
 		super().__init__()
@@ -109,7 +122,8 @@ class UartModelDummy(QObject):
 	def _port_listing_task(self, delay=1):
 		while self._do_port_listing:
 			last_listing_time = time.time()
-			self._update_port_list({'DUMMY1': [], **{f'DUMMY{p+1}': [] for p in random.sample(range(4), k=2)}})
+			self._update_port_list([DummySerial(port='DUMMY1'),] + [DummySerial(port=f'DUMMY{p+1}') for p in random.sample(range(1,4), k=2)])
+			# self._update_port_list({'DUMMY1': [], **{f'DUMMY{p+1}': [] for p in random.sample(range(4), k=2)}})
 			# Wait at least `delay` seconds until next port list
 			time.sleep(max(0, last_listing_time + delay - time.time()))
 
@@ -228,7 +242,7 @@ if __name__ == '__main__':
 	app = QApplication([])
 	mdl = UartModelDummy()
 	# Signal connections
-	mdl.portListChanged.connect(lambda ports: print(list(ports.keys())))
+	mdl.portListChanged.connect(lambda ports: print([p.device for p in ports]))
 	mdl.linkStatusChanged.connect(lambda link_status: print(f'Link status: {("BAD", "DATA LOSS", "GOOD")[link_status]}'))
 	mdl.dataChanged.connect(lambda name, value: print(f'{name}: {value}'))
 	# mdl.configure_comport('COM4', timeout=1, baudrate=115200, parity=serial.PARITY_NONE, stopbits=serial.STOPBITS_ONE)

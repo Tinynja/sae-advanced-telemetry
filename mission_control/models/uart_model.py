@@ -59,7 +59,8 @@ class UartModel(QObject):
 	def _port_listing_task(self, delay=1):
 		while self._do_port_listing:
 			last_listing_time = time.time()
-			self._update_port_list({p.device:p for p in list_ports.comports()})
+			self._update_port_list(list_ports.comports())
+			# self._update_port_list({p.device:p for p in list_ports.comports()})
 			# Wait at least `delay` seconds until next port list
 			time.sleep(max(0, last_listing_time + delay - time.time()))
 

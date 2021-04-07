@@ -18,6 +18,7 @@ class MainView(QMainWindow):
 		self._connect_signals()
 	
 	def _connect_signals(self):
+		self._data_model.portListChanged.connect(self._process_port_list_change)
 		self._data_model.dataChanged.connect(self._process_data_change)
 		# if self._ui.buttons[0].isChecked():
 		# 	self._ui.buttons[1].setChecked(True)
@@ -27,11 +28,20 @@ class MainView(QMainWindow):
 		# self._ui.b2.clicked.connect(self._ui._activer_bouton_standby)
 		# self._ui.buttons_drop_history[0].clicked.connect...
 	
+	def _process_port_list_change(self, ports):
+		self._ui.update_ports(ports)
+
 	def _process_data_change(self, src, data):
 		if self._debug: print(f'{src}: {data}')
-		value, data_time = float(data[0]), float(data[1])
-		# Do action based on type of data received
+		data_time = float(data[1])
 		self._ui.set_clock(data_time)
+		# Convert the string data into numeric data
+		if src == 'GPS':
+			value = map(float, data[0].split(','))
+			value = list(map(lambda degmin: int(degmin/100)+degmin%100/60, value))
+		else:
+			value = float(data[0])
+		# Do action based on type of data received
 		if src == 'ch1':
 			if 'Alt' in self._ui.data and value > 0 and 'ch1' in self._ui.data and self._ui.data['ch1'] < 0:
 				# Only record altitude if:
@@ -135,6 +145,9 @@ class MainView(QMainWindow):
 			pass
 		elif src == 'AccZ':
 			self._ui.acc_z.update_value(value)
+		elif src == 'GPS':
+			pass
+			# print(value)
 		# Save the data in self._ui for later use
 		self._ui.data[src] = value
 		self._ui.data_time[src] = data_time

@@ -10,6 +10,7 @@ from PyQt5.QtCore import QTimer,QDateTime
 
 # User libraries
 from lib.analog_gauge_widget import AnalogGaugeWidget
+from lib.utils import *
 
 
 class MainUi:
@@ -18,7 +19,8 @@ class MainUi:
 
 		# Useful variables
 		self.data = {}
-		self.data_time={}
+		self.data_time = {}
+		self._comports = []
 
 		# Init main window
 		self._main_window.setWindowTitle('Avion-Cargo Mission Control')
@@ -67,7 +69,7 @@ class MainUi:
 		self.b2.setGeometry(0,0,60,50)
 		self.b2.setStyleSheet("background-color: red; color: white")
 		self.b2.move(60,0)
-		self.b2.clicked.connect(lambda: print('Inactif'))
+		# self.b2.clicked.connect(lambda: print('Inactif'))
 
 		activation_layout.addWidget(self.b1)
 		activation_layout.addWidget(self.b2)
@@ -355,17 +357,19 @@ class MainUi:
 			self.buttons[2].setStyleSheet("background-color: none")
 			self.buttons[3].setStyleSheet("background-color: none")
 
+	# def _create_top_buttons(self):
+	# 	self._top_buttons_layout = QHBoxLayout()
 
 	def _create_drop_history(self):
 		self._drop_history_layout = QGridLayout()
+		self._create_top_buttons()
 	
 		self.labels = []
 		self.buttons = []
 		# def set_drop_checked(boolqweqweqwe):
 		# 		self.buttons[0].setChecked(boolqweqweqwe)
 		# 		btn.setStyleSheet("background-color: " + colors[boolqweqweqwe])
-		
-			
+							
 		def click_drop_type(self, btn, checked):
 			if btn.text() in ("Glider 1", "Glider 2"):
 				self.buttons[0].setChecked(checked)
@@ -406,13 +410,15 @@ class MainUi:
 		__create_button("Front Door")
 		__create_button("Back Door")
 
-		__create_label("Altitude Glider 1")
-		__create_label("Altitude Glider 2")
-		__create_label("Altitude Front Door")
-		__create_label("Altitude Back Door")
+		__create_label("")
+		__create_label("")
+		__create_label("")
+		__create_label("")
+		# __create_label("Altitude Glider 1")
+		# __create_label("Altitude Glider 2")
+		# __create_label("Altitude Front Door")
+		# __create_label("Altitude Back Door")
 		
-		self._drop_history_layout.addWidget(QPushButton("Enregistrement"),0,2)
-		self._drop_history_layout.addWidget(QPushButton("Settings"),0,3)
 		for i in range(2):
 			for j in range(4):
 				if i == 0:
@@ -420,6 +426,47 @@ class MainUi:
 				elif i == 1:
 					self._drop_history_layout.addWidget(self.labels[j],j+1,2,1,2)
 		
+	def _create_top_buttons(self):
+		self._top_buttons = {}
+		self._top_buttons['ports'] = QComboBox()
+		self._top_buttons['ports'].addItem('Sélectionner un port COM')
+		self._top_buttons['record'] = QPushButton("Enregistrement")
+		self._top_buttons['settings'] = QPushButton("Paramètres")
+		self._drop_history_layout.addWidget(self._top_buttons['ports'],0,0,1,2)
+		self._drop_history_layout.addWidget(self._top_buttons['record'],0,2)
+		self._drop_history_layout.addWidget(self._top_buttons['settings'],0,3)
+
+	def update_ports(self, new_ports):
+		combobox = self._top_buttons['ports']
+		# print([p.device for p in new_ports])
+		# Format new ports
+		new_ports = [f'{p.device}: {p.description}' for p in new_ports]
+		# Delete all the ports that are no longer available
+		for i,p in enumerate(self._comports):
+			if p not in new_ports and i+1 != combobox.currentIndex:
+				del self._comports[i]
+				combobox.removeItem(i+1)
+		# Add all the new ports to the list
+		for p in new_ports:
+			if p not in self._comports:
+				self._comports.append(p)
+		# Sort the new list and add the missing items in the combobox
+		self._comports.sort()
+		for i,p in enumerate(self._comports):
+			if combobox.itemText(i+1) != p:
+				combobox.insertItem(i+1, p)
+
+		# current_port = combobox.currentText()
+		# combobox.clear()
+		# combobox.addItems(new_ports)
+		# if current_port not in new_ports:
+		# 	new_ports.insert(0, current_port)
+		# 	combobox.insertItem(0, current_port)
+		# 	combobox.setCurrentIndex(0)
+		# if  not in new_ports:
+		# 	new_ports.insert(0, combo.currentText())
+		
+		# for p in self._comports:
 
 	def record_altitude(self, label, ALT):
 		#self.data['Alt']= ALT

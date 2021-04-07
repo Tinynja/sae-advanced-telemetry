@@ -103,9 +103,10 @@ class MainUi:
 		self.puissance.value_min=0
 		self.puissance.value_max=10
 		puiss.addWidget(self.puissance)
-		puiss.addWidget(QLabel("Puissance (Watts)"), alignment=Qt.AlignCenter)
-		#puiss.setStretch(0, 1)
-		#puiss.setStretch(1, 0)
+		title_puissance=QLabel(("Puissance (Watts)"), alignment=Qt.AlignCenter)
+		#title_puissance.setFont(QFont('Arial',15)
+		puiss.addWidget(title_puissance)
+
 		jauges.addLayout(puiss, 0, 0)
 		#self.jauges.addWidget(self.puissance, 0, 0)
 		

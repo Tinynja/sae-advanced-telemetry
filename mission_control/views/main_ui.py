@@ -116,8 +116,8 @@ class MainUi:
 		ax=QVBoxLayout()
 
 		self.acc_x = AnalogGaugeWidget()
-		self.acc_x.value_min=0
-		self.acc_x.value_max=100
+		self.acc_x.value_min=-5
+		self.acc_x.value_max=5
 		#
 		ax.addWidget(self.acc_x)
 		ax.addWidget(QLabel("Accélération en X (m/s^2)"), alignment=Qt.AlignCenter)
@@ -130,8 +130,8 @@ class MainUi:
 		az=QVBoxLayout()
 
 		self.acc_z = AnalogGaugeWidget()
-		self.acc_z.value_min=0
-		self.acc_z.value_max=100
+		self.acc_z.value_min=-5
+		self.acc_z.value_max=5
 		#
 		ax.addWidget(self.acc_z)
 		ax.addWidget(QLabel("Accélération en Z (m/s^2)"), alignment=Qt.AlignCenter)

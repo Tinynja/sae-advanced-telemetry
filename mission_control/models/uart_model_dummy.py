@@ -34,7 +34,8 @@ class DummySerial:
 			'ch2':[-1024, 1024],
 			'ch3':[-1024, 1024],
 			'ch4':[-1024, 1024],
-			'TAS':[0,70]
+			'TAS':[0,65],
+			'GS':[0,50]
 		}
 		# We want to get 5Hz data refresh rate
 		self.delay = 1/len(self.variables)/2

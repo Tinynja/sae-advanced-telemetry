@@ -327,10 +327,9 @@ class MainUi:
 				self.ALT_variables['ALT_value'].setStyleSheet("background-color: red; color: white")
 		else:
 			self.ALT_variables['ALT_value'].setStyleSheet("background-color: gray; color: white")
-		if ALT > 112:
-			calculated_top = 1.639164268
-		else:
-			calculated_top = 100 - 5.464490874 * (ALT-94)
+		#calculated_top = 100 - 5.464490874 * (ALT-94)
+		calculated_top = 200-5.384615385*(ALT-140)
+		#calculated_top = 250-5.416666667*(ALT-130)
 		top = round(calculated_top)
 		#top1 = max(0, min(top, self.ALT_variables['original_img_ALT'].height()-self.ALT_variables['height']))
 		self.ALT_variables['ALT_img'].setPixmap(self.ALT_variables['original_img_ALT'].copy(QRect(0, top, self.ALT_variables['original_img_ALT'].width(), self.ALT_variables['height'])))

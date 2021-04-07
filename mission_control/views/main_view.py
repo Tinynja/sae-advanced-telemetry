@@ -31,7 +31,7 @@ class MainView(QMainWindow):
 		if self._debug: print(f'{src}: {data}')
 		value, data_time = float(data[0]), float(data[1])
 		# Do action based on type of data received
-		if self._ui.record_button.isChecked()
+		if self._ui.record_button.isChecked():
 			self._ui.clock.append(time.time())
 			self._ui.set_clock(data_time)
 		if src == 'ch1':

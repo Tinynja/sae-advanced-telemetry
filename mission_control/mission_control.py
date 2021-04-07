@@ -30,7 +30,7 @@ class MissionControl(QApplication):
 		self.config_model = ConfigModel()
 		if dummy:
 			self.uart_model = UartModelDummy()
-			self.uart_model.configure_comport('DUMMY1')
+			# self.uart_model.configure_comport('DUMMY1')
 		else:
 			self.uart_model = UartModel()
 			self.uart_model.configure_comport('COM8')

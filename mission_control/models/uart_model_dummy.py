@@ -15,7 +15,6 @@ from PyQt5.QtWidgets import QApplication
 class DummySerial:
 	def __init__(self, *args, **kwargs):
 		self.is_open = (True if 'port' in kwargs else False)
-		self.close = lambda: None
 		self.device = kwargs.pop('port', None)
 		self.description = 'Dummy Serial Port'
 
@@ -41,7 +40,7 @@ class DummySerial:
 			'GS':[0,50]
 		}
 		# We want to get 5Hz data refresh rate
-		self.delay = 1/len(self.variables)/2
+		self.delay = 1/2/len(self.variables)/2
 		# Set a random initial value for each variable so they get phase shifted (sinusoid)
 		self._last_values = [(2*pi*random.random() if src != 'GPS' else [2*pi*random.random(), 2*pi*random.random()]) for src in self.variables]
 		# Keep track of the last data sent (since uart.read_until splits the text)
@@ -73,6 +72,9 @@ class DummySerial:
 			packet = f'\x01v\x02{value}\x03\n'
 		time.sleep(self.delay)
 		return packet.encode()
+	
+	def close(self):
+		self.is_open = False
 
 
 class UartModelDummy(QObject):
@@ -102,14 +104,14 @@ class UartModelDummy(QObject):
 		self._serial_port = DummySerial()
 
 		# Start the port listing loop
-		self.start_port_listing()
+		self._start_port_listing()
 	
 	def stop_model(self):
 		self._stop_port_listing()
 		self._stop_port_polling()
 		self._stop_comport_config()
 
-	def start_port_listing(self):
+	def _start_port_listing(self):
 		self._do_port_listing = True
 		self._port_listing_thread = threading.Thread(target=self._port_listing_task)
 		self._port_listing_thread.start()
@@ -143,8 +145,8 @@ class UartModelDummy(QObject):
 		# Stop the comport_config thread if it is already running
 		self._stop_comport_config()
 		# Launch the comport configuration thread
-		self._comport_config_thread = threading.Thread(target=self._comport_config_task, kwargs=self.comport_config)
 		self._do_comport_config = True
+		self._comport_config_thread = threading.Thread(target=self._comport_config_task)
 		self._comport_config_thread.start()
 
 	def _stop_comport_config(self):
@@ -249,5 +251,7 @@ if __name__ == '__main__':
 	mdl.dataChanged.connect(lambda name, value: print(f'{name}: {value}'))
 	# mdl.configure_comport('COM4', timeout=1, baudrate=115200, parity=serial.PARITY_NONE, stopbits=serial.STOPBITS_ONE)
 	# Config
+	mdl.configure_comport('DUMMY3')
+	input()
 	mdl.configure_comport('DUMMY3')
 	app.exec()

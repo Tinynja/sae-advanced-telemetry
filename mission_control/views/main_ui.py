@@ -11,6 +11,7 @@ from PyQt5.QtCore import QTimer,QDateTime
 # User libraries
 from lib.analog_gauge_widget import AnalogGaugeWidget
 from lib.utils import *
+from views.utils import InvalidComboBoxStyle
 
 
 class MainUi:
@@ -459,6 +460,7 @@ class MainUi:
 	def _create_top_buttons(self):
 		self._top_buttons = {}
 		self._top_buttons['ports'] = QComboBox()
+		self._invalid_comport_style = InvalidComboBoxStyle()
 		self._top_buttons['ports'].addItem('Sélectionner un port COM')
 		self._top_buttons['record'] = QPushButton("Enregistrement")
 		self._top_buttons['record'].setCheckable(True)
@@ -474,9 +476,22 @@ class MainUi:
 		new_ports = [f'{p.device}: {p.description}' for p in new_ports]
 		# Delete all the ports that are no longer available
 		for i,p in enumerate(self._comports):
-			if p not in new_ports and i+1 != combobox.currentIndex:
-				del self._comports[i]
-				combobox.removeItem(i+1)
+			if p not in new_ports:
+				if i+1 == combobox.currentIndex():
+					combobox.model().item(i+1).setForeground(Qt.red)
+					font = combobox.model().item(i+1).font()
+					font.setBold(True)
+					combobox.model().item(i+1).setFont(font)
+					combobox.setStyle(self._invalid_comport_style)
+				else:
+					del self._comports[i]
+					combobox.removeItem(i+1)
+			elif i+1 == combobox.currentIndex():
+				combobox.model().item(i+1).setForeground(Qt.black)
+				font = combobox.model().item(i+1).font()
+				font.setBold(False)
+				combobox.model().item(i+1).setFont(font)
+				combobox.setStyle(self._main_window.style())
 		# Add all the new ports to the list
 		for p in new_ports:
 			if p not in self._comports:

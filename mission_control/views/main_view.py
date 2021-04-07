@@ -26,8 +26,14 @@ class MainView(QMainWindow):
 		# 	self._ui.buttons[3].setChecked(False)
 		# PFD
 		# self._ui.b2.clicked.connect(self._ui._activer_bouton_standby)
+		self._ui._top_buttons['ports'].textActivated.connect(self._connect_COM_port)
 		self._ui._top_buttons['record'].clicked.connect(self._handle_record)
 	
+	def _connect_COM_port(self, name):
+		name = name.split(':')[0]
+		print(name)
+		self._data_model.configure_comport(name)
+
 	def _handle_record(self, checked):
 		if checked:
 			self._ui.clock = time.time()
@@ -46,7 +52,6 @@ class MainView(QMainWindow):
 			value = float(data[0])
 		# Do action based on type of data received
 		if self._ui._top_buttons['record'].isChecked():
-			# self._ui.clock = time.time()
 			self._ui.set_clock(data_time)
 		if src == 'ch1':
 			if 'Alt' in self._ui.data and value > 0 and 'ch1' in self._ui.data and self._ui.data['ch1'] < 0:

@@ -80,6 +80,7 @@ class MainUi:
 		activation_layout.addWidget(self.Label_avion)
 		activation_layout.addWidget(self.Bat1)
 		self._gauges_layout.addLayout(activation_layout)
+		
 
 		# Battérie télémétrie
 		self.Label_tel=QLabel('Charge de la télémétrie')
@@ -91,29 +92,50 @@ class MainUi:
 		#Jauges
 
 		jauges = QGridLayout()
+		#self.jauges=QVBoxLayout()
 
 		#Jauge de la puissance
+		puiss=QVBoxLayout()
+
 		self.puissance = AnalogGaugeWidget()
-		#self.puissance.update_value(5)
 		self.puissance.value_min=0
 		self.puissance.value_max=10
-		jauges.addWidget(self.puissance, 0, 0)
+		puiss.addWidget(self.puissance)
+		puiss.addWidget(QLabel("Puissance (Watts)"), alignment=Qt.AlignCenter)
+		#puiss.setStretch(0, 1)
+		#puiss.setStretch(1, 0)
+		jauges.addLayout(puiss, 0, 0)
+		#self.jauges.addWidget(self.puissance, 0, 0)
 		
 		# # # Jauges de voltage remplacées par afficheur de batterie # # # 
 
 		#Jauge de l'accéléromètre en X
+		ax=QVBoxLayout()
+
 		self.acc_x = AnalogGaugeWidget()
-		#self.acc_x.update_value(30)
 		self.acc_x.value_min=0
 		self.acc_x.value_max=100
-		jauges.addWidget(self.acc_x, 0, 1)
+		#
+		ax.addWidget(self.acc_x)
+		ax.addWidget(QLabel("Accélération en X (m/s^2)"), alignment=Qt.AlignCenter)
+		jauges.addLayout(ax, 0, 1)
+		#
+		#jauges.addWidget(self.acc_x, 0, 1)
+
 
 		#Jauge de l'accéléromètre en Z
+		az=QVBoxLayout()
+
 		self.acc_z = AnalogGaugeWidget()
-		#self.acc_z.update_value(30)
 		self.acc_z.value_min=0
 		self.acc_z.value_max=100
-		jauges.addWidget(self.acc_z, 1, 1)
+		#
+		ax.addWidget(self.acc_z)
+		ax.addWidget(QLabel("Accélération en Z (m/s^2)"), alignment=Qt.AlignCenter)
+		jauges.addLayout(ax, 1, 1)
+		#
+		#jauges.addWidget(self.acc_z, 1, 1)
+		
 
 		self._gauges_layout.addLayout(jauges)
 

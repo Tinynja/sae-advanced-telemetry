@@ -291,9 +291,12 @@ class MainUi:
 	
 	def set_TAS(self, TAS):
 		self.data['tas'] = TAS
-		calculated_top = 100 - 9.803921569 * (TAS-57)
+		if TAS > 67.2:
+			calculated_top = 0
+		else:
+			calculated_top = 100 - 9.803921569 * (TAS-57)
 		top = round(calculated_top)
-		top1 = max(0, min(top, self.TAS_variables['original_img_TAS'].height()-self.TAS_variables['height']))
+		#top1 = max(0, min(top, self.TAS_variables['original_img_TAS'].height()-self.TAS_variables['height']))
 		self.TAS_variables['TAS_img'].setPixmap(self.TAS_variables['original_img_TAS'].copy(QRect(0, top, self.TAS_variables['original_img_TAS'].width(), self.TAS_variables['height'])))
 		self.TAS_variables['TAS_value'].setText(str(int(TAS)) + ' m/s')
 		limits = [0, 20, 50]
@@ -324,9 +327,12 @@ class MainUi:
 				self.ALT_variables['ALT_value'].setStyleSheet("background-color: red; color: white")
 		else:
 			self.ALT_variables['ALT_value'].setStyleSheet("background-color: gray; color: white")
-		calculated_top = 100 - 5.464490874 * (ALT-94)
+		if ALT > 112:
+			calculated_top = 1.639164268
+		else:
+			calculated_top = 100 - 5.464490874 * (ALT-94)
 		top = round(calculated_top)
-		top1 = max(0, min(top, self.ALT_variables['original_img_ALT'].height()-self.ALT_variables['height']))
+		#top1 = max(0, min(top, self.ALT_variables['original_img_ALT'].height()-self.ALT_variables['height']))
 		self.ALT_variables['ALT_img'].setPixmap(self.ALT_variables['original_img_ALT'].copy(QRect(0, top, self.ALT_variables['original_img_ALT'].width(), self.ALT_variables['height'])))
 		self.ALT_variables['ALT_value'].setText(str(int(ALT))+ ' ft')
 

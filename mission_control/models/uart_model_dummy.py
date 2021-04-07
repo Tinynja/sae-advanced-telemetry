@@ -33,10 +33,11 @@ class DummySerial:
 			'ch1':[-1024, 1024],
 			'ch2':[-1024, 1024],
 			'ch3':[-1024, 1024],
-			'ch4':[-1024, 1024]
+			'ch4':[-1024, 1024],
+			'TAS':[0,70]
 		}
 		# We want to get 5Hz data refresh rate
-		self.delay = 1/5/len(self.variables)/2
+		self.delay = 1/len(self.variables)/2
 		# Set a random initial value for each variable so they get phase shifted (sinusoid)
 		self._last_values = [2*pi*random.random() for limits in self.variables]
 		# Keep track of the last data sent (since uart.read_until splits the text)

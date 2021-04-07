@@ -64,6 +64,8 @@ class MainUi:
 		self.b1 = QPushButton("ACTIVE")
 		self.b1.setGeometry(0,0,60,50)
 		self.b1.setStyleSheet("background-color: green; color: white")
+		self.b1.clicked.connect(lambda: print('Actif'))
+
 
 		self.b2 = QPushButton("Stand by")
 		self.b2.setGeometry(0,0,60,50)
@@ -82,6 +84,7 @@ class MainUi:
 		activation_layout.addWidget(self.Label_avion)
 		activation_layout.addWidget(self.Bat1)
 		self._gauges_layout.addLayout(activation_layout)
+		
 
 		# Battérie télémétrie
 		self.Label_tel=QLabel('Charge de la télémétrie')
@@ -93,29 +96,51 @@ class MainUi:
 		#Jauges
 
 		jauges = QGridLayout()
+		#self.jauges=QVBoxLayout()
 
 		#Jauge de la puissance
+		puiss=QVBoxLayout()
+
 		self.puissance = AnalogGaugeWidget()
-		#self.puissance.update_value(5)
 		self.puissance.value_min=0
 		self.puissance.value_max=10
-		jauges.addWidget(self.puissance, 0, 0)
+		puiss.addWidget(self.puissance)
+		title_puissance=QLabel(("Puissance (Watts)"), alignment=Qt.AlignCenter)
+		#title_puissance.setFont(QFont('Arial',15)
+		puiss.addWidget(title_puissance)
+
+		jauges.addLayout(puiss, 0, 0)
+		#self.jauges.addWidget(self.puissance, 0, 0)
 		
 		# # # Jauges de voltage remplacées par afficheur de batterie # # # 
 
 		#Jauge de l'accéléromètre en X
+		ax=QVBoxLayout()
+
 		self.acc_x = AnalogGaugeWidget()
-		#self.acc_x.update_value(30)
-		self.acc_x.value_min=0
-		self.acc_x.value_max=100
-		jauges.addWidget(self.acc_x, 0, 1)
+		self.acc_x.value_min=-5
+		self.acc_x.value_max=5
+		#
+		ax.addWidget(self.acc_x)
+		ax.addWidget(QLabel("Accélération en X (m/s^2)"), alignment=Qt.AlignCenter)
+		jauges.addLayout(ax, 0, 1)
+		#
+		#jauges.addWidget(self.acc_x, 0, 1)
+
 
 		#Jauge de l'accéléromètre en Z
+		az=QVBoxLayout()
+
 		self.acc_z = AnalogGaugeWidget()
-		#self.acc_z.update_value(30)
-		self.acc_z.value_min=0
-		self.acc_z.value_max=100
-		jauges.addWidget(self.acc_z, 1, 1)
+		self.acc_z.value_min=-5
+		self.acc_z.value_max=5
+		#
+		ax.addWidget(self.acc_z)
+		ax.addWidget(QLabel("Accélération en Z (m/s^2)"), alignment=Qt.AlignCenter)
+		jauges.addLayout(ax, 1, 1)
+		#
+		#jauges.addWidget(self.acc_z, 1, 1)
+		
 
 		self._gauges_layout.addLayout(jauges)
 
@@ -156,18 +181,18 @@ class MainUi:
 		self.Clock_variables ={}
 		self.Clock_variables['label']= QLabel('Temps écoulé depuis le début du vol')
 		self.Clock_variables['label'].setAlignment(Qt.AlignCenter)
-		self.Clock_variables['value']=QLabel('1:30:29')
+		self.Clock_variables['value']=QLabel('00:00')
 		self.Clock_variables['value'].setAlignment(Qt.AlignCenter)
 		self.Clock_variables['value'].setFont(QFont('Arial',20))
 		self.Clock_variables['value'].setFrameStyle(QFrame.Panel | QFrame.Sunken)
 		Clock_display.addWidget(self.Clock_variables['label'])
 		Clock_display.addWidget(self.Clock_variables['value'])
 		self.clock = []
-		self.clock.append(time.time())
+		#self.clock.append(time.time())
 
 		#indicateur de vertical speed
 		self.VSI_variables={}
-		self.VSI_variables['label']= QLabel('Vitesse verticale (fpm)')
+		self.VSI_variables['label']= QLabel('Vitesse verticale (fps)')
 		self.VSI_variables['label'].setAlignment(Qt.AlignCenter)
 		self.VSI_variables['value']= QLabel('+ 50')
 		self.VSI_variables['value'].setAlignment(Qt.AlignCenter)
@@ -268,9 +293,12 @@ class MainUi:
 	
 	def set_TAS(self, TAS):
 		self.data['tas'] = TAS
-		calculated_top = 100 - 9.803921569 * (TAS-57)
+		if TAS > 67.2:
+			calculated_top = 0
+		else:
+			calculated_top = 100 - 9.803921569 * (TAS-57)
 		top = round(calculated_top)
-		top1 = max(0, min(top, self.TAS_variables['original_img_TAS'].height()-self.TAS_variables['height']))
+		#top1 = max(0, min(top, self.TAS_variables['original_img_TAS'].height()-self.TAS_variables['height']))
 		self.TAS_variables['TAS_img'].setPixmap(self.TAS_variables['original_img_TAS'].copy(QRect(0, top, self.TAS_variables['original_img_TAS'].width(), self.TAS_variables['height'])))
 		self.TAS_variables['TAS_value'].setText(str(int(TAS)) + ' m/s')
 		limits = [0, 20, 50]
@@ -301,9 +329,12 @@ class MainUi:
 				self.ALT_variables['ALT_value'].setStyleSheet("background-color: red; color: white")
 		else:
 			self.ALT_variables['ALT_value'].setStyleSheet("background-color: gray; color: white")
-		calculated_top = 100 - 5.464490874 * (ALT-94)
+		if ALT > 112:
+			calculated_top = 1.639164268
+		else:
+			calculated_top = 100 - 5.464490874 * (ALT-94)
 		top = round(calculated_top)
-		top1 = max(0, min(top, self.ALT_variables['original_img_ALT'].height()-self.ALT_variables['height']))
+		#top1 = max(0, min(top, self.ALT_variables['original_img_ALT'].height()-self.ALT_variables['height']))
 		self.ALT_variables['ALT_img'].setPixmap(self.ALT_variables['original_img_ALT'].copy(QRect(0, top, self.ALT_variables['original_img_ALT'].width(), self.ALT_variables['height'])))
 		self.ALT_variables['ALT_value'].setText(str(int(ALT))+ ' ft')
 
@@ -431,6 +462,7 @@ class MainUi:
 		self._top_buttons['ports'] = QComboBox()
 		self._top_buttons['ports'].addItem('Sélectionner un port COM')
 		self._top_buttons['record'] = QPushButton("Enregistrement")
+		self._top_buttons['record'].setCheckable(True)
 		self._top_buttons['settings'] = QPushButton("Paramètres")
 		self._drop_history_layout.addWidget(self._top_buttons['ports'],0,0,1,2)
 		self._drop_history_layout.addWidget(self._top_buttons['record'],0,2)

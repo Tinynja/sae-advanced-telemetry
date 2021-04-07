@@ -2,7 +2,7 @@
 from PyQt5.QtGui import *
 from PyQt5.QtCore import *
 from PyQt5.QtWidgets import *
-
+import time
 # User libraries
 from views.main_ui import MainUi
 
@@ -42,6 +42,9 @@ class MainView(QMainWindow):
 		else:
 			value = float(data[0])
 		# Do action based on type of data received
+		if self._ui._top_buttons['record'].isChecked():
+			self._ui.clock.append(time.time())
+			self._ui.set_clock(data_time)
 		if src == 'ch1':
 			if 'Alt' in self._ui.data and value > 0 and 'ch1' in self._ui.data and self._ui.data['ch1'] < 0:
 				# Only record altitude if:
@@ -135,7 +138,7 @@ class MainView(QMainWindow):
 			elif value < nb_cell_tel * 3.69:
 				self._ui.Bat2.setValue(0)
 			#self._ui.volt_telem.update_value(value)
-		elif src == 'Curr':
+		elif src == 'Curr' and 'Bat1' in self._ui.data:
 			voltage = self._ui.data['Bat1']
 			self._ui.puissance.update_value(value*voltage)
 		elif src == 'AccX':

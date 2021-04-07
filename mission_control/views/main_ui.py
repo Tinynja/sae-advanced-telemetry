@@ -62,6 +62,8 @@ class MainUi:
 		self.b1 = QPushButton("ACTIVE")
 		self.b1.setGeometry(0,0,60,50)
 		self.b1.setStyleSheet("background-color: green; color: white")
+		self.b1.clicked.connect(lambda: print('Actif'))
+
 
 		self.b2 = QPushButton("Stand by")
 		self.b2.setGeometry(0,0,60,50)

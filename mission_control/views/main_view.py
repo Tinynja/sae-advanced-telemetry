@@ -26,7 +26,11 @@ class MainView(QMainWindow):
 		# 	self._ui.buttons[3].setChecked(False)
 		# PFD
 		# self._ui.b2.clicked.connect(self._ui._activer_bouton_standby)
-		# self._ui.buttons_drop_history[0].clicked.connect...
+		self._ui._top_buttons['record'].clicked.connect(self._handle_record)
+	
+	def _handle_record(self, checked):
+		if checked:
+			self._ui.clock = time.time()
 	
 	def _process_port_list_change(self, ports):
 		self._ui.update_ports(ports)
@@ -34,7 +38,6 @@ class MainView(QMainWindow):
 	def _process_data_change(self, src, data):
 		if self._debug: print(f'{src}: {data}')
 		data_time = float(data[1])
-		self._ui.set_clock(data_time)
 		# Convert the string data into numeric data
 		if src == 'GPS':
 			value = map(float, data[0].split(','))
@@ -43,7 +46,7 @@ class MainView(QMainWindow):
 			value = float(data[0])
 		# Do action based on type of data received
 		if self._ui._top_buttons['record'].isChecked():
-			self._ui.clock.append(time.time())
+			# self._ui.clock = time.time()
 			self._ui.set_clock(data_time)
 		if src == 'ch1':
 			if 'Alt' in self._ui.data and value > 0 and 'ch1' in self._ui.data and self._ui.data['ch1'] < 0:

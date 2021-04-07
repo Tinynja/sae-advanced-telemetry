@@ -281,8 +281,8 @@ class MainUi:
 		min, sec = divmod(seconds, 60)
 		return "%02d:%02d" % (min, sec)
 
-	def set_clock(self,time):
-		current_time = time-self.clock[0]
+	def set_clock(self, time):
+		current_time = time-self.clock
 		self.Clock_variables['value'].setText(self.convert(current_time))
 		#self.Clock_variables['value'].setText(f'{time-self.clock[0]:.1f}')
 	

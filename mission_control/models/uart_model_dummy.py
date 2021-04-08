@@ -21,7 +21,7 @@ class DummySerial:
 		self.max_step = 0.3
 		self.variables = {
 			'Roll':[-180, 180],
-			'Ptch':[-180, 180],
+			'Ptch':[-90, 90],
 			'Yaw':[0, 360],
 			'GPS': [[4538.43528, 4538.77854], [-7344.64902, -7344.75814]],
 			'AccX':[-5, 5],

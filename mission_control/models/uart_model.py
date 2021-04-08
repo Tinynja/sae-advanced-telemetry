@@ -92,7 +92,8 @@ class UartModel(QObject):
 		while self._do_comport_config and not self._serial_port.is_open: # (port is None or self.available_ports == {} or port in self.available_ports):
 			try:
 				self._serial_port = serial.Serial(**self.comport_config)
-				self._start_port_polling()
+				if self.comport_config['port'] is not None:
+					self._start_port_polling()
 			except SerialException:
 				time.sleep(0.5)
 	

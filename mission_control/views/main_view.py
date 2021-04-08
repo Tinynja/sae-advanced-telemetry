@@ -83,6 +83,10 @@ class MainView(QMainWindow):
 				self._ui.record_altitude(3, self._ui.data['Alt'])
 			elif value > 0 or ('ch4' in self._ui.data and self._ui.data['ch4'] > 0):
 				src, value, data_time = '_', 0, 0
+		elif src == 'Roll':
+			self._ui.set_attitude(roll=value)
+		elif src == 'Ptch':
+			self._ui.set_attitude(pitch=value)
 		elif src == 'TAS':
 			self._ui.set_TAS(value)
 			self._ui.data[src] = value

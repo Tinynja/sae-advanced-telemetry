@@ -242,8 +242,8 @@ class MainUi:
 		#indicateur de ALT
 		self.ALT_variables={}
 		self.ALT_variables['height']=300
-		self.ALT_variables['original_img_ALT']=QPixmap('resources/ALT_Graphic.PNG')
-		self.data['Alt']=69
+		self.ALT_variables['original_img_ALT']=QPixmap('resources/ALT_Graphic_Default.jpg')
+		self.data['Alt']=0
 		# calculated_top = 100 - 5.464490874 * (alt-94)
 		# top = round(calculated_top)
 		# def __update_img(adj=0):
@@ -253,7 +253,6 @@ class MainUi:
 		self.ALT_variables['ALT_img']=QLabel()
 		self.ALT_variables['ALT_img'].setFrameStyle(QFrame.Box)
 		self.ALT_variables['ALT_value']=QLabel()
-		self.ALT_variables['ALT_value'].setFrameStyle(QFrame.Box)
 		self.ALT_variables['ALT_value'].setFont(QFont('Arial',25))
 		self.ALT_variables['ALT_value'].setAlignment(Qt.AlignCenter)
 		self.ALT_variables['ALT_value'].setFrameStyle(QFrame.Panel | QFrame.Raised)
@@ -267,6 +266,7 @@ class MainUi:
 		ALT_layout.addStretch(1)
 		ALT_display.addWidget(self.ALT_variables['ALT_img'])
 		ALT_display.addWidget(alt_dummy_widget)
+		#self.set_ALT(self.data['Alt'])
 
 		#Assemblage de top_layout et bottom_layout
 		top_layout.addLayout( GS_display )
@@ -311,7 +311,14 @@ class MainUi:
 			self.TAS_variables['TAS_value'].setStyleSheet("background-color: gray; color: white")
 
 	def set_ALT(self, ALT):
-		# self.data['Alt'] = ALT
+		#self.data['Alt'] = ALT
+		#calculated_top = 100 - 5.464490874 * (ALT-94)
+		calculated_top = 200-5.384615385*(ALT-140)
+		#calculated_top = 250-5.416666667*(ALT-130)
+		top = round(calculated_top)
+		#top1 = max(0, min(top, self.ALT_variables['original_img_ALT'].height()-self.ALT_variables['height']))
+		self.ALT_variables['ALT_img'].setPixmap(self.ALT_variables['original_img_ALT'].copy(QRect(0, top, self.ALT_variables['original_img_ALT'].width(), self.ALT_variables['height'])))
+		self.ALT_variables['ALT_value'].setText(str(int(ALT))+ ' ft')
 		if self.buttons[0].isChecked():
 			self.ALT_variables['original_img_ALT']=QPixmap('resources/ALT_Graphic.PNG')
 			limits = [0, 50, 100]
@@ -329,14 +336,8 @@ class MainUi:
 			else:
 				self.ALT_variables['ALT_value'].setStyleSheet("background-color: red; color: white")
 		else:
+			self.ALT_variables['original_img_ALT']=QPixmap('resources/ALT_Graphic_Default.PNG')
 			self.ALT_variables['ALT_value'].setStyleSheet("background-color: gray; color: white")
-		#calculated_top = 100 - 5.464490874 * (ALT-94)
-		calculated_top = 200-5.384615385*(ALT-140)
-		#calculated_top = 250-5.416666667*(ALT-130)
-		top = round(calculated_top)
-		#top1 = max(0, min(top, self.ALT_variables['original_img_ALT'].height()-self.ALT_variables['height']))
-		self.ALT_variables['ALT_img'].setPixmap(self.ALT_variables['original_img_ALT'].copy(QRect(0, top, self.ALT_variables['original_img_ALT'].width(), self.ALT_variables['height'])))
-		self.ALT_variables['ALT_value'].setText(str(int(ALT))+ ' ft')
 
 
 	# Indicateur d'assiette

@@ -8,8 +8,8 @@
 
 // --- PARAMÈTRE AJUSTABLES ---
 #define V1_PIN A1 // Pin d'entrée du capteur de voltage de la batterie principale
-#define I1_PIN A7 // Pin d'entrée du capteur de courant de la batterie principale
-#define V2_PIN A2 // Pin d'entrée du capteur de voltage de la batterie télémétrie
+#define I1_PIN A2 // Pin d'entrée du capteur de courant de la batterie principale
+#define V2_PIN A7 // Pin d'entrée du capteur de voltage de la batterie télémétrie
 const float Vin = 5.123;
 // Facteurs de conversion pour capteurs analog
 const float facteur_V1 = 25.2/1023;       
@@ -43,7 +43,7 @@ void imu_acc_Y(SPortSensor* sensor);
 void imu_acc_Z(SPortSensor* sensor);
 void imu_ang_X(SPortSensor* sensor);
 void imu_ang_Y(SPortSensor* sensor);
-void imu_ang_Z(SPortSensor* sensor);
+//void imu_ang_Z(SPortSensor* sensor);
 // Analog
 void anal_cour_1(SPortSensor* sensor);
 void anal_volt_1(SPortSensor* sensor);
@@ -59,7 +59,7 @@ SPortSensor sAlt(SPORT_SENSOR_ALT);
 // IMU
 SPortSensor sRoll(0x310, imu_ang_X);
 SPortSensor sPitch(0x320, imu_ang_Y);
-SPortSensor sYaw(0x330, imu_ang_Z);
+//SPortSensor sYaw(0x330, imu_ang_Z);
 SPortSensor sAccX(SPORT_SENSOR_ACCX, imu_acc_X);
 SPortSensor sAccY(SPORT_SENSOR_ACCY, imu_acc_Y);
 SPortSensor sAccZ(SPORT_SENSOR_ACCZ, imu_acc_Z);
@@ -83,7 +83,7 @@ void setup() {
   hub.registerSensor(sRoll);
   hub.registerSensor(sRoll);
   hub.registerSensor(sPitch);
-  hub.registerSensor(sYaw);
+  //hub.registerSensor(sYaw);
   hub.registerSensor(sAccY);
   hub.registerSensor(sAccX);
   hub.registerSensor(sAccZ);
@@ -167,7 +167,7 @@ void imu_acc_Y(SPortSensor* sensor) { sensor->setValue(imu.getAccY()); }
 void imu_acc_Z(SPortSensor* sensor) { sensor->setValue(imu.getAccZ()); }
 void imu_ang_X(SPortSensor* sensor) { sensor->setValue(imu.getAngleX()); }
 void imu_ang_Y(SPortSensor* sensor) { sensor->setValue(imu.getAngleY()); }
-void imu_ang_Z(SPortSensor* sensor) { sensor->setValue(imu.getAngleZ()); }
+//void imu_ang_Z(SPortSensor* sensor) { sensor->setValue(imu.getAngleZ()); }
 
 void anal_cour_1(SPortSensor* sensor) { sensor->setValue((bias_I1-analogRead(I1_PIN))*facteur_I1); }
 void anal_volt_1(SPortSensor* sensor) { sensor->setValue(analogRead(V1_PIN)*facteur_V1); }
@@ -175,9 +175,9 @@ void anal_volt_2(SPortSensor* sensor) { sensor->setValue(analogRead(V2_PIN)*fact
 
 // --- Fin des fonctions de mise à jour des capteurs (pour S.Port) ---
 
-// Fonctions spécifiques au Pitot (il n'a pas de librairie)
+// --- Fonctions spécifiques au Pitot (il n'a pas de librairie) ---
 
-void pitot_press(SPortSensor* sensor) {
+void pitot_press(SPortSensor* sensor) { // Récupération de delta_P en Pascals
   // Lecture des données via I2C
   Wire.requestFrom(0x28,2);
   byte value1 = Wire.read();

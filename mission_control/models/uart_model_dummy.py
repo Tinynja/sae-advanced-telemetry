@@ -107,8 +107,8 @@ class UartModelDummy(QObject):
 		self._start_port_listing()
 	
 	def stop_model(self):
-		self._stop_port_listing()
 		self._stop_port_polling()
+		self._stop_port_listing()
 		self._stop_comport_config()
 
 	def _start_port_listing(self):
@@ -160,6 +160,7 @@ class UartModelDummy(QObject):
 		while self._do_comport_config and not self._serial_port.is_open: # (port is None or self.available_ports == {} or port in self.available_ports):
 			try:
 				self._serial_port = DummySerial(**self.comport_config)
+				if self.comport_config['port'] is not None:
 				self._start_port_polling()
 			except SerialException:
 				time.sleep(0.5)
@@ -177,10 +178,10 @@ class UartModelDummy(QObject):
 			pass
 
 	def _port_polling_task(self):
-		# protocol: \x01 + [type] + \x02 + [name] + \x03 + \x01 + [type] + \x02 + [value] + \x03
+		# protocol: \x01 + [type] + \x02 + [source] + \x03 + \x01 + [type] + \x02 + [value] + \x03
 		# 	type :=
-		# 		0: name
-		# 		1: value
+		# 		s: source
+		# 		v: value
 		# 	\x01: start_of_heading
 		# 	\x02: start_of_text
 		# 	\x03: end_of_text
@@ -251,7 +252,5 @@ if __name__ == '__main__':
 	mdl.dataChanged.connect(lambda name, value: print(f'{name}: {value}'))
 	# mdl.configure_comport('COM4', timeout=1, baudrate=115200, parity=serial.PARITY_NONE, stopbits=serial.STOPBITS_ONE)
 	# Config
-	mdl.configure_comport('DUMMY3')
-	input()
 	mdl.configure_comport('DUMMY3')
 	app.exec()

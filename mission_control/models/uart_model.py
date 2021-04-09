@@ -23,7 +23,7 @@ class UartModel(QObject):
 	
 	linkStatusChanged = pyqtSignal(int)
 	dataChanged = pyqtSignal(str, object)
-	portListChanged = pyqtSignal(dict)
+	portListChanged = pyqtSignal(list)
 
 	def __init__(self):
 		super().__init__()
@@ -40,7 +40,7 @@ class UartModel(QObject):
 		self._start_port_listing()
 	
 	def stop_model(self):
-		self._stop_port_polling()
+		self.__stop_port_polling()
 		self._stop_port_listing()
 		self._stop_comport_config()
 
@@ -71,13 +71,14 @@ class UartModel(QObject):
 
 	def configure_comport(self, port=None, timeout=1, **kwargs):
 		# Safely stop the current serial port
-		self.stop_port_polling()
+		self._stop_port_polling()
 		self._serial_port.close()
 		# Save the disered config for later use (useful when trying to reconnect)
 		self.comport_config = {'port': port, 'timeout':timeout, **kwargs}
 		# Stop the comport_config thread if it is already running
 		self._stop_comport_config()
 		# Launch the comport configuration thread
+		self._do_comport_config = True
 		self._comport_config_thread = threading.Thread(target=self._comport_config_task)
 		self._comport_config_thread.start()
 
@@ -110,9 +111,9 @@ class UartModel(QObject):
 			pass
 
 	def _port_polling_task(self):
-		# protocol: \x01 + [type] + \x02 + [name] + \x03 + \x01 + [type] + \x02 + [value] + \x03
+		# protocol: \x01 + [type] + \x02 + [source] + \x03 + \x01 + [type] + \x02 + [value] + \x03
 		# 	type :=
-		# 		n: name
+		# 		s: source
 		# 		v: value
 		# 	\x01: start_of_heading
 		# 	\x02: start_of_text
@@ -128,6 +129,7 @@ class UartModel(QObject):
 					if time.time()-last_response_time > 5:
 						self.configure_comport(**self.comport_config)
 				elif response[0] != 1 or response[2] != 2 or response[-1] != 3:
+					# Indexing a byte string returns an int
 					# Protocol mismatch
 					last_response_time = time.time()
 					last_response = b''

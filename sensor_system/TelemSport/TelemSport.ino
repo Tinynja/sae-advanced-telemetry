@@ -126,14 +126,14 @@ void setup() {
   byte statusIMU = imu.begin();
   while (statusIMU != 0) { } // Tout arrêter si problème de connection
   imu.writeData(MPU6050_CONFIG_REGISTER, 0x06); // Activer le low pass filter built-in du MPU6050 (pour aider avec les vibrations)
-  imu.calcOffsets(true, true); // Gyro et Accelero
+  imu.calcOffsets(true, true); // Calibration gyro et accéléromètre
 }
 
 void loop() {
   // Mettre à jour l'attitude
   imu.update();
 
-  // Mettre à jour l'altitude
+  // Mettre à jour l'altitude (pas mis dans une fonction SPort en raison du temps de réponse > 10ms de ce capteur)
   sAlt.setValue(alt.readAltitude(pressionSol));
 
   // Mettre à jour le GPS

@@ -10,8 +10,9 @@ from PyQt5.QtCore import QTimer,QDateTime
 
 # User libraries
 from lib.analog_gauge_widget import AnalogGaugeWidget
-from lib.utils import *
+# from lib.utils import *
 from views.utils import InvalidComboBoxStyle
+# from views.map_ui import MapUi
 
 
 class MainUi:
@@ -32,7 +33,7 @@ class MainUi:
 		self._create_gauges()
 		self._create_PFD()
 		self._create_drop_history()
-		self._create_MAP()
+		# self._create_MAP()
 
 		# Merge all sub-layouts to the main layout
 		self._create_main_layout()
@@ -52,7 +53,7 @@ class MainUi:
 		row1_layout.addLayout(self._PFD_layout)
 		row1_layout.addLayout(self._drop_history_layout)
 
-		# row2_layout.addLayout(self._MAP_layout)
+		# row2_layout.addWidget(self.map)
 	
 	def _activer_bouton_standby(self):
 		print('LOOL')
@@ -236,7 +237,7 @@ class MainUi:
 		Attitude_display.addWidget(self._attitude)
 		# Attitude_value = QLabel('Pitch = -0.5 deg | Roll = 12.2 deg')
 		# Attitude_display.addWidget(Attitude_value)
-		self.set_attitude(pitch=10, roll=-30)
+		self.set_attitude(pitch=0, roll=0)
 
 
 		#indicateur de ALT
@@ -280,7 +281,7 @@ class MainUi:
 
 	def convert(self, seconds):
 		min, sec = divmod(seconds, 60)
-		return "%02d:%02d" % (min, sec)
+		return "%02d:%02d:%01d" % (min, sec, sec*10%10)
 
 	def set_clock(self, time):
 		current_time = time-self.clock
@@ -426,13 +427,13 @@ class MainUi:
 		def __create_button(text):
 			btn = QPushButton(text)
 			self.buttons.append(btn)
-			btn.setFont(QFont('Arial',75))
+			# btn.setFont(QFont('Arial',75))
 			btn.setCheckable(True)
 			btn.clicked.connect(lambda checked, self=self, btn=btn: click_drop_type(self, btn, checked))
 
 		def __create_label(text):
 			self.labels.append(QLabel(text))
-			self.labels[-1].setFont(QFont('Arial',75))
+			# self.labels[-1].setFont(QFont('Arial',75))
 			self.labels[-1].setFrameStyle(QFrame.Box|QFrame.Plain)
 			self.labels[-1].setLineWidth(2)
 
@@ -520,18 +521,18 @@ class MainUi:
 		# if switch > 1023:
 		self.labels[label].setText(f'{ALT:.1f}'+ " ft")
 
-
 	def _create_MAP(self):
-		pass
+		self.map = MapUi()
+		
 
 
-# Color est ajouté pour PFD, à voir si on laisse ça là
-class Color(QWidget):
+# # Color est ajouté pour PFD, à voir si on laisse ça là
+# class Color(QWidget):
 
-	def __init__(self, color, *args, **kwargs):
-		super(Color, self).__init__(*args, **kwargs)
-		self.setAutoFillBackground(True)
+# 	def __init__(self, color, *args, **kwargs):
+# 		super(Color, self).__init__(*args, **kwargs)
+# 		self.setAutoFillBackground(True)
 
-		palette = self.palette()
-		palette.setColor(QPalette.Window, QColor(color))
-		self.setPalette(palette)
+# 		palette = self.palette()
+# 		palette.setColor(QPalette.Window, QColor(color))
+# 		self.setPalette(palette)

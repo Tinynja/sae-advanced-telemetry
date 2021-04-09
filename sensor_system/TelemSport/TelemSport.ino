@@ -1,32 +1,27 @@
-// Most receivers require an inverter on the sport line to work with the hardware serial of an Arduino
-// Known receivers that DON'T need an inverter:
-//		Jumper R8
-//		*any that is directly compatible with Pixhawk
-// Connect any S.Port pin on your receiver to the RX pin of the Arduino
-// Put a 10K resistor between TX and RX of the Arduino
-
-#include <SPort.h>                  //Include the SPort library
+#include <SPort.h>                  // SPort library
 #include "Wire.h"
-#include <MPU6050_light.h>
-#include <Adafruit_BMP085.h>
-#include <Adafruit_GPS.h>
+#include <MPU6050_light.h>          // IMU library
+#include <Adafruit_BMP085.h>        // Altimeter library
+#include <Adafruit_GPS.h>           // GPS library
 
-// Pitot variables, clean up later
-#define PITOT_ADDR 0x28
-float pitotBias;
+
 
 // --- PARAMÈTRE AJUSTABLES ---
 #define V1_PIN A1 // Pin d'entrée du capteur de voltage de la batterie principale
 #define I1_PIN A7 // Pin d'entrée du capteur de courant de la batterie principale
 #define V2_PIN A2 // Pin d'entrée du capteur de voltage de la batterie télémétrie
 const float Vin = 5.123;
-const float facteur_V1 = Vin/1023;
-const float facteur_I1 = Vin/1023;
+// Facteurs de conversion pour capteurs analog
+const float facteur_V1 = 25.2/1023;       
+const float facteur_I1 = (Vin/1023)/39.5;
 const int   bias_I1    = 511;
-const float facteur_V2 = Vin/1023;
+const float facteur_V2 = 8.4/1023;
 
-// Pression au sol, pour altimètre
-int32_t pressionSol;
+
+// Variables misc.
+#define PITOT_ADDR 0x28 // Addresse I2C du pitot
+float pitotBias;     // Bias du pitot, calculé automatiquement pendant calibration
+int32_t pressionSol; // Pression au sol, pour altimètre
 
 // Variables de conversion
 const float m2ft = 3.28084;
@@ -151,6 +146,8 @@ void loop() {
   hub.handle();
 }
 
+// --- Fonctions de mise à jour des capteurs (pour S.Port) ---
+
 void gps_lat_long(SPortSensor* sensor) {
 	if (sensor->pollCount) {
 		//Longitude
@@ -172,9 +169,13 @@ void imu_ang_X(SPortSensor* sensor) { sensor->setValue(imu.getAngleX()); }
 void imu_ang_Y(SPortSensor* sensor) { sensor->setValue(imu.getAngleY()); }
 void imu_ang_Z(SPortSensor* sensor) { sensor->setValue(imu.getAngleZ()); }
 
-void anal_cour_1(SPortSensor* sensor) { sensor->setValue((analogRead(I1_PIN)-bias_I1)*facteur_I1); }
+void anal_cour_1(SPortSensor* sensor) { sensor->setValue((bias_I1-analogRead(I1_PIN))*facteur_I1); }
 void anal_volt_1(SPortSensor* sensor) { sensor->setValue(analogRead(V1_PIN)*facteur_V1); }
 void anal_volt_2(SPortSensor* sensor) { sensor->setValue(analogRead(V2_PIN)*facteur_V2); }
+
+// --- Fin des fonctions de mise à jour des capteurs (pour S.Port) ---
+
+// Fonctions spécifiques au Pitot (il n'a pas de librairie)
 
 void pitot_press(SPortSensor* sensor) {
   // Lecture des données via I2C

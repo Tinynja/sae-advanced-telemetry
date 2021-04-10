@@ -161,7 +161,7 @@ class UartModelDummy(QObject):
 			try:
 				self._serial_port = DummySerial(**self.comport_config)
 				if self.comport_config['port'] is not None:
-				self._start_port_polling()
+					self._start_port_polling()
 			except SerialException:
 				time.sleep(0.5)
 	

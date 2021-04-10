@@ -1,2 +1,0 @@
-class MutableObject:
-	pass

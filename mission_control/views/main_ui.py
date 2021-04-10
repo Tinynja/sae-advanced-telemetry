@@ -303,7 +303,7 @@ class MainUi:
 		#top1 = max(0, min(top, self.TAS_variables['original_img_TAS'].height()-self.TAS_variables['height']))
 		self.TAS_variables['TAS_img'].setPixmap(self.TAS_variables['original_img_TAS'].copy(QRect(0, top, self.TAS_variables['original_img_TAS'].width(), self.TAS_variables['height'])))
 		self.TAS_variables['TAS_value'].setText(str(int(TAS)) + ' m/s')
-		limits = [0, 20, 50]
+		limits = [0, 8, 18]
 		if TAS > limits[-1]:
 			self.TAS_variables['TAS_value'].setStyleSheet("background-color: red; color: white")
 		elif TAS > limits[-2]:

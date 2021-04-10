@@ -105,7 +105,7 @@ class MainUi:
 
 		self.puissance = AnalogGaugeWidget()
 		self.puissance.value_min=0
-		self.puissance.value_max=10
+		self.puissance.value_max=1200
 		puiss.addWidget(self.puissance)
 		title_puissance=QLabel(("Puissance (Watts)"), alignment=Qt.AlignCenter)
 		#title_puissance.setFont(QFont('Arial',15)

@@ -14,7 +14,7 @@ from views.main_view import MainView
 
 
 parser = ArgumentParser()
-parser.add_argument('-d', '--dummy', help='use dummy data for testing', action='store_false')
+parser.add_argument('-d', '--dummy', help='use dummy data for testing', action='store_true')
 parser.add_argument('--debug', help='enable debug mode', action='store_true')
 args = parser.parse_args().__dict__
 
@@ -28,12 +28,11 @@ class MissionControl(QApplication):
 
 		# Initiliaze all components of the application
 		self.config_model = ConfigModel()
-		if dummy:
+		if False:
 			self.uart_model = UartModelDummy()
 			# self.uart_model.configure_comport('DUMMY1')
 		else:
 			self.uart_model = UartModel()
-			self.uart_model.configure_comport('COM8')
 		
 		self.main_view = MainView(self.uart_model, self.config_model, debug)
 		self.main_view.show()

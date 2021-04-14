@@ -3,6 +3,7 @@ from PyQt5.QtGui import *
 from PyQt5.QtCore import *
 from PyQt5.QtWidgets import *
 import time
+from datetime import datetime
 # User libraries
 from views.main_ui import MainUi
 
@@ -12,6 +13,7 @@ class MainView(QMainWindow):
 		super().__init__()
 		self._ui = MainUi(self)
 		self._data_model = data_model
+		self._log_file = None
 
 		self._debug = debug
 		
@@ -31,12 +33,16 @@ class MainView(QMainWindow):
 	
 	def _connect_COM_port(self, name):
 		name = name.split(':')[0]
-		print(name)
 		self._data_model.configure_comport(name)
 
 	def _handle_record(self, checked):
 		if checked:
 			self._ui.clock = time.time()
+			file_name = 'logs/' + datetime.now().strftime('%Y-%m-%d_%H-%M-%S') + '.log'
+			self._log_file = open(file_name, 'w')
+		else:
+			self._log_file.close()
+			self._log_file = None
 	
 	def _process_port_list_change(self, ports):
 		self._ui.update_ports(ports)
@@ -166,3 +172,5 @@ class MainView(QMainWindow):
 		# Save the data in self._ui for later use
 		self._ui.data[src] = value
 		self._ui.data_time[src] = data_time
+		if self._log_file is not None and src != '_':
+			print(f'{src};{value};{data_time}', file=self._log_file, flush=True)

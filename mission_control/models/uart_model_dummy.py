@@ -249,7 +249,7 @@ if __name__ == '__main__':
 	# Signal connections
 	mdl.portListChanged.connect(lambda ports: print([p.device for p in ports]))
 	mdl.linkStatusChanged.connect(lambda link_status: print(f'Link status: {("BAD", "DATA LOSS", "GOOD")[link_status]}'))
-	mdl.dataChanged.connect(lambda name, value: print(f'{name}: {value}'))
+	# mdl.dataChanged.connect(lambda name, value: print(f'{name}: {value}'))
 	# mdl.configure_comport('COM4', timeout=1, baudrate=115200, parity=serial.PARITY_NONE, stopbits=serial.STOPBITS_ONE)
 	# Config
 	mdl.configure_comport('DUMMY3')

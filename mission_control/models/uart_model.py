@@ -40,7 +40,7 @@ class UartModel(QObject):
 		self._start_port_listing()
 	
 	def stop_model(self):
-		self.__stop_port_polling()
+		self._stop_port_polling()
 		self._stop_port_listing()
 		self._stop_comport_config()
 
@@ -180,7 +180,7 @@ if __name__ == '__main__':
 	app = QApplication([])
 	mdl = UartModel()
 	# Signal connections
-	mdl.portListChanged.connect(lambda ports: print(list(ports.keys())))
+	mdl.portListChanged.connect(lambda ports: print(ports))
 	mdl.linkStatusChanged.connect(lambda link_status: print(f'Link status: {("BAD", "DATA LOSS", "GOOD")[link_status]}'))
 	mdl.dataChanged.connect(lambda name, value: print(f'{name}: {value}'))
 	# mdl.configure_comport('COM4', timeout=1, baudrate=115200, parity=serial.PARITY_NONE, stopbits=serial.STOPBITS_ONE)

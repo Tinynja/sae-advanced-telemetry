@@ -1,7 +1,8 @@
 import sys
-from PyQt5.QtWidgets import QWidget, QApplication
-from PyQt5.QtGui import QPainter, QColor, QFont
-from PyQt5.QtCore import Qt
+from PyQt5.QtWidgets import *
+from PyQt5.QtGui import *
+from PyQt5.QtCore import *
+import time
 
 
 class Example(QWidget):
@@ -9,13 +10,8 @@ class Example(QWidget):
 	def __init__(self):
 		super().__init__()
 		self.show()
-
-	def initUI(self):
-
-		self.text = "Лев Николаевич Толстой\nАнна Каренина"
-
-		self.setGeometry(300, 300, 350, 300)
-		self.setWindowTitle('Drawing text')
+		time.sleep(1)
+		self.paintEvent = lambda x: None
 
 	def paintEvent(self, event):
 		qp = QPainter()
@@ -24,9 +20,10 @@ class Example(QWidget):
 		qp.end()
 
 	def drawText(self, event, qp):
-		qp.setPen(QColor(168, 34, 3))
-		qp.setFont(QFont('Decorative', 10))
-		qp.drawText(event.rect(), Qt.AlignCenter, self.text)
+		qp.setPen(Qt.red)
+		qp.setBrush(Qt.red)
+		# qp.setFont(QFont('Decorative', 10))
+		qp.drawEllipse(QPoint(50,50), 10, 10)
 
 
 if __name__ == '__main__':

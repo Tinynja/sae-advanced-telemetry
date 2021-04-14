@@ -237,7 +237,7 @@ class MainUi:
 		Attitude_display.addWidget(self._attitude)
 		# Attitude_value = QLabel('Pitch = -0.5 deg | Roll = 12.2 deg')
 		# Attitude_display.addWidget(Attitude_value)
-		self.set_attitude(pitch=0, roll=0)
+		self.set_attitude(pitch=20, roll=30)
 
 
 		#indicateur de ALT
@@ -319,7 +319,7 @@ class MainUi:
 		top = round(calculated_top)
 		#top1 = max(0, min(top, self.ALT_variables['original_img_ALT'].height()-self.ALT_variables['height']))
 		self.ALT_variables['ALT_img'].setPixmap(self.ALT_variables['original_img_ALT'].copy(QRect(0, top, self.ALT_variables['original_img_ALT'].width(), self.ALT_variables['height'])))
-		self.ALT_variables['ALT_value'].setText(str(int(ALT))+ ' ft')
+		self.ALT_variables['ALT_value'].setText(str(int(ALT))+ ' m')
 		if self.buttons[0].isChecked():
 			self.ALT_variables['original_img_ALT']=QPixmap('resources/ALT_Graphic.PNG')
 			limits = [0, 50, 100]
@@ -520,7 +520,7 @@ class MainUi:
 		#self.data['Alt']= ALT
 		# self.data['switch']= switch
 		# if switch > 1023:
-		self.labels[label].setText(f'{ALT:.1f}'+ " ft")
+		self.labels[label].setText(f'{ALT:.1f}'+ " m")
 
 	def _create_MAP(self):
 		self.map = MapUi()

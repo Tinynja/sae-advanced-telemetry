@@ -1,7 +1,6 @@
 RSSI
 Roll
 Ptch
-Yaw
 GPS
 Curr
 AccX
@@ -11,6 +10,9 @@ dPrs
 Bat1
 Bat2
 Alt
+GAlt
+GSpd
+Hdg
 ch1
 ch2
 ch3

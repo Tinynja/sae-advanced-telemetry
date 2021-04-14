@@ -14,7 +14,7 @@ from views.main_view import MainView
 
 
 parser = ArgumentParser()
-parser.add_argument('-d', '--dummy', help='use dummy data for testing', action='store_true')
+parser.add_argument('-d', '--dummy', help='use dummy data for testing', action='store_false')
 parser.add_argument('--debug', help='enable debug mode', action='store_true')
 args = parser.parse_args().__dict__
 

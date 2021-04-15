@@ -53,7 +53,7 @@ const float facteur_I1 = (Vin/1023)/39.5;
 const int   bias_I1    = 511;
 
 // Variables misc.
-#define PITOT_ADDR 0x28 // Addresse I2C du pitot, utilisée
+#define PITOT_ADDR 0x28 // Addresse I2C du pitot, utilisée dans les fonctions de pitot
 float pitotBias;        // Bias du pitot, calculé automatiquement pendant calibration
 int32_t pressionSol;    // Pression au sol, calculée automatiquement pendant la calibration de l'altimètre
 

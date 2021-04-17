@@ -1,32 +1,63 @@
+/*=============================================================================
+ |   Nom du projet: Télémétrie S.Port Avion Cargo Polytechnique Montréal
+ |
+ |   Date de la dernière mise à jour: 15 Avril 2021
+ |
+ |   Auteurs:  Olivier Fréchette (https://github.com/FreshOlives)
+ |             Amine Kchouk (https://github.com/Tinynja)
+ |
+ |   Libraries requises:
+ |             -Disponibles dans le library manager:
+ |                -Adafruit GPS Library by Adafruit
+ |                -MPU6050_Light by rfetick
+ |                -Adafruit BMP085 Library by Adafruit
+ |             -Libraries custom (incluses dans le dossier du présent sketch, à extraire dans le dossier "Documents/Arduino/Libraries"):
+ |                -FrSkySPortTelemetry (originalement par https://github.com/RealTadango, modifié par Amine Kchouk)
+ |
+ +-----------------------------------------------------------------------------
+ |
+ |  Description: Ce code permet le fonctionnement du système de télémétrie basé
+ |               sur Arduino et S.Port tel que développé dans le cadre d'un PI4
+ |               de l'hiver 2021. Les données sont traitées par le Arduino puis
+ |               envoyées via le protocol S.Port au receiver Jumper R8 pour
+ |               acheminement à un transmetteur compatibles.
+ |
+ |               Les données suivantes sont envoyées :
+ |                  -Roulis et tangage (degrés)
+ |                  -Accélération X, Y, Z (g)
+ |                  -Coordonnées GPS
+ |                  -Altitude GPS (p/r à la mer) (m)
+ |                  -Heading GPS (degrés)
+ |                  -Groundspeed GPS (noeuds)
+ |                  -Altitude p/r au sol (m)
+ |                  -Delta_P du capteur Pitot (Pa)
+ |                  -Voltage de la batterie principale (V)
+ |                  -Courant sortant de la batterie principale (A)
+ |                  -Roulis
+ |                
+ *===========================================================================*/
+
 #include <SPort.h>                  // SPort library
-#include "Wire.h"
+#include "Wire.h"                   // I2C library (default Arduino library)
 #include <MPU6050_light.h>          // IMU library
 #include <Adafruit_BMP085.h>        // Altimeter library
 #include <Adafruit_GPS.h>           // GPS library
 
-
-
 // --- PARAMÈTRE AJUSTABLES ---
 #define V1_PIN A1 // Pin d'entrée du capteur de voltage de la batterie principale
 #define I1_PIN A2 // Pin d'entrée du capteur de courant de la batterie principale
-#define V2_PIN A7 // Pin d'entrée du capteur de voltage de la batterie télémétrie
 const float Vin = 5.123;
 // Facteurs de conversion pour capteurs analog
 const float facteur_V1 = 25.2/1023;       
 const float facteur_I1 = (Vin/1023)/39.5;
 const int   bias_I1    = 511;
-const float facteur_V2 = 8.4/1023;
-
 
 // Variables misc.
-#define PITOT_ADDR 0x28 // Addresse I2C du pitot
-float pitotBias;     // Bias du pitot, calculé automatiquement pendant calibration
-int32_t pressionSol; // Pression au sol, pour altimètre
+#define PITOT_ADDR 0x28 // Addresse I2C du pitot, utilisée dans les fonctions de pitot
+float pitotBias;        // Bias du pitot, calculé automatiquement pendant calibration
+int32_t pressionSol;    // Pression au sol, calculée automatiquement pendant la calibration de l'altimètre
 
-// Variables de conversion
-const float m2ft = 3.28084;
-
-// Enregtistrement de Capteurs - I2C
+// Enregistrement de Capteurs - I2C
 MPU6050 imu(Wire);
 Adafruit_BMP085 alt;
 Adafruit_GPS GPS(&Wire);
@@ -43,16 +74,15 @@ void imu_acc_Y(SPortSensor* sensor);
 void imu_acc_Z(SPortSensor* sensor);
 void imu_ang_X(SPortSensor* sensor);
 void imu_ang_Y(SPortSensor* sensor);
-//void imu_ang_Z(SPortSensor* sensor);
 // Analog
 void anal_cour_1(SPortSensor* sensor);
 void anal_volt_1(SPortSensor* sensor);
-void anal_volt_2(SPortSensor* sensor);
 // Pitot
 void pitot_press(SPortSensor* sensor);
 
 
 // --- Enregristrement de capteurs - SPort ---
+// Toutes les addresses de capteurs sont disponible dans le fichier FrSkySPortTelemetry\src\SPortStandardSensorIDs.h
 SPortHub hub(0xFF); // Physical ID - 0xFF pour répondre à tous les polls du receiver - Augmente la fréquence des mises à jour
 // Altimètre
 SPortSensor sAlt(SPORT_SENSOR_ALT);
@@ -71,7 +101,6 @@ SPortSensor sGPSalt(SPORT_SENSOR_GPS_ALT, gps_alt);
 // Analog
 SPortSensor sCurr1(SPORT_SENSOR_CURR, anal_cour_1);
 SPortSensor sVolt1(SPORT_SENSOR_A3,   anal_volt_1);
-SPortSensor sVolt2(SPORT_SENSOR_A4,   anal_volt_2);
 // Pitot
 SPortSensor sPitot(0x340, pitot_press);
 
@@ -98,7 +127,7 @@ void setup() {
   hub.registerSensor(sCurr1);
   hub.registerSensor(sVolt1);
   hub.registerSensor(sVolt2);
-  //Begin the serial interface for S.Port
+  // Commencer interface Serial pour S.Port
   hub.begin();                  
 
   // Initialisation des pins analog
@@ -106,6 +135,7 @@ void setup() {
   pinMode(I1_PIN, INPUT);
   pinMode(V1_PIN, INPUT);
 
+  // --- Initialisation des capteurs I2C ---
   // Initialisation du GPS
   GPS.begin(0x10);
   GPS.sendCommand(PMTK_SET_NMEA_OUTPUT_RMCONLY);
@@ -122,7 +152,7 @@ void setup() {
   while (statusAlt = 0) { } // Tout arrêter si problème de connection
   pressionSol = alt.readSealevelPressure();
   
-  // Intialisation du IMU (initialisé en dernier pour minimiser le temps entre imu.begin() et le premier imu.update()
+  // Intialisation du IMU (initialisé en dernier pour minimiser le temps entre imu.begin() et le premier imu.update())
   byte statusIMU = imu.begin();
   while (statusIMU != 0) { } // Tout arrêter si problème de connection
   imu.writeData(MPU6050_CONFIG_REGISTER, 0x06); // Activer le low pass filter built-in du MPU6050 (pour aider avec les vibrations)
@@ -130,13 +160,13 @@ void setup() {
 }
 
 void loop() {
-  // Mettre à jour l'attitude
+  // Mettre à jour données du IMU (roulis et tanguage)
   imu.update();
 
   // Mettre à jour l'altitude (pas mis dans une fonction SPort en raison du temps de réponse > 10ms de ce capteur)
   sAlt.setValue(alt.readAltitude(pressionSol));
 
-  // Mettre à jour le GPS
+  // Mettre à jour les données stockées dans l'objet GPS
   GPS.read();
   if(GPS.newNMEAreceived()) {
     GPS.parse(GPS.lastNMEA());    
@@ -158,28 +188,26 @@ void gps_lat_long(SPortSensor* sensor) {
 	}
 }
 
-void gps_alt(SPortSensor* sensor) {sensor->setValue(GPS.angle);}
-void gps_course(SPortSensor* sensor) {sensor->setValue(GPS.angle);}
-void gps_speed(SPortSensor* sensor) {sensor->setValue(GPS.speed);}
+void gps_alt(SPortSensor* sensor) { sensor->setValue(GPS.angle); }
+void gps_course(SPortSensor* sensor) { sensor->setValue(GPS.angle); }
+void gps_speed(SPortSensor* sensor) { sensor->setValue(GPS.speed); }
 
 void imu_acc_X(SPortSensor* sensor) { sensor->setValue(imu.getAccX()); }
 void imu_acc_Y(SPortSensor* sensor) { sensor->setValue(imu.getAccY()); }
 void imu_acc_Z(SPortSensor* sensor) { sensor->setValue(imu.getAccZ()); }
 void imu_ang_X(SPortSensor* sensor) { sensor->setValue(imu.getAngleX()); }
 void imu_ang_Y(SPortSensor* sensor) { sensor->setValue(imu.getAngleY()); }
-//void imu_ang_Z(SPortSensor* sensor) { sensor->setValue(imu.getAngleZ()); }
 
 void anal_cour_1(SPortSensor* sensor) { sensor->setValue((bias_I1-analogRead(I1_PIN))*facteur_I1); }
 void anal_volt_1(SPortSensor* sensor) { sensor->setValue(analogRead(V1_PIN)*facteur_V1); }
-void anal_volt_2(SPortSensor* sensor) { sensor->setValue(analogRead(V2_PIN)*facteur_V2); }
 
 // --- Fin des fonctions de mise à jour des capteurs (pour S.Port) ---
 
-// --- Fonctions spécifiques au Pitot (il n'a pas de librairie) ---
+// --- Fonctions spécifiques au Pitot (puisqu'il n'a pas de librairie) ---
 
 void pitot_press(SPortSensor* sensor) { // Récupération de delta_P en Pascals
   // Lecture des données via I2C
-  Wire.requestFrom(0x28,2);
+  Wire.requestFrom(PITOT_ADDR,2);
   byte value1 = Wire.read();
   byte value2 = Wire.read();
 

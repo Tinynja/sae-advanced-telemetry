@@ -13,10 +13,10 @@ void gps_lat_long(SPortSensor* sensor);
 void gps_time_date(SPortSensor* sensor);
 
 SPortHub hub(0); // Physical ID 
-SPortSensor sensor1(SPORT_SENSOR_ALT);
-SPortSensor sensor2(SPORT_SENSOR_ACCX, constant456);
-SPortSensor sensor3(SPORT_SENSOR_GPS_LATI_LONG, gps_lat_long);
-SPortSensor sensor4(SPORT_SENSOR_GPS_TIME_DATE, gps_time_date);
+SPortSensor sensor1(SPORT_SENSOR_ALT); 								//Static sensor
+SPortSensor sensor2(SPORT_SENSOR_ACCX, constant456); 				//On-demand sensor
+SPortSensor sensor3(SPORT_SENSOR_GPS_LATI_LONG, gps_lat_long); 		//On-demand sensor
+SPortSensor sensor4(SPORT_SENSOR_GPS_TIME_DATE, gps_time_date); 	//On-demand sensor
 
 void setup() {
 	sensor1.precision = 10000;		//Sets a custom precision for the sensor (see SPortSensor.cpp for default precisions)

@@ -48,8 +48,8 @@
 #define I1_PIN A2 // Pin d'entrée du capteur de courant de la batterie principale
 const float Vin = 5.123;
 // Facteurs de conversion pour capteurs analog
-const float facteur_V1 = 25.2/1023;       
-const float facteur_I1 = (Vin/1023)/39.5;
+const float facteur_V1 = 25.2;
+const float facteur_I1 = 39.5;
 const int   bias_I1    = 511;
 
 // Variables misc.
@@ -198,8 +198,8 @@ void imu_acc_Z(SPortSensor* sensor) { sensor->setValue(imu.getAccZ()); }
 void imu_ang_X(SPortSensor* sensor) { sensor->setValue(imu.getAngleX()); }
 void imu_ang_Y(SPortSensor* sensor) { sensor->setValue(imu.getAngleY()); }
 
-void anal_cour_1(SPortSensor* sensor) { sensor->setValue((bias_I1-analogRead(I1_PIN))*facteur_I1); }
-void anal_volt_1(SPortSensor* sensor) { sensor->setValue(analogRead(V1_PIN)*facteur_V1); }
+void anal_cour_1(SPortSensor* sensor) { sensor->setValue((bias_I1-analogRead(I1_PIN))*(Vin/1023)/facteur_I1); }
+void anal_volt_1(SPortSensor* sensor) { sensor->setValue(analogRead(V1_PIN)*facteur_V1/1023); }
 
 // --- Fin des fonctions de mise à jour des capteurs (pour S.Port) ---
 

@@ -2,8 +2,9 @@
 from PyQt5.QtGui import *
 from PyQt5.QtCore import *
 from PyQt5.QtWidgets import *
-import time
+import time, math
 from datetime import datetime
+
 # User libraries
 from views.main_ui import MainUi
 
@@ -93,9 +94,10 @@ class MainView(QMainWindow):
 			self._ui.set_attitude(roll=value)
 		elif src == 'Ptch':
 			self._ui.set_attitude(pitch=value)
-		elif src == 'TAS':
+		elif src == 'dPrs':
+			src = 'TAS'
+			value = math.sqrt(2*abs(value/1.204))
 			self._ui.set_TAS(value)
-			self._ui.data[src] = value
 		elif src == 'Alt':
 			self._ui.set_color_label(value)
 			self._ui.set_ALT(value)
